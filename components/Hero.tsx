@@ -26,6 +26,44 @@ export const Hero: React.FC<HeroProps> = ({ id }) => {
   };
 
   return (
+    <section className="relative min-h-screen overflow-hidden bg-black">
+  {/* Video Background */}
+  <video
+    className="absolute inset-0 h-full w-full object-cover opacity-40"
+    autoPlay
+    muted
+    loop
+    playsInline
+    preload="auto"
+  >
+    <source src="/hero.mp4" type="video/mp4" />
+  </video>
+
+  {/* Dark Overlay */}
+  <div className="absolute inset-0 bg-black/70" />
+
+  {/* Hero Content */}
+  <div className="relative z-10 flex min-h-screen items-center justify-center px-6">
+    <div className="max-w-3xl text-center">
+      <p className="mb-4 text-xs uppercase tracking-[0.3em] text-white/60">
+        CREATIVE AND AGENTIC AI STUDIO
+      </p>
+
+      <h1 className="mb-6 text-4xl font-semibold leading-tight text-white md:text-6xl">
+        NOTHING HERE IS ACCIDENTAL
+      </h1>
+
+      <p className="mb-10 text-white/75">
+        AI systems. Real results. <br />
+        We design intelligent workflows that scale brands and operations.
+      </p>
+
+      <button className="rounded-full bg-white px-8 py-3 text-sm font-medium text-black transition hover:scale-[1.03]">
+        Start a project
+      </button>
+    </div>
+  </div>
+</section>
     <section 
       id={id} 
       className="relative w-full h-screen text-zero-white flex flex-col items-center justify-center p-6 md:p-16 overflow-hidden" 
