@@ -23,6 +23,13 @@ export const Footer: React.FC = () => {
         <a href="mailto:fabian.nuron@gmail.com" aria-label="Email" className="hover:text-zero-black transition-colors">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
         </a>
+        {/* Updated WhatsApp Icon */}
+        <a href="https://wa.me/19152343655?text=Hi%2C%20i%20want%20build%20something%20exceptional%21" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" className="hover:text-zero-black transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M21 12.5C21 18.2934 16.2934 23 10.5 23C8.4287 23 6.4716 22.4042 4.79373 21.2828L1 23L2.28284 19.2063C1.59584 17.5284 1 15.6563 1 13.5C1 7.70659 5.70659 3 11.5 3C17.2934 3 22 7.70659 22 13.5C22 13.5 21.5 13.5 21 13.5C21 13.5 21 12.5 21 12.5Z"/>
+            <path d="M8 7L16 11L8 15V7Z" fill="currentColor" stroke="none"/>
+          </svg>
+        </a>
       </div>
     </footer>
   );

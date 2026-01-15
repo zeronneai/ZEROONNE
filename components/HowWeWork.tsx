@@ -17,11 +17,7 @@ export const HowWeWork: React.FC<HowWeWorkProps> = ({ id }) => {
   const [dotPositions, setDotPositions] = useState<number[]>([]);
   const [isSectionInView, setIsSectionInView] = useState(false); // Tracks if the whole section is in view
 
-  // Ref to hold the current activeStep value to avoid stale closures in callbacks
-  const currentActiveStepRef = useRef(activeStep);
-  useEffect(() => {
-    currentActiveStepRef.current = activeStep;
-  }, [activeStep]);
+  // Removed currentActiveStepRef as functional updates handle this better.
 
   const stepsContent = [
     {
@@ -96,9 +92,8 @@ export const HowWeWork: React.FC<HowWeWorkProps> = ({ id }) => {
   const handleScrollOrResize = useCallback(() => {
     if (!isSectionInView) {
       // If the section is not in view, ensure activeStep is null.
-      if (currentActiveStepRef.current !== null) {
-        setActiveStep(null);
-      }
+      // Use functional update to avoid unnecessary re-renders.
+      setActiveStep(prevActiveStep => (prevActiveStep !== null ? null : prevActiveStep));
       return;
     }
 
@@ -130,38 +125,30 @@ export const HowWeWork: React.FC<HowWeWorkProps> = ({ id }) => {
       }
     }
 
-    // Update the state only if the new active step is different
-    if (newActiveStepIndex !== null && newActiveStepIndex !== currentActiveStepRef.current) {
-      setActiveStep(newActiveStepIndex);
-    } else if (newActiveStepIndex === null && currentActiveStepRef.current !== null) {
-        // This case can happen if we scroll very fast, or are between sections.
-        // If the section is still visible, but no step is 'active' per the criteria,
-        // and we are not completely off-screen, try to keep an active state or revert to 0 if at top.
-        const sectionRect = sectionRef.current?.getBoundingClientRect();
-        if (sectionRect && sectionRect.top <= viewportMid && sectionRect.bottom > 0) {
-            if (currentActiveStepRef.current !== 0) { // If it's not already Strategy, try to set to 0.
-                setActiveStep(0);
-            }
-        }
-    }
+    // Update the state using a functional update, only if the value actually changes.
+    // This is key to preventing unnecessary re-renders.
+    setActiveStep(prevActiveStep => {
+      if (prevActiveStep !== newActiveStepIndex) {
+        return newActiveStepIndex;
+      }
+      return prevActiveStep; // No change, return current state
+    });
+
   }, [isSectionInView, stepRefs, sectionRef]); // Dependencies for useCallback: stepRefs and sectionRef are stable
 
   // 4. Effect to attach and cleanup scroll/resize event listeners
   useEffect(() => {
-    // When the section first comes into view, ensure Strategy is active
-    if (isSectionInView && activeStep === null) {
-        setActiveStep(0);
-    }
-
+    // Only attach/detach listeners and perform initial check.
+    // All state update logic is now contained within handleScrollOrResize.
     window.addEventListener('scroll', handleScrollOrResize);
     window.addEventListener('resize', handleScrollOrResize);
-    handleScrollOrResize(); // Initial check when section loads or becomes visible
+    handleScrollOrResize(); // Initial check on mount or when handleScrollOrResize changes
 
     return () => {
       window.removeEventListener('scroll', handleScrollOrResize);
       window.removeEventListener('resize', handleScrollOrResize);
     };
-  }, [isSectionInView, handleScrollOrResize]); // isSectionInView and handleScrollOrResize are dependencies
+  }, [handleScrollOrResize]); // handleScrollOrResize is the only dependency here
 
 
   return (
