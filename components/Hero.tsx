@@ -32,7 +32,7 @@ export const Hero: React.FC<HeroProps> = ({ id }) => {
     >
       {/* MP4 Video Background */}
       <video
-        src="/hero.mp4"
+        src="https://i.imgur.com/pYqMHMF.mp4"
         className="absolute inset-0 w-full h-full object-cover z-0 hidden sm:block"
         autoPlay
         muted
