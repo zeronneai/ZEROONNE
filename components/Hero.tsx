@@ -64,11 +64,6 @@ export const Hero: React.FC<HeroProps> = ({ id }) => {
     </div>
   </div>
 </section>
-    <section 
-      id={id} 
-      className="relative w-full h-screen text-zero-white flex flex-col items-center justify-center p-6 md:p-16 overflow-hidden" 
-      style={{ backgroundImage: 'linear-gradient(to bottom, #000000 95%, transparent 100%)' }} // Apply gradient directly here
-    >
       {/* Background image with blur, opacity, and new animation */}
       <div
         className="absolute inset-0 z-0 bg-no-repeat bg-center bg-contain opacity-10 blur-sm animate-drift-and-breathe"
