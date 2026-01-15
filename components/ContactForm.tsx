@@ -28,9 +28,10 @@ export const ContactForm: React.FC<ContactFormProps> = ({ isOpen, onClose }) => 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [projectDescription, setProjectDescription] = useState('');
-  const [selectedServices, setSelectedServices] = useState<string[]>([]); // New state for selected services
+  const [selectedServices, setSelectedServices] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [submissionError, setSubmissionError] = useState<string | null>(null);
 
   if (!isOpen) return null;
 
@@ -42,26 +43,45 @@ export const ContactForm: React.FC<ContactFormProps> = ({ isOpen, onClose }) => 
     );
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    // Simulate API call
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setIsSubmitted(true);
-      console.log('Form Submitted:', {
-        name,
-        email,
-        projectDescription,
-        selectedServices, // Include selected services in the log
+    setSubmissionError(null); // Clear previous errors
+
+    const formData = {
+      name,
+      email,
+      services: selectedServices.join(', '), // Join selected services into a single string
+      description: projectDescription,
+    };
+
+    try {
+      // Replace '/api/submit-contact-form' with the actual URL of your backend endpoint
+      const response = await fetch('/api/submit-contact-form', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
       });
-      // Optionally clear form fields after submission, though they're hidden in success state
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to submit form.');
+      }
+
+      setIsSubmitted(true);
+      // Optionally clear form fields after successful submission
       setName('');
       setEmail('');
       setProjectDescription('');
-      setSelectedServices([]); // Clear selected services
-      // setTimeout(() => onClose(), 3000);
-    }, 1500);
+      setSelectedServices([]);
+    } catch (error: any) {
+      console.error('Error submitting form:', error);
+      setSubmissionError(error.message || 'An unexpected error occurred. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -87,6 +107,12 @@ export const ContactForm: React.FC<ContactFormProps> = ({ isOpen, onClose }) => 
 
         {!isSubmitted ? (
           <form onSubmit={handleSubmit} className="space-y-6">
+            {submissionError && (
+              <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                <strong className="font-bold">Error:</strong>
+                <span className="block sm:inline"> {submissionError}</span>
+              </div>
+            )}
             <div>
               <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Name</label>
               <input
@@ -109,7 +135,6 @@ export const ContactForm: React.FC<ContactFormProps> = ({ isOpen, onClose }) => 
                 required
               />
             </div>
-            {/* New: Services interested in */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">What type of service are you looking for? (Select all that apply)</label>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-2 gap-x-4 max-h-48 overflow-y-auto custom-scrollbar p-2 border border-gray-300 rounded-md bg-gray-50">
@@ -159,6 +184,13 @@ export const ContactForm: React.FC<ContactFormProps> = ({ isOpen, onClose }) => 
             <p className="mt-8 text-sm text-gray-600">
               We'll be in touch shortly to discuss your project.
             </p>
+            <button
+              onClick={onClose}
+              className="mt-8 bg-zero-black text-zero-white px-6 py-3 rounded-md text-lg font-medium hover:bg-zero-accent focus:outline-none focus:ring-2 focus:ring-zero-black focus:ring-offset-2 transition-colors"
+              aria-label="Close message"
+            >
+              Close
+            </button>
           </div>
         )}
       </div>
