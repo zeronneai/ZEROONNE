@@ -6,8 +6,6 @@ import { Services } from './components/Services';
 import { Manifesto } from './components/Manifesto';
 import { Cta } from './components/Cta';
 import { Footer } from './components/Footer';
-import { ChatbotToggle } from './components/ChatbotToggle';
-import { Chatbot } from './components/Chatbot';
 import { LoadingOverlay } from './components/LoadingOverlay'; 
 import { HowWeWork } from './components/HowWeWork'; 
 import { ContactForm } from './components/ContactForm'; 
@@ -19,13 +17,8 @@ import { EditorialTransition } from './components/EditorialTransition'; // New i
 
 // SECTION_IDS array removed as it's no longer used by ScrollLine
 const App: React.FC = () => {
-  const [isChatOpen, setIsChatOpen] = useState(false);
   const [showLoadingOverlay, setShowLoadingOverlay] = useState(true); 
   const [showContactForm, setShowContactForm] = useState(false); 
-
-  const toggleChat = () => {
-    setIsChatOpen(!isChatOpen);
-  };
 
   return (
     <div className="min-h-screen w-full overflow-x-hidden">
@@ -46,8 +39,6 @@ const App: React.FC = () => {
         <Cta id="cta-section" onStartProjectClick={() => setShowContactForm(true)} />
       </main>
       <Footer />
-      <ChatbotToggle isOpen={isChatOpen} onToggle={toggleChat} />
-      <Chatbot isOpen={isChatOpen} onClose={() => setIsChatOpen(false)} />
       {/* Render ContactForm globally */}
       <ContactForm isOpen={showContactForm} onClose={() => setShowContactForm(false)} />
       {/* New: Floating "Start Project" button */}
