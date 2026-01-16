@@ -124,6 +124,7 @@ export const ContactForm: React.FC<ContactFormProps> = ({ isOpen, onClose }) => 
               <input
                 type="text"
                 id="name"
+                name="name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-zero-accent bg-gray-50 text-zero-black"
@@ -135,6 +136,7 @@ export const ContactForm: React.FC<ContactFormProps> = ({ isOpen, onClose }) => 
               <input
                 type="email"
                 id="email"
+                name="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-zero-accent bg-gray-50 text-zero-black"
@@ -166,6 +168,7 @@ export const ContactForm: React.FC<ContactFormProps> = ({ isOpen, onClose }) => 
               <label htmlFor="projectDescription" className="block text-sm font-medium text-gray-700 mb-1">Project Description</label>
               <textarea
                 id="projectDescription"
+                name="projectDescription"
                 value={projectDescription}
                 onChange={(e) => setProjectDescription(e.target.value)}
                 rows={5}
