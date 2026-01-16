@@ -55,34 +55,42 @@ export const ContactForm: React.FC<ContactFormProps> = ({ isOpen, onClose }) => 
       description: projectDescription,
     };
 
-    try {
-      // Replace '/api/submit-contact-form' with the actual URL of your backend endpoint
-      const response = await fetch('/api/submit-contact-form', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
+   try {
+  // ✅ Pega aquí tu URL real del Apps Script (la del /exec)
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzis438XBjeXQFQwZzR3WXWeER7oTGThG0fl7mTXuXsfAaeIOYl1u-iNyAYgUsRIt4l/exec";
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to submit form.');
-      }
+  const response = await fetch(SCRIPT_URL, {
+    method: "POST",
+    body: JSON.stringify(formData),
+  });
 
-      setIsSubmitted(true);
-      // Optionally clear form fields after successful submission
-      setName('');
-      setEmail('');
-      setProjectDescription('');
-      setSelectedServices([]);
-    } catch (error: any) {
-      console.error('Error submitting form:', error);
-      setSubmissionError(error.message || 'An unexpected error occurred. Please try again.');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+  const text = await response.text();
+
+  let data: any;
+  try {
+    data = JSON.parse(text);
+  } catch (e) {
+    console.error("Respuesta NO es JSON:", text);
+    throw new Error("El servidor respondió algo que no es JSON.");
+  }
+
+  if (!response.ok || data?.ok === false) {
+    throw new Error(data?.message || data?.error || "Failed to submit form.");
+  }
+
+  setIsSubmitted(true);
+
+  // ✅ limpiar campos
+  setName("");
+  setEmail("");
+  setProjectDescription("");
+  setSelectedServices([]);
+} catch (error: any) {
+  console.error("Error submitting form:", error);
+  setSubmissionError(error.message || "An unexpected error occurred. Please try again.");
+} finally {
+  setIsSubmitting(false);
+}
 
   return (
     <div
