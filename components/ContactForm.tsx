@@ -55,55 +55,54 @@ export const ContactForm: React.FC<ContactFormProps> = ({ isOpen, onClose }) => 
       description: projectDescription,
     };
 
-   try {
-  // ✅ Pega aquí tu URL real del Apps Script (la del /exec)
-  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzis438XBjeXQFQwZzR3WXWeER7oTGThG0fl7mTXuXsfAaeIOYl1u-iNyAYgUsRIt4l/exec";
+   try {const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setIsSubmitting(true);
+  setSubmissionError(null);
 
-  const response = await fetch(SCRIPT_URL, {
-    method: "POST",
-    body: JSON.stringify(formData),
-  });
+  const formData = {
+    name,
+    email,
+    services: selectedServices.join(", "),
+    description: projectDescription,
+  };
 
-  const text = await response.text();
-
-  let data: any;
   try {
-  // ✅ Pega aquí tu URL real del Apps Script (la del /exec)
-  const SCRIPT_URL = "https://script.google.com/macros/s/TU_ID/exec";
+    const SCRIPT_URL =
+      "https://script.google.com/macros/s/AKfycbzis438XBjeXQFQwZzR3WXWeER7oTGThG0fl7mTXuXsfAaeIOYl1u-iNyAYgUsRIt4l/exec";
 
-  const response = await fetch(SCRIPT_URL, {
-    method: "POST",
-    body: JSON.stringify(formData),
-  });
+    const response = await fetch(SCRIPT_URL, {
+      method: "POST",
+      body: JSON.stringify(formData),
+    });
 
-  const text = await response.text();
+    const text = await response.text();
 
-  let data: any;
-  try {
-    data = JSON.parse(text);
-  } catch (e) {
-    console.error("Respuesta NO es JSON:", text);
-    throw new Error("El servidor respondió algo que no es JSON.");
+    let data: any;
+    try {
+      data = JSON.parse(text);
+    } catch {
+      console.error("Respuesta NO es JSON:", text);
+      throw new Error("El servidor respondió algo que no es JSON.");
+    }
+
+    if (!response.ok || data?.ok === false) {
+      throw new Error(data?.message || data?.error || "Failed to submit form.");
+    }
+
+    setIsSubmitted(true);
+    setName("");
+    setEmail("");
+    setProjectDescription("");
+    setSelectedServices([]);
+  } catch (error: any) {
+    console.error("Error submitting form:", error);
+    setSubmissionError(error.message || "An unexpected error occurred. Please try again.");
+  } finally {
+    setIsSubmitting(false);
   }
+};
 
-  if (!response.ok || data?.ok === false) {
-    throw new Error(data?.message || data?.error || "Failed to submit form.");
-  }
-
-  setIsSubmitted(true);
-
-  // ✅ limpiar campos
-  setName("");
-  setEmail("");
-  setProjectDescription("");
-  setSelectedServices([]);
-} catch (error: any) {
-  console.error("Error submitting form:", error);
-  setSubmissionError(error.message || "An unexpected error occurred. Please try again.");
-} finally {
-  setIsSubmitting(false);
-}
-export default ContactForm;
   return (
     <div
       className={`fixed inset-0 z-50 flex items-center justify-center bg-zero-black bg-opacity-90 p-4 transition-opacity duration-500 ease-out`}
@@ -216,3 +215,6 @@ export default ContactForm;
       </div>
     </div>
   );
+};
+
+export default ContactForm;
