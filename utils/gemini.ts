@@ -2,7 +2,7 @@
 import { GoogleGenAI, Chat } from "@google/genai";
 
 // The API key must be obtained exclusively from the environment variable process.env.API_KEY as per coding guidelines.
-const GEMINI_API_KEY = process.env.API_KEY;
+const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 
 let aiInstance: GoogleGenAI | null = null;
 
