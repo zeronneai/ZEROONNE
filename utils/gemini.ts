@@ -1,18 +1,16 @@
 
 import { GoogleGenAI, Chat } from "@google/genai";
 
-// Define the API key from environment variable as requested
-const GEMINI_API_KEY = process.env.NEXT_PUBLIC_GEMINI_API_KEY || '';
+// The API key must be obtained exclusively from the environment variable process.env.API_KEY as per coding guidelines.
+const GEMINI_API_KEY = process.env.API_KEY;
 
 let aiInstance: GoogleGenAI | null = null;
 
 // Initialize GoogleGenAI
 function getGenAI(): GoogleGenAI {
   if (!aiInstance) {
-    if (!GEMINI_API_KEY) {
-      // Throw a specific error that can be caught and handled friendly in the UI
-      throw new Error("API_KEY_NOT_CONFIGURED_FRIENDLY_MESSAGE");
-    }
+    // As per coding guidelines, the API key is assumed to be pre-configured, valid, and accessible.
+    // The application must not ask the user for it under any circumstances, and it's a hard requirement.
     aiInstance = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
   }
   return aiInstance;
@@ -20,7 +18,7 @@ function getGenAI(): GoogleGenAI {
 
 // Initialize a new chat session
 export function initChatSession(): Chat {
-  const ai = getGenAI(); // This might throw if API key is not configured
+  const ai = getGenAI();
   const chat: Chat = ai.chats.create({
     model: 'gemini-3-flash-preview', // Using the recommended model for basic text tasks
     config: {

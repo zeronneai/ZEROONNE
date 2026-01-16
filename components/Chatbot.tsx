@@ -18,7 +18,7 @@ export const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [apiConfigError, setApiConfigError] = useState(false); // New state for API key configuration error
+  // Removed apiConfigError state as per coding guidelines, API key is assumed to be pre-configured.
   const chatSessionRef = useRef<any | null>(null); // To store the chat session
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -27,17 +27,12 @@ export const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose }) => {
     if (isOpen && !chatSessionRef.current) {
       try {
         chatSessionRef.current = initChatSession();
-        setMessages([{ id: 'welcome', text: 'Hello! How can I help you today?', sender: 'ai' }]);
-        setApiConfigError(false); // Clear any previous error
+        // Updated welcome message based on persona.
+        setMessages([{ id: 'welcome', text: 'Welcome to ZERO ONNE. How can we assist you today?', sender: 'ai' }]);
       } catch (error: any) {
-        if (error.message === "API_KEY_NOT_CONFIGURED_FRIENDLY_MESSAGE") {
-          setMessages([{ id: 'config_error', text: 'Configuración pendiente: Por favor añade una API Key para chatear', sender: 'ai' }]);
-          setApiConfigError(true); // Set config error state
-        } else {
-          console.error('Error initializing chat session:', error);
-          setMessages([{ id: 'init_error', text: 'Error al iniciar el chat.', sender: 'ai' }]);
-          setApiConfigError(false); // Ensure this is false for other errors
-        }
+        // If there's any other initialization error (not related to API key now), log it.
+        console.error('Error initializing chat session:', error);
+        setMessages([{ id: 'init_error', text: 'An unexpected error occurred during chat initialization.', sender: 'ai' }]);
       }
     }
   }, [isOpen]);
@@ -48,7 +43,8 @@ export const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose }) => {
   }, [messages]);
 
   const handleSendMessage = async () => {
-    if (input.trim() === '' || isLoading || !chatSessionRef.current || apiConfigError) return;
+    // Removed apiConfigError check as per coding guidelines.
+    if (input.trim() === '' || isLoading || !chatSessionRef.current) return;
 
     const userMessage: Message = { id: Date.now().toString(), text: input, sender: 'user' };
     setMessages((prevMessages) => [...prevMessages, userMessage]);
@@ -66,15 +62,18 @@ export const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose }) => {
       const stream = await sendMessageToGemini(chatSessionRef.current, input);
 
       for await (const chunk of stream) {
-        const textChunk = chunk.text || '';
-        fullResponse += textChunk;
-        setMessages((prevMessages) =>
-          prevMessages.map((msg) =>
-            msg.id === aiLoadingMessageId
-              ? { ...msg, text: fullResponse, isTyping: true }
-              : msg
-          )
-        );
+        // Correctly access text from the chunk, as per coding guidelines.
+        const textChunk = chunk.text;
+        if (textChunk) { // Ensure textChunk is not undefined before appending
+          fullResponse += textChunk;
+          setMessages((prevMessages) =>
+            prevMessages.map((msg) =>
+              msg.id === aiLoadingMessageId
+                ? { ...msg, text: fullResponse, isTyping: true }
+                : msg
+            )
+          );
+        }
       }
 
       setMessages((prevMessages) =>
@@ -86,10 +85,8 @@ export const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose }) => {
       );
     } catch (error: any) {
       console.error('Error sending message to Gemini:', error);
-      const errorMessage =
-        error.message === "API_KEY_NOT_CONFIGURED_FRIENDLY_MESSAGE"
-          ? 'Configuración pendiente: Por favor añade una API Key para chatear'
-          : 'Error de configuración';
+      // Generic error message if an API call fails after initialization.
+      const errorMessage = 'There was an issue processing your request. Please try again.';
       setMessages((prevMessages) =>
         prevMessages.map((msg) =>
           msg.id === aiLoadingMessageId
@@ -97,9 +94,6 @@ export const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose }) => {
             : msg
         )
       );
-      if (error.message === "API_KEY_NOT_CONFIGURED_FRIENDLY_MESSAGE") {
-          setApiConfigError(true); // Persist error state if trying to send message without key
-      }
     } finally {
       setIsLoading(false);
     }
@@ -161,15 +155,17 @@ export const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose }) => {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyPress={handleKeyPress}
-              placeholder={apiConfigError ? "API Key no configurada" : "Escribe tu mensaje..."}
+              // Removed apiConfigError check for placeholder and disabled state
+              placeholder="Type your message..."
               className="flex-grow bg-zero-black text-zero-white border border-zero-black rounded-md p-2 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-zero-accent"
               aria-label="Chat input"
-              disabled={isLoading || apiConfigError}
+              disabled={isLoading}
             />
             <button
               onClick={handleSendMessage}
               className="bg-zero-black text-zero-white px-4 py-2 rounded-md hover:bg-zero-accent focus:outline-none focus:ring-2 focus:ring-zero-black focus:ring-offset-2 transition-colors"
-              disabled={isLoading || input.trim() === '' || apiConfigError}
+              // Removed apiConfigError check for disabled state
+              disabled={isLoading || input.trim() === ''}
               aria-label="Send message"
             >
               Send
