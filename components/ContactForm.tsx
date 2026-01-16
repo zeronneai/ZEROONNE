@@ -44,18 +44,6 @@ export const ContactForm: React.FC<ContactFormProps> = ({ isOpen, onClose }) => 
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    setSubmissionError(null); // Clear previous errors
-
-    const formData = {
-      name,
-      email,
-      services: selectedServices.join(', '), // Join selected services into a single string
-      description: projectDescription,
-    };
-
-   try {const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
   setIsSubmitting(true);
   setSubmissionError(null);
@@ -67,10 +55,10 @@ export const ContactForm: React.FC<ContactFormProps> = ({ isOpen, onClose }) => 
     description: projectDescription,
   };
 
-  try {
-    const SCRIPT_URL =
-      "https://script.google.com/macros/s/AKfycbzis438XBjeXQFQwZzR3WXWeER7oTGThG0fl7mTXuXsfAaeIOYl1u-iNyAYgUsRIt4l/exec";
+  const SCRIPT_URL =
+    "https://script.google.com/macros/s/AKfycbzis438XBjeXQFQwZzR3WXWeER7oTGThG0fl7mTXuXsfAaeIOYl1u-iNyAYgUsRIt4l/exec";
 
+  try {
     const response = await fetch(SCRIPT_URL, {
       method: "POST",
       body: JSON.stringify(formData),
@@ -102,7 +90,6 @@ export const ContactForm: React.FC<ContactFormProps> = ({ isOpen, onClose }) => 
     setIsSubmitting(false);
   }
 };
-
   return (
     <div
       className={`fixed inset-0 z-50 flex items-center justify-center bg-zero-black bg-opacity-90 p-4 transition-opacity duration-500 ease-out`}
