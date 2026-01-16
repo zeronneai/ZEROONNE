@@ -65,7 +65,7 @@ export const Hero: React.FC<HeroProps> = ({ id }) => {
           EASY AI SOLUTIONS FOR BUSINESSES AND PROFESSIONALS
         </h1>
         <p className="text-xl md:text-2xl lg:text-3xl font-medium mb-24 leading-relaxed animate-subheading-appear">
-          HUMAN VISION. EFFICIENT INTELLIGENCE
+          HUMAN VISION. EFFICIENT INTELLIGENCE.
         </p>
         <p className="text-lg md:text-xl lg:text-2xl font-light mb-32 max-w-2xl mx-auto animate-subheading-appear leading-relaxed">
           ZERO ONNE is a next-gen AI agency focused on creative and workflow optimization
