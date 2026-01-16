@@ -168,51 +168,7 @@
 </div>
 
 <script>
-  <script>
-  // 1. REEMPLAZA ESTA URL con la de tu "Nueva implementación" (la que termina en /exec)
-  const scriptURL = 'https://script.google.com/macros/s/AKfycbxVHdAjP3MntbCWQdJEMbetIQbNzlfjDGda-m1IYc5qrckafXMs8p3aehvHONDzLl9k/exec' 
-  
-  const form = document.getElementById('form-zeronne')
-  const btn = document.getElementById('btn-enviar')
-
-  form.addEventListener('submit', e => {
-    e.preventDefault()
-    btn.disabled = true
-    btn.innerText = "Sending..."
-
-    // Esta línea captura automáticamente Name, Email y Project Description
-    const formData = new FormData(form)
-    
-    // Esta parte se encarga de los servicios (Checkboxes)
-    const selectedServices = []
-    // Buscamos todos los que el usuario marcó
-    form.querySelectorAll('input[type="checkbox"]:checked').forEach(cb => {
-      selectedServices.push(cb.value)
-    })
-    
-    // Si marcó algo, lo guardamos en la columna de servicios
-    if(selectedServices.length > 0) {
-      formData.set('What type of service are you looking for? (Select all that apply)', selectedServices.join(', '))
-    }
-
-    // Enviamos TODO (Name, Email, Servicios y Descripción) a Google
-    fetch(scriptURL, { method: 'POST', body: formData })
-      .then(response => {
-         // Si Google responde algo que no es éxito, avisamos
-         if (!response.ok) throw new Error('Error en el servidor');
-         
-         alert("¡Success! Your information has been sent to Zero Onne.")
-         form.reset() // Limpia todo el formulario
-         btn.disabled = false
-         btn.innerText = "Send Information"
-      })
-      .catch(error => {
-         console.error('Error!', error.message)
-         alert("Error: Make sure you used the NEW URL from Apps Script.")
-         btn.disabled = false
-         btn.innerText = "Send Information"
-      })
-  })
+})
 </script>
 </script>
 </html>
