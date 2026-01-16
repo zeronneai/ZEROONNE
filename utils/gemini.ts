@@ -2,7 +2,7 @@
 import { GoogleGenAI, Chat } from "@google/genai";
 
 // Define the API key directly as requested
-const GEMINI_API_KEY = 'AIzaSyCXk2Yi5TGBl9wSqz2qXZo_LMrE09NXWL4';
+const GEMINI_API_KEY = 'AIzaSyBWgS7G67Wn9BF4syOCk4SXnrHPo3yt-VM';
 
 // Remove the process.env.API_KEY reference and warning, as the key is now hardcoded.
 
