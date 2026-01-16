@@ -56,7 +56,7 @@ export const ContactForm: React.FC<ContactFormProps> = ({ isOpen, onClose }) => 
   };
 
   const SCRIPT_URL =
-    "https://script.google.com/macros/s/AKfycbzheObdbByTbpg7YXyvFVSEuuTSgV12qOz1Xuhq848sIkAU7wsAypWAzP97xdipwMkd/exec";
+    "https://script.google.com/macros/s/AKfycbwk3mBe_e-iZzCRaUE-ys3nNRHnX6Evri66iulEuaS7tMPgh_5NMDvkg_aKY--ezXSQ/exec";
 
   try {
     const response = await fetch(SCRIPT_URL, {
