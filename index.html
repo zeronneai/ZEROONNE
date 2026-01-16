@@ -133,4 +133,63 @@
   <div id="root"></div>
   <script type="module" src="/index.tsx"></script>
 </body>
+  <div class="form-container">
+  <h2>Start Your Project with Zero Onne</h2>
+  <form id="form-zeronne">
+    <div class="input-group">
+      <label>Name</label>
+      <input type="text" name="Name" required>
+    </div>
+
+    <div class="input-group">
+      <label>Email</label>
+      <input type="email" name="Email" required>
+    </div>
+
+    <div class="input-group">
+      <label>What type of service are you looking for? (Select all that apply)</label>
+      <select name="What type of service are you" required>
+        <option value="">Select an option...</option>
+        <option value="App Design">App Design</option>
+        <option value="UI/UX Design">UI/UX Design</option>
+        <option value="AI Video/Graphic">AI Video & Graphic Design</option>
+        <option value="Custom Software">Custom Software</option>
+        <option value="AI Automation">AI Automation</option>
+      </select>
+    </div>
+
+    <div class="input-group">
+      <label>Project Description</label>
+      <textarea name="Project Description" rows="4" required></textarea>
+    </div>
+
+    <button type="submit" id="btn-enviar">Send Information</button>
+  </form>
+</div>
+
+<script>
+  // PEGA AQUÍ TU URL DE GOOGLE APPS SCRIPT (la que termina en /exec)
+  const scriptURL = 'https://script.google.com/macros/s/AKfycbyseTuI243Dg9Krl5jHPeNe2Rgo7L3RmzBvkA9gyAC7nWC-IArzpo9If2jUbgn6Rn6o/exec'
+  const form = document.getElementById('form-zeronne')
+  const btn = document.getElementById('btn-enviar')
+
+  form.addEventListener('submit', e => {
+    e.preventDefault()
+    btn.disabled = true
+    btn.innerText = "Sending..."
+
+    fetch(scriptURL, { method: 'POST', body: new FormData(form)})
+      .then(response => {
+         alert("¡Success! Your information has been sent.")
+         form.reset()
+         btn.disabled = false
+         btn.innerText = "Send Information"
+      })
+      .catch(error => {
+         alert("Error: " + error.message)
+         btn.disabled = false
+         btn.innerText = "Send Information"
+      })
+  })
+</script>
 </html>
