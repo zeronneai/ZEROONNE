@@ -1,23 +1,22 @@
 
 import { GoogleGenAI, Chat } from "@google/genai";
 
-// Ensure the API key is available from environment variables
-// In a real application, you might use a server-side proxy to protect your API key.
-const API_KEY = process.env.API_KEY;
+// Define the API key directly as requested
+const GEMINI_API_KEY = 'AIzaSyCXk2Yi5TGBl9wSqz2qXZo_LMrE09NXWL4';
 
-if (!API_KEY) {
-  console.warn("API_KEY is not defined. Please ensure process.env.API_KEY is set for Gemini API interaction.");
-}
+// Remove the process.env.API_KEY reference and warning, as the key is now hardcoded.
 
 let aiInstance: GoogleGenAI | null = null;
 
 // Initialize GoogleGenAI
 function getGenAI(): GoogleGenAI {
   if (!aiInstance) {
-    if (!API_KEY) {
+    if (!GEMINI_API_KEY) {
+      // This case should ideally not be hit as GEMINI_API_KEY is hardcoded.
+      // But it's good defensive programming.
       throw new Error("Gemini API Key is not configured.");
     }
-    aiInstance = new GoogleGenAI({ apiKey: API_KEY });
+    aiInstance = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
   }
   return aiInstance;
 }

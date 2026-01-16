@@ -77,7 +77,7 @@ export const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose }) => {
       setMessages((prevMessages) =>
         prevMessages.map((msg) =>
           msg.id === aiLoadingMessageId
-            ? { ...msg, text: 'Sorry, I encountered an error. Please try again.', isTyping: false }
+            ? { ...msg, text: 'Error de configuración', isTyping: false } // Updated error message
             : msg
         )
       );
