@@ -168,8 +168,10 @@
 </div>
 
 <script>
-  // PEGA AQUÍ TU URL DE GOOGLE APPS SCRIPT (la que termina en /exec)
-  const scriptURL = 'https://script.google.com/macros/s/AKfycbyseTuI243Dg9Krl5jHPeNe2Rgo7L3RmzBvkA9gyAC7nWC-IArzpo9If2jUbgn6Rn6o/exec'
+  <script>
+  // 1. REEMPLAZA ESTA URL con la de tu "Nueva implementación" (la que termina en /exec)
+  const scriptURL = 'https://script.google.com/macros/s/AKfycbxVHdAjP3MntbCWQdJEMbetIQbNzlfjDGda-m1IYc5qrckafXMs8p3aehvHONDzLl9k/exec' 
+  
   const form = document.getElementById('form-zeronne')
   const btn = document.getElementById('btn-enviar')
 
@@ -178,18 +180,39 @@
     btn.disabled = true
     btn.innerText = "Sending..."
 
-    fetch(scriptURL, { method: 'POST', body: new FormData(form)})
+    // Esta línea captura automáticamente Name, Email y Project Description
+    const formData = new FormData(form)
+    
+    // Esta parte se encarga de los servicios (Checkboxes)
+    const selectedServices = []
+    // Buscamos todos los que el usuario marcó
+    form.querySelectorAll('input[type="checkbox"]:checked').forEach(cb => {
+      selectedServices.push(cb.value)
+    })
+    
+    // Si marcó algo, lo guardamos en la columna de servicios
+    if(selectedServices.length > 0) {
+      formData.set('What type of service are you looking for? (Select all that apply)', selectedServices.join(', '))
+    }
+
+    // Enviamos TODO (Name, Email, Servicios y Descripción) a Google
+    fetch(scriptURL, { method: 'POST', body: formData })
       .then(response => {
-         alert("¡Success! Your information has been sent.")
-         form.reset()
+         // Si Google responde algo que no es éxito, avisamos
+         if (!response.ok) throw new Error('Error en el servidor');
+         
+         alert("¡Success! Your information has been sent to Zero Onne.")
+         form.reset() // Limpia todo el formulario
          btn.disabled = false
          btn.innerText = "Send Information"
       })
       .catch(error => {
-         alert("Error: " + error.message)
+         console.error('Error!', error.message)
+         alert("Error: Make sure you used the NEW URL from Apps Script.")
          btn.disabled = false
          btn.innerText = "Send Information"
       })
   })
+</script>
 </script>
 </html>
