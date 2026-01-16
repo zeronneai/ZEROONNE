@@ -68,6 +68,18 @@ export const ContactForm: React.FC<ContactFormProps> = ({ isOpen, onClose }) => 
 
   let data: any;
   try {
+  // ✅ Pega aquí tu URL real del Apps Script (la del /exec)
+  const SCRIPT_URL = "https://script.google.com/macros/s/TU_ID/exec";
+
+  const response = await fetch(SCRIPT_URL, {
+    method: "POST",
+    body: JSON.stringify(formData),
+  });
+
+  const text = await response.text();
+
+  let data: any;
+  try {
     data = JSON.parse(text);
   } catch (e) {
     console.error("Respuesta NO es JSON:", text);
@@ -91,7 +103,7 @@ export const ContactForm: React.FC<ContactFormProps> = ({ isOpen, onClose }) => 
 } finally {
   setIsSubmitting(false);
 }
-
+export default ContactForm;
   return (
     <div
       className={`fixed inset-0 z-50 flex items-center justify-center bg-zero-black bg-opacity-90 p-4 transition-opacity duration-500 ease-out`}
@@ -204,4 +216,3 @@ export const ContactForm: React.FC<ContactFormProps> = ({ isOpen, onClose }) => 
       </div>
     </div>
   );
-};
