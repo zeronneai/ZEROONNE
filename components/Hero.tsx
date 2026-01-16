@@ -28,12 +28,12 @@ export const Hero: React.FC<HeroProps> = ({ id }) => {
   return (
     <section 
       id={id} 
-      className="relative w-full h-screen text-zero-white flex flex-col items-center justify-center p-6 md:p-16 overflow-hidden bg-zero-black"
+      className="relative w-full min-h-screen text-zero-white flex flex-col items-center justify-center p-6 md:p-16 overflow-hidden bg-zero-black"
     >
       {/* MP4 Video Background */}
       <video
         src="https://i.imgur.com/pYqMHMF.mp4"
-        className="absolute inset-0 w-full h-full object-cover z-0 hidden sm:block"
+        className="absolute inset-0 w-full h-full object-cover z-0"
         autoPlay
         muted
         loop
@@ -41,10 +41,11 @@ export const Hero: React.FC<HeroProps> = ({ id }) => {
         preload="auto"
         aria-hidden="true"
         title="Zero Onne Background Video"
+        style={{ width:'100%', height:'auto', display:'block' }}
       />
 
       {/* Dark Overlay for Readability */}
-      <div className="absolute inset-0 w-full h-full bg-zero-black opacity-70 z-10 hidden sm:block" aria-hidden="true"></div>
+      <div className="absolute inset-0 w-full h-full bg-zero-black opacity-70 z-10" aria-hidden="true"></div>
 
       <div className="relative z-20 text-center max-w-4xl">
         {/* Radial Glow */}

@@ -28,7 +28,7 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen w-full overflow-x-hidden">
       {showLoadingOverlay && <LoadingOverlay onAnimationEnd={() => setShowLoadingOverlay(false)} />}
       
       {/* ScrollLine component rendering removed */}

@@ -98,7 +98,7 @@ export const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose }) => {
         ${isOpen ? 'translate-x-0' : 'translate-x-full'}
         ${
           isOpen
-            ? 'bottom-0 left-0 right-0 top-0 lg:bottom-24 lg:right-8 lg:left-auto lg:top-auto lg:h-[600px] lg:w-96 lg:border lg:border-gray-300 lg:rounded-lg lg:shadow-xl'
+            ? 'bottom-0 left-0 right-0 top-0 lg:bottom-24 lg:right-8 lg:left-auto lg:top-auto lg:min-h-[600px] lg:max-h-[90vh] lg:w-96 lg:border lg:border-gray-300 lg:rounded-lg lg:shadow-xl'
             : 'w-0 h-0'
         }
       `}

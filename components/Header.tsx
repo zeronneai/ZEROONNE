@@ -66,12 +66,12 @@ export const Header: React.FC<HeaderProps> = ({ onStartProjectClick }) => {
 
   return (
     <>
-      <header className="fixed top-0 left-0 w-full z-30 py-8 px-6 md:px-16 flex items-center bg-zero-white">
-        {/* Left: "Let’s build something exceptional" button */}
-        <div>
+      <header className="fixed top-0 left-0 w-full z-30 py-4 px-4 md:py-8 md:px-16 flex flex-wrap items-center justify-between bg-zero-white gap-x-4 gap-y-2">
+        {/* "Let’s build something exceptional" button */}
+        <div className="flex-none"> {/* Simplified classes */}
           <button
             onClick={onStartProjectClick}
-            className="text-zero-black text-base md:text-lg tracking-wider font-medium hover:text-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-zero-black focus:ring-offset-2 rounded-md p-2 border-2 border-zero-black animate-pulse-subtle"
+            className="text-zero-black text-sm md:text-lg tracking-wider font-medium hover:text-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-zero-black focus:ring-offset-2 rounded-md p-2 border-2 border-zero-black animate-pulse-subtle w-full text-center sm:w-auto"
             aria-label="Let's build something exceptional with Zero Onne"
             role="button"
             tabIndex={0}
@@ -80,19 +80,19 @@ export const Header: React.FC<HeaderProps> = ({ onStartProjectClick }) => {
           </button>
         </div>
 
-        {/* Centered ZERO ONNE text */}
-        <div className="absolute left-1/2 -translate-x-1/2">
-          <span className="text-zero-black text-xl md:text-2xl font-bold uppercase tracking-widest z-10">
+        {/* ZERO ONNE text */}
+        <div className="flex-auto text-center"> {/* Simplified classes to let flexbox manage */}
+          <span className="text-zero-black text-xl md:text-2xl font-bold uppercase tracking-widest z-10 block">
             ZERO ONNE
           </span>
         </div>
 
-        {/* Right: Services dropdown */}
-        <div className="ml-auto">
+        {/* Services dropdown */}
+        <div className="flex-none"> {/* Simplified classes */}
           <div className="relative" ref={dropdownRef}>
             <button
               onClick={toggleServicesDropdown}
-              className="flex items-center gap-1 text-base font-medium text-zero-black hover:text-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-zero-black focus:ring-offset-2 rounded-md p-2"
+              className="flex items-center gap-1 text-base font-medium text-zero-black hover:text-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-zero-black focus:ring-offset-2 rounded-md p-2 w-full justify-center sm:w-auto"
               aria-expanded={isServicesDropdownOpen}
               aria-haspopup="true"
               aria-label="Open services menu"
