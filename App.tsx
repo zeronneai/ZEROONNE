@@ -581,89 +581,48 @@ export default function App() {
           )}
         </AnimatePresence>
 
-     import React, { useState } from 'react';
-
-export default function ContactSection() {
-  const [formData, setFormData] = useState({ name: '', email: '', vision: '' });
-  const [isSending, setIsSending] = useState(false);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsSending(true);
-
-    // --- CONFIGURACIÓN ---
-    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxYXP1v61GmER-YyYw8blra98IT4uhV8wMcGfAqGuDXmMrbBun3QxymELE-qcrEQnu2/exec";
-    const WHATSAPP_NUMBER = "5216142857193"; // Tu número con código de país (ej. 521 para México)
-
-    // 1. Enviar a Google Sheets (Silencioso)
-    try {
-      const formBody = new URLSearchParams();
-      formBody.append('name', formData.name);
-      formBody.append('email', formData.email);
-      formBody.append('vision', formData.vision);
-
-      fetch(GOOGLE_SCRIPT_URL, {
-        method: 'POST',
-        mode: 'no-cors', // Necesario para Google Scripts
-        body: formBody
-      });
-    } catch (error) {
-      console.error("Error saving to sheets", error);
-    }
-
-    // 2. Preparar y abrir WhatsApp
-    const message = `*NEW LEAD - ZERONNE*%0A%0A*Name:* ${formData.name}%0A*Email:* ${formData.email}%0A*Vision:* ${formData.vision}`;
-    const whatsappUrl = `https://wa.me/${+5216142857193}?text=${message}`;
-    
-    window.open(whatsappUrl, '_blank');
-    
-    setIsSending(false);
-    alert("Data secured and WhatsApp opening...");
-  };
-
-  return (
-    <section id="contact" className="py-40 bg-[#0A0A0A] rounded-t-[4rem] z-10 relative">
-      <div className="max-w-3xl mx-auto px-8">
-        <div className="text-center mb-20">
-          <h2 className="text-6xl font-black tracking-tighter mb-4 italic">CONNECT.</h2>
-          <p className="opacity-40 uppercase tracking-[0.3em] text-[10px]">Direct line to the future</p>
-        </div>
-
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <input 
-            type="text" 
-            placeholder="Full Name" 
-            required
-            className="w-full bg-transparent border-b border-white/10 py-4 focus:outline-none focus:border-[#7000FF] transition-colors"
-            onChange={(e) => setFormData({...formData, name: e.target.value})}
-          />
-          <input 
-            type="email" 
-            placeholder="Email Address" 
-            required
-            className="w-full bg-transparent border-b border-white/10 py-4 focus:outline-none focus:border-[#7000FF] transition-colors"
-            onChange={(e) => setFormData({...formData, email: e.target.value})}
-          />
-          <textarea 
-            placeholder="What is your vision?" 
-            rows="4" 
-            required
-            className="w-full bg-transparent border-b border-white/10 py-4 focus:outline-none focus:border-[#7000FF] transition-colors"
-            onChange={(e) => setFormData({...formData, vision: e.target.value})}
-          ></textarea>
+        {/* --- CONTACT / LEAD CAPTURE (Bottom Section) --- */}
+        <section id="contact" className="py-40 relative overflow-hidden">
+          {/* Decorative background element for contact */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#7000FF]/5 rounded-full blur-[100px] pointer-events-none" />
           
-          <button 
-            type="submit" 
-            disabled={isSending}
-            className="w-full bg-[#7000FF] text-white py-6 rounded-2xl font-bold uppercase tracking-[0.5em] text-[10px] mt-10 hover:shadow-[0_0_50px_rgba(112,0,255,0.4)] transition-all"
-          >
-            {isSending ? "SYNCING..." : "INITIALIZE CONTACT"}
-          </button>
-        </form>
-      </div>
-    </section>
-  );
-}
+          <div className="max-w-3xl mx-auto px-8 relative z-10">
+            <Reveal>
+              <div className="text-center mb-20">
+                <h2 className="text-5xl md:text-7xl font-bold tracking-tighter mb-6">READY TO <br /><span className="italic font-light text-white/40">TRANSCEND?</span></h2>
+                <p className="text-white/40 tracking-widest text-[10px] uppercase font-light">Leave your mark below</p>
+              </div>
+              
+              <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
+                <div className="grid md:grid-cols-2 gap-6">
+                  <input 
+                    type="text" 
+                    placeholder="Full Name" 
+                    className="w-full bg-transparent border-b border-white/10 py-4 focus:outline-none focus:border-[#7000FF] transition-colors placeholder:text-white/20 text-white font-light" 
+                  />
+                  <input 
+                    type="email" 
+                    placeholder="Business Email" 
+                    className="w-full bg-transparent border-b border-white/10 py-4 focus:outline-none focus:border-[#7000FF] transition-colors placeholder:text-white/20 text-white font-light" 
+                  />
+                </div>
+                <textarea 
+                  placeholder="Tell us about your vision" 
+                  rows={4} 
+                  className="w-full bg-transparent border-b border-white/10 py-4 focus:outline-none focus:border-[#7000FF] transition-colors placeholder:text-white/20 text-white font-light resize-none"
+                ></textarea>
+                
+                <motion.button 
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="w-full bg-[#7000FF] text-white py-6 rounded-2xl font-bold uppercase tracking-[0.4em] text-[10px] mt-10 hover:shadow-[0_0_50px_rgba(112,0,255,0.4)] transition-all"
+                >
+                  Submit Request
+                </motion.button>
+              </form>
+            </Reveal>
+          </div>
+        </section>
 
         {/* --- FOOTER --- */}
         <footer className="border-t border-white/5 p-12 flex flex-col md:flex-row justify-between items-center gap-8 bg-black">
