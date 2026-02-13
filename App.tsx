@@ -178,6 +178,13 @@ export default function App() {
     }
   ];
 
+  const handleWhatsAppClick = () => {
+    const phoneNumber = '+5216142857193';
+    const message = 'I want to evolve my brand!';
+    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
+  };
+
   return (
     <div className="bg-[#000000] text-white font-sans selection:bg-[#7000FF] selection:text-white min-h-screen relative">
       
@@ -443,15 +450,29 @@ export default function App() {
                </div>
 
                {/* End of section text */}
-               <motion.div
-                 initial={{ opacity: 0, y: 50 }}
-                 whileInView={{ opacity: 1, y: 0 }}
-                 viewport={{ once: true, amount: 0.5 }}
-                 transition={{ delay: 0.5, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-                 className="text-center mt-24 md:mt-32 text-2xl md:text-4xl font-light italic text-white/60"
-               >
-                 And anymore... you can be part of it.
-               </motion.div>
+               <div className="mt-24 md:mt-32 pt-20 pb-40 text-center"> {/* Added pt-20 pb-40 for scroll padding */}
+                 <Reveal viewport={{ once: true, amount: 0.8 }}>
+                   <p className="text-[8vw] md:text-[6vw] font-black uppercase text-[#7000FF] leading-none mb-8">
+                     AND ANYMORE...
+                   </p>
+                 </Reveal>
+                 <Reveal viewport={{ once: true, amount: 0.8 }}>
+                   <p className="text-[8vw] md:text-[6vw] font-black uppercase text-[#7000FF] leading-none">
+                     YOU CAN BE PART OF IT.
+                   </p>
+                 </Reveal>
+                 {/* New "Start Project" button */}
+                 <motion.button 
+                   onClick={handleWhatsAppClick}
+                   className="mt-16 bg-[#7000FF] text-white px-10 py-5 rounded-full font-bold uppercase tracking-[0.2em] text-[12px] hover:shadow-[0_0_50px_rgba(112,0,255,0.4)] transition-all duration-300"
+                   initial={{ opacity: 0, y: 30 }}
+                   whileInView={{ opacity: 1, y: 0 }}
+                   viewport={{ once: true, amount: 0.5 }}
+                   transition={{ delay: 0.8, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+                 >
+                   Start Project
+                 </motion.button>
+               </div>
            </div>
         </section>
 
