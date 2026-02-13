@@ -7,7 +7,7 @@ const Reveal: React.FC<RevealProps> = ({ children }) => (
   <motion.div 
     initial={{ opacity: 0, y: 40 }}
     whileInView={{ opacity: 1, y: 0 }}
-    viewport={{ once: true }}
+    viewport={{ once: true, amount: 0.2 }} // Added amount for better control over when it triggers
     transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
   >
     {children}
@@ -402,7 +402,7 @@ export default function App() {
           </motion.div>
         </section>
 
-        {/* --- WORK / FEATURED (INFINITE CAROUSEL) --- */}
+        {/* --- WORK / FEATURED (VERTICAL SCROLL) --- */}
         <section id="work" className="py-20 border-b border-white/5 overflow-hidden">
            <div className="px-8 max-w-[1400px] mx-auto mb-12">
                <Reveal>
@@ -418,26 +418,11 @@ export default function App() {
                </Reveal>
            </div>
            
-           <div className="relative w-full">
-               {/* Gradients to fade edges */}
-               <div className="absolute left-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-r from-black to-transparent z-20 pointer-events-none"></div>
-               <div className="absolute right-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-l from-black to-transparent z-20 pointer-events-none"></div>
-
-               <motion.div 
-                  className="flex w-max"
-                  animate={{ x: ["0%", "-50%"] }}
-                  transition={{ 
-                      duration: 30, 
-                      ease: "linear", 
-                      repeat: Infinity 
-                  }}
-               >
-                   {[...projects, ...projects].map((project, index) => (
-                       <div 
-                           key={`${project.id}-${index}`} 
-                           className="relative pr-8" // Use padding for spacing to avoid flex gap loop glitch
-                       >
-                           <div className="group relative w-[80vw] md:w-[40vw] aspect-video bg-[#080808] border border-white/5 rounded-2xl overflow-hidden cursor-pointer">
+           <div className="relative w-full px-8 max-w-[1400px] mx-auto">
+               <div className="grid grid-cols-1 gap-16 md:gap-24">
+                   {projects.map((project, index) => (
+                       <Reveal key={project.id}>
+                           <div className="group relative w-full aspect-video md:aspect-[16/7] bg-[#080808] border border-white/5 rounded-2xl overflow-hidden cursor-pointer">
                                {/* Image Background */}
                                <img 
                                    src={project.image} 
@@ -453,8 +438,19 @@ export default function App() {
                                    <div className="text-[10px] text-white/40 tracking-widest mt-2 uppercase">{project.category}</div>
                                </div>
                            </div>
-                       </div>
+                       </Reveal>
                    ))}
+               </div>
+
+               {/* End of section text */}
+               <motion.div
+                 initial={{ opacity: 0, y: 50 }}
+                 whileInView={{ opacity: 1, y: 0 }}
+                 viewport={{ once: true, amount: 0.5 }}
+                 transition={{ delay: 0.5, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+                 className="text-center mt-24 md:mt-32 text-2xl md:text-4xl font-light italic text-white/60"
+               >
+                 And anymore... you can be part of it.
                </motion.div>
            </div>
         </section>
