@@ -838,7 +838,7 @@ export default function App() {
           )}
         </AnimatePresence>
 
-        {/* --- CONTACT / LEAD CAPTURE (Bottom Section) --- */}
+          {/* --- CONTACT / LEAD CAPTURE (Bottom Section) --- */}
         <section id="contact" className="py-40 relative overflow-hidden">
           {/* Decorative background element for contact */}
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#7000FF]/5 rounded-full blur-[100px] pointer-events-none" />
@@ -846,25 +846,30 @@ export default function App() {
           <div className="max-w-3xl mx-auto px-8 relative z-10">
             <Reveal>
               <div className="text-center mb-20">
-                <h2 className="text-5xl md:text-7xl font-bold tracking-tighter mb-6">READY TO <br /><span className="italic font-light text-white/40">TRANSCEND?</span></h2>
-                <p className="text-white/40 tracking-widest text-[10px] uppercase font-light">Leave your mark below</p>
+                <h2 className="text-5xl md:text-7xl font-bold tracking-tighter mb-6">{t.contact.ready} <br /><span className="italic font-light text-white/40">{t.contact.transcend}</span></h2>
+                <p className="text-white/40 tracking-widest text-[10px] uppercase font-light">{t.contact.mark}</p>
               </div>
               
               <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
                 <div className="grid md:grid-cols-2 gap-6">
                   <input 
                     type="text" 
-                    placeholder="Full Name" 
+                    placeholder={t.contact.namePlaceholder} 
                     className="w-full bg-transparent border-b border-white/10 py-4 focus:outline-none focus:border-[#7000FF] transition-colors placeholder:text-white/20 text-white font-light" 
                   />
                   <input 
-                    type="email" 
-                    placeholder="Business Email" 
+                    type="text" 
+                    placeholder={t.modal.projectPlaceholder} 
                     className="w-full bg-transparent border-b border-white/10 py-4 focus:outline-none focus:border-[#7000FF] transition-colors placeholder:text-white/20 text-white font-light" 
                   />
                 </div>
+                <input 
+                  type="email" 
+                  placeholder={t.contact.emailPlaceholder} 
+                  className="w-full bg-transparent border-b border-white/10 py-4 focus:outline-none focus:border-[#7000FF] transition-colors placeholder:text-white/20 text-white font-light" 
+                />
                 <textarea 
-                  placeholder="Tell us about your vision" 
+                  placeholder={t.contact.msgPlaceholder}
                   rows={4} 
                   className="w-full bg-transparent border-b border-white/10 py-4 focus:outline-none focus:border-[#7000FF] transition-colors placeholder:text-white/20 text-white font-light resize-none"
                 ></textarea>
@@ -874,7 +879,7 @@ export default function App() {
                   whileTap={{ scale: 0.98 }}
                   className="w-full bg-[#7000FF] text-white py-6 rounded-2xl font-bold uppercase tracking-[0.4em] text-[10px] mt-10 hover:shadow-[0_0_50px_rgba(112,0,255,0.4)] transition-all"
                 >
-                  Submit Request
+                  {t.contact.submit}
                 </motion.button>
               </form>
             </Reveal>
