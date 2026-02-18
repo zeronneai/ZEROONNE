@@ -316,7 +316,7 @@ export default function App() {
     description: e.target.description.value,
   };
   try {
-    await fetch("https://script.google.com/macros/s/AKfycbysGMcESzsWUY4bxRUHUVvo55ZsyZGe1rPsp1LcMXESSSyF87OZQQVzPevI372CppIz/exec", {
+    await fetch("https://script.google.com/macros/s/AKfycbxsmlsoMEB4mTElO6a0_BBWy3kbTkZoj1yqtGe2M3L0ajF-2bSnFlIit6biW6qvzs7N/exec", {
       method: "POST",
       body: JSON.stringify(formData),
     });
