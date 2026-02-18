@@ -851,38 +851,61 @@ export default function App() {
                 <p className="text-white/40 tracking-widest text-[10px] uppercase font-light">{t.contact.mark}</p>
               </div>
               
-              <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
-                <div className="grid md:grid-cols-2 gap-6">
-                  <input 
-                    type="text" 
-                    placeholder={t.contact.namePlaceholder} 
-                    className="w-full bg-transparent border-b border-white/10 py-4 focus:outline-none focus:border-[#7000FF] transition-colors placeholder:text-white/20 text-white font-light" 
-                  />
-                  <input 
-                    type="text" 
-                    placeholder={t.modal.projectPlaceholder} 
-                    className="w-full bg-transparent border-b border-white/10 py-4 focus:outline-none focus:border-[#7000FF] transition-colors placeholder:text-white/20 text-white font-light" 
-                  />
-                </div>
-                <input 
-                  type="email" 
-                  placeholder={t.contact.emailPlaceholder} 
-                  className="w-full bg-transparent border-b border-white/10 py-4 focus:outline-none focus:border-[#7000FF] transition-colors placeholder:text-white/20 text-white font-light" 
-                />
-                <textarea 
-                  placeholder={t.contact.msgPlaceholder}
-                  rows={4} 
-                  className="w-full bg-transparent border-b border-white/10 py-4 focus:outline-none focus:border-[#7000FF] transition-colors placeholder:text-white/20 text-white font-light resize-none"
-                ></textarea>
-                
-                <motion.button 
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="w-full bg-[#7000FF] text-white py-6 rounded-2xl font-bold uppercase tracking-[0.4em] text-[10px] mt-10 hover:shadow-[0_0_50px_rgba(112,0,255,0.4)] transition-all"
-                >
-                  {t.contact.submit}
-                </motion.button>
-              </form>
+              <form className="space-y-6" onSubmit={async (e) => {
+  e.preventDefault();
+  const formData = {
+    name: e.target.name.value,
+    email: e.target.email.value,
+    projectName: e.target.projectName.value,
+    description: e.target.description.value,
+  };
+  try {
+    await fetch("https://script.google.com/macros/s/AKfycbwXwWFhbXD-7zyVhCcpfA_def8aykuX_r9DphgsIeEdWEfQg1YjER9EW25J4cmyjUSq/exec", {
+      method: "POST",
+      body: JSON.stringify(formData),
+    });
+    alert("Your proposal has been submitted! We'll be in touch soon.");
+    e.target.reset();
+  } catch (error) {
+    alert("Something went wrong. Please try again.");
+  }
+}}>
+  <div className="grid md:grid-cols-2 gap-6">
+    <input 
+      type="text"
+      name="name"
+      placeholder={t.contact.namePlaceholder} 
+      className="w-full bg-transparent border-b border-white/10 py-4 focus:outline-none focus:border-[#7000FF] transition-colors placeholder:text-white/20 text-white font-light" 
+    />
+    <input 
+      type="text"
+      name="projectName"
+      placeholder={t.modal.projectPlaceholder} 
+      className="w-full bg-transparent border-b border-white/10 py-4 focus:outline-none focus:border-[#7000FF] transition-colors placeholder:text-white/20 text-white font-light" 
+    />
+  </div>
+  <input 
+    type="email"
+    name="email"
+    placeholder={t.contact.emailPlaceholder} 
+    className="w-full bg-transparent border-b border-white/10 py-4 focus:outline-none focus:border-[#7000FF] transition-colors placeholder:text-white/20 text-white font-light" 
+  />
+  <textarea 
+    name="description"
+    placeholder={t.contact.msgPlaceholder}
+    rows={4} 
+    className="w-full bg-transparent border-b border-white/10 py-4 focus:outline-none focus:border-[#7000FF] transition-colors placeholder:text-white/20 text-white font-light resize-none"
+  ></textarea>
+  
+  <motion.button 
+    type="submit"
+    whileHover={{ scale: 1.02 }}
+    whileTap={{ scale: 0.98 }}
+    className="w-full bg-[#7000FF] text-white py-6 rounded-2xl font-bold uppercase tracking-[0.4em] text-[10px] mt-10 hover:shadow-[0_0_50px_rgba(112,0,255,0.4)] transition-all"
+  >
+    {t.contact.submit}
+  </motion.button>
+</form>
             </Reveal>
           </div>
         </section>
