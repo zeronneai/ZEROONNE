@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Service, RevealProps } from './types';
+
 // --- TRANSLATIONS ---
 const translations = {
   en: {
@@ -103,6 +104,7 @@ const translations = {
       startDesc: "Tell us about your vision. We will guide you from there.",
       labelName: "Name",
       labelProject: "Project Name",
+      projectPlaceholder: "Project Title",
       labelEmail: "Email",
       labelDesc: "Project Description",
       submitProposal: "Submit Proposal"
@@ -211,6 +213,7 @@ const translations = {
       startDesc: "Cuéntanos sobre tu visión. Te guiaremos desde allí.",
       labelName: "Nombre",
       labelProject: "Nombre del Proyecto",
+      projectPlaceholder: "Título del Proyecto",
       labelEmail: "Correo",
       labelDesc: "Descripción del Proyecto",
       submitProposal: "Enviar Propuesta"
@@ -220,12 +223,13 @@ const translations = {
     }
   }
 };
+
 // --- ANIMATION WRAPPER ---
-const Reveal: React.FC<RevealProps> = ({ children }) => (
+const Reveal: React.FC<RevealProps> = ({ children, viewport }) => (
   <motion.div 
     initial={{ opacity: 0, y: 40 }}
     whileInView={{ opacity: 1, y: 0 }}
-    viewport={{ once: true, amount: 0.2 }} // Added amount for better control over when it triggers
+    viewport={viewport || { once: true, amount: 0.2 }}
     transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
   >
     {children}
@@ -257,7 +261,7 @@ const Counter = ({ target }: { target: number }) => {
 };
 
 // --- GROWTH IMPACT SECTION COMPONENT ---
-const GrowthImpactSection = () => {
+const GrowthImpactSection = ({ text }: { text: typeof translations.en.impact }) => {
   const [revealed, setRevealed] = useState(false);
 
   return (
@@ -275,8 +279,7 @@ const GrowthImpactSection = () => {
               onClick={() => setRevealed(true)}
             >
               <h2 className="text-3xl md:text-5xl font-light tracking-tight leading-tight mb-8">
-                How much <span className="italic">growth</span> is your brand <br /> 
-                sacrificing by ignoring AI?
+                {text.question} <span className="italic">{text.questionItalic}</span> {text.questionEnd}
               </h2>
               
               <motion.div 
@@ -285,7 +288,7 @@ const GrowthImpactSection = () => {
                 className="inline-block"
               >
                 <button className="bg-white/5 border border-[#7000FF]/50 px-8 py-4 rounded-full text-[10px] tracking-[0.3em] font-bold uppercase group-hover:bg-[#7000FF] group-hover:text-white transition-all duration-500 shadow-[0_0_30px_rgba(112,0,255,0.2)]">
-                  Click to reveal the gap
+                  {text.button}
                 </button>
               </motion.div>
             </motion.div>
@@ -304,19 +307,18 @@ const GrowthImpactSection = () => {
                 transition={{ delay: 0.2 }}
                 className="flex items-center gap-4 text-[#7000FF] mb-6"
               >
-                <span className="text-[10px] tracking-[0.5em] font-bold uppercase">The Advantage</span>
+                <span className="text-[10px] tracking-[0.5em] font-bold uppercase">{text.advantage}</span>
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="animate-bounce">
                   <path d="M12 4V20M12 4L6 10M12 4L18 10" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </motion.div>
 
               <h3 className="text-[12vw] md:text-[10vw] font-black leading-none tracking-tighter text-white mb-6">
-                <span className="text-[#7000FF]"><Counter target={45} /></span> FASTER
+                <span className="text-[#7000FF]"><Counter target={45} /></span> {text.faster}
               </h3>
               
               <p className="text-xl md:text-2xl font-light opacity-60 max-w-2xl mx-auto">
-                Companies integrating AI-driven creative strategies see an average 
-                surge in digital authority within the first 12 months.
+                {text.statDesc}
               </p>
 
               <motion.button
@@ -326,7 +328,7 @@ const GrowthImpactSection = () => {
                 onClick={(e) => { e.stopPropagation(); setRevealed(false); }}
                 className="mt-12 text-[9px] uppercase tracking-widest opacity-30 hover:opacity-100 transition-opacity"
               >
-                ← Back to question
+                {text.back}
               </motion.button>
             </motion.div>
           )}
@@ -337,68 +339,43 @@ const GrowthImpactSection = () => {
 }
 
 export default function App() {
+  const [lang, setLang] = useState<'en' | 'es'>('en');
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isContactOpen, setIsContactOpen] = useState(false);
 
-  const services: Service[] = [
-    { 
-      id: '01', 
-      title: 'AI STRATEGY', 
-      desc: 'We architect the intelligent core of your business future.', 
-      detail: 'From custom LLM integration to predictive analytics, we design the roadmap for your AI transformation.' 
-    },
-    { 
-      id: '02', 
-      title: 'LUXURY LANDINGS', 
-      desc: 'High-conversion interfaces powered by cognitive psychology.', 
-      detail: 'Our landing pages aren’t just beautiful; they use AI-driven heatmaps to ensure every pixel converts.' 
-    },
-    { 
-      id: '03', 
-      title: 'CREATIVE AUTOMATION', 
-      desc: 'Scaling content production without losing human soul.', 
-      detail: 'Custom diffusion models trained specifically on your brand’s visual DNA for infinite, consistent assets.' 
-    }
-  ];
-
-  const servicesList = [
-    "Web Design", "Web Hosting", "App Design", "UI Design", "UX", 
-    "Custom Software", "AI Video", "AI Graphic Design", "AI Images", 
-    "AI Upscaling", "AI Creative Strategy", "AI Automation", 
-    "AI Education", "AI Integration", "AI Installation"
-  ];
+  const t = translations[lang];
 
   const projects = [
     { 
       id: '01', 
       title: 'HOUSE OF KINGS', 
-      category: 'Immersive Web Experience',
+      category: lang === 'en' ? 'Immersive Web Experience' : 'Experiencia Web Inmersiva',
       image: 'https://res.cloudinary.com/dsprn0ew4/image/upload/v1770931913/Remove_the_loose_4k_202602100841_ed1o70.jpg'
     },
     { 
       id: '02', 
       title: 'AMO CAFE', 
-      category: 'Sensory Brand Identity',
+      category: lang === 'en' ? 'Sensory Brand Identity' : 'Identidad de Marca Sensorial',
       image: 'https://res.cloudinary.com/dsprn0ew4/image/upload/v1770932056/Generate_this_image_4k_202602121532_oyxlid.jpg'
     },
     { 
       id: '03', 
       title: 'ALEXBOOTS', 
-      category: 'High-Fidelity E-Commerce',
+      category: lang === 'en' ? 'High-Fidelity E-Commerce' : 'E-Commerce de Alta Fidelidad',
       image: 'https://res.cloudinary.com/dsprn0ew4/image/upload/v1770931913/A_detailed_cinematic_4k_202602091405_lnlgb5.jpg'
     },
     { 
       id: '04', 
       title: 'THECOCREATIVE HUB', 
-      category: 'Innovation Platform',
+      category: lang === 'en' ? 'Innovation Platform' : 'Plataforma de Innovación',
       image: 'https://res.cloudinary.com/dsprn0ew4/image/upload/v1770932085/A_photorealistic_wide_4k_202602121534_zixtsc.jpg'
     }
   ];
 
   const handleWhatsAppClick = () => {
     const phoneNumber = '+5216142857193';
-    const message = 'I want to evolve my brand!';
+    const message = lang === 'en' ? 'I want to evolve my brand!' : '¡Quiero evolucionar mi marca!';
     const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
   };
@@ -429,29 +406,50 @@ export default function App() {
       <div className="relative z-10">
         {/* --- NAVIGATION --- */}
         <nav className="fixed top-0 w-full z-[100] px-8 py-6 flex justify-between items-center mix-blend-difference">
-          <motion.div 
-            initial={{ opacity: 0 }} 
-            animate={{ opacity: 1 }}
-            className="text-xl font-bold tracking-[0.3em] cursor-pointer"
-            onClick={() => window.scrollTo(0, 0)}
-          >
-            ZERONNE<span className="text-[#7000FF]">.</span>
-          </motion.div>
-          
-          {/* Botón de Pestaña de Servicios */}
-          <button 
-            onClick={() => setIsMenuOpen(!isMenuOpen)} 
-            className="bg-white/10 backdrop-blur-md px-6 py-2 rounded-full border border-white/10 text-[10px] uppercase tracking-widest font-bold hover:bg-[#7000FF] transition-all z-[101]"
-          >
-            {isMenuOpen ? "Close" : "Our Services +"}
-          </button>
+          <div className="flex items-center gap-6">
+            <motion.div 
+              initial={{ opacity: 0 }} 
+              animate={{ opacity: 1 }}
+              className="text-xl font-bold tracking-[0.3em] cursor-pointer"
+              onClick={() => window.scrollTo(0, 0)}
+            >
+              ZERONNE<span className="text-[#7000FF]">.</span>
+            </motion.div>
 
-          <button 
-            onClick={() => setIsContactOpen(true)}
-            className="hidden md:block bg-white text-black px-6 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest hover:bg-[#7000FF] hover:text-white transition-all"
-          >
-            Contact
-          </button>
+            {/* Language Switcher */}
+            <div className="flex items-center gap-1">
+               <button 
+                 onClick={() => setLang('en')}
+                 className={`text-[9px] font-bold uppercase tracking-widest transition-colors ${lang === 'en' ? 'text-white' : 'text-white/40 hover:text-white'}`}
+               >
+                 EN
+               </button>
+               <span className="text-white/20 text-[9px]">/</span>
+               <button 
+                 onClick={() => setLang('es')}
+                 className={`text-[9px] font-bold uppercase tracking-widest transition-colors ${lang === 'es' ? 'text-white' : 'text-white/40 hover:text-white'}`}
+               >
+                 ES
+               </button>
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-4">
+            {/* Botón de Pestaña de Servicios */}
+            <button 
+              onClick={() => setIsMenuOpen(!isMenuOpen)} 
+              className="bg-white/10 backdrop-blur-md px-6 py-2 rounded-full border border-white/10 text-[10px] uppercase tracking-widest font-bold hover:bg-[#7000FF] transition-all z-[101]"
+            >
+              {isMenuOpen ? t.nav.close : t.nav.services}
+            </button>
+
+            <button 
+              onClick={() => setIsContactOpen(true)}
+              className="hidden md:block bg-white text-black px-6 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest hover:bg-[#7000FF] hover:text-white transition-all"
+            >
+              {t.nav.contact}
+            </button>
+          </div>
         </nav>
 
         {/* --- DROPDOWN DE LOS 15 SERVICIOS (Centered Modal) --- */}
@@ -472,15 +470,17 @@ export default function App() {
                 className="w-full max-w-5xl bg-[#0A0A0A] p-8 md:p-12 rounded-[2rem] border border-white/10 grid grid-cols-2 md:grid-cols-4 gap-x-8 gap-y-6 shadow-2xl shadow-[#7000FF]/20 max-h-[85vh] overflow-y-auto"
                 onClick={(e) => e.stopPropagation()}
               >
-                {servicesList.map((service, index) => (
+                {t.services.list.map((service, index) => (
                   <button 
                     key={index}
                     onClick={() => { 
                       setSelectedService({
                           id: `EXP-${index + 1}`,
                           title: service, 
-                          desc: "Specialized solution by Zeronne AI Studio.",
-                          detail: "We harness the power of advanced artificial intelligence to deliver this service with maximizing efficiency and creativity. Contact us to discuss your bespoke requirements."
+                          desc: lang === 'en' ? "Specialized solution by Zeronne AI Studio." : "Solución especializada por Zeronne AI Studio.",
+                          detail: lang === 'en' 
+                            ? "We harness the power of advanced artificial intelligence to deliver this service with maximizing efficiency and creativity. Contact us to discuss your bespoke requirements."
+                            : "Aprovechamos el poder de la inteligencia artificial avanzada para ofrecer este servicio maximizando la eficiencia y la creatividad. Contáctanos para discutir tus requisitos personalizados."
                       }); 
                       setIsMenuOpen(false); 
                     }}
@@ -521,78 +521,56 @@ export default function App() {
                 </div>
                 
                 <div className="mb-10">
-                  <h3 className="text-3xl font-light tracking-tight mb-2">Start a <span className="text-[#7000FF]">Project</span></h3>
-                  <p className="text-white/40 text-sm">Tell us about your vision. We will guide you from there.</p>
+                  <h3 className="text-3xl font-light tracking-tight mb-2">{t.modal.start} <span className="text-[#7000FF]">{t.modal.project}</span></h3>
+                  <p className="text-white/40 text-sm">{t.modal.startDesc}</p>
                 </div>
 
-              <form className="space-y-8" onSubmit={async (e) => {
-  e.preventDefault();
-  const formData = {
-    name: e.target.name.value,
-    email: e.target.email.value,
-    projectName: e.target.projectName.value,
-    description: e.target.description.value,
-  };
-  try {
-    await fetch("https://script.google.com/macros/s/AKfycbzO4_5xlbL4YBsvFIfzFIIpJU4BBVgvN1acz4Ac1OIpSYbFeEeQ6Sc2pk4o9EwvMfwb/exec", {
-      method: "POST",
-      body: JSON.stringify(formData),
-    });
-    alert("Your proposal has been submitted! We'll be in touch soon.");
-    setIsContactOpen(false);
-  } catch (error) {
-    alert("Something went wrong. Please try again.");
-  }
-}}>
-  <div className="grid md:grid-cols-2 gap-6">
-    <div className="space-y-2">
-      <label className="text-[10px] uppercase tracking-widest text-[#7000FF]">Name</label>
-      <input 
-        type="text"
-        name="name"
-        placeholder="Your Name" 
-        className="w-full bg-transparent border-b border-white/10 py-2 focus:outline-none focus:border-[#7000FF] transition-colors placeholder:text-white/20 text-white font-light"
-      />
-    </div>
-    <div className="space-y-2">
-      <label className="text-[10px] uppercase tracking-widest text-[#7000FF]">Project Name</label>
-      <input 
-        type="text"
-        name="projectName"
-        placeholder="Project Title" 
-        className="w-full bg-transparent border-b border-white/10 py-2 focus:outline-none focus:border-[#7000FF] transition-colors placeholder:text-white/20 text-white font-light"
-      />
-    </div>
-  </div>
+                <form className="space-y-8" onSubmit={(e) => { e.preventDefault(); setIsContactOpen(false); }}>
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                       <label className="text-[10px] uppercase tracking-widest text-[#7000FF]">{t.modal.labelName}</label>
+                       <input 
+                        type="text" 
+                        placeholder={t.contact.namePlaceholder} 
+                        className="w-full bg-transparent border-b border-white/10 py-2 focus:outline-none focus:border-[#7000FF] transition-colors placeholder:text-white/20 text-white font-light"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                       <label className="text-[10px] uppercase tracking-widest text-[#7000FF]">{t.modal.labelProject}</label>
+                       <input 
+                        type="text" 
+                        placeholder={t.modal.projectPlaceholder} 
+                        className="w-full bg-transparent border-b border-white/10 py-2 focus:outline-none focus:border-[#7000FF] transition-colors placeholder:text-white/20 text-white font-light"
+                      />
+                    </div>
+                  </div>
 
-  <div className="space-y-2">
-    <label className="text-[10px] uppercase tracking-widest text-[#7000FF]">Email</label>
-    <input 
-      type="email"
-      name="email"
-      placeholder="name@company.com" 
-      className="w-full bg-transparent border-b border-white/10 py-2 focus:outline-none focus:border-[#7000FF] transition-colors placeholder:text-white/20 text-white font-light" 
-    />
-  </div>
-  
-  <div className="space-y-2">
-    <label className="text-[10px] uppercase tracking-widest text-[#7000FF]">Project Description</label>
-    <textarea 
-      name="description"
-      placeholder="Briefly describe your idea, goals, or requirements..." 
-      rows={4} 
-      className="w-full bg-transparent border-b border-white/10 py-2 focus:outline-none focus:border-[#7000FF] transition-colors placeholder:text-white/20 text-white font-light resize-none"
-    ></textarea>
-  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] uppercase tracking-widest text-[#7000FF]">{t.modal.labelEmail}</label>
+                    <input 
+                      type="email" 
+                      placeholder="name@company.com" 
+                      className="w-full bg-transparent border-b border-white/10 py-2 focus:outline-none focus:border-[#7000FF] transition-colors placeholder:text-white/20 text-white font-light" 
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <label className="text-[10px] uppercase tracking-widest text-[#7000FF]">{t.modal.labelDesc}</label>
+                    <textarea 
+                      placeholder={t.contact.msgPlaceholder}
+                      rows={4} 
+                      className="w-full bg-transparent border-b border-white/10 py-2 focus:outline-none focus:border-[#7000FF] transition-colors placeholder:text-white/20 text-white font-light resize-none"
+                    ></textarea>
+                  </div>
 
-  <motion.button 
-    whileHover={{ scale: 1.02 }}
-    whileTap={{ scale: 0.98 }}
-    className="w-full bg-white text-black py-4 rounded-xl font-bold uppercase tracking-[0.2em] text-[10px] hover:bg-[#7000FF] hover:text-white transition-all duration-300"
-  >
-    Submit Proposal
-  </motion.button>
-</form>
+                  <motion.button 
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="w-full bg-white text-black py-4 rounded-xl font-bold uppercase tracking-[0.2em] text-[10px] hover:bg-[#7000FF] hover:text-white transition-all duration-300"
+                  >
+                    {t.modal.submitProposal}
+                  </motion.button>
+                </form>
               </motion.div>
             </motion.div>
           )}
@@ -613,7 +591,7 @@ export default function App() {
               transition={{ delay: 0.2 }}
               className="text-[12px] tracking-[0.5em] uppercase mb-4 block"
             >
-              Evolution is not optional
+              {t.hero.evolution}
             </motion.span>
             
             <motion.h1 
@@ -622,8 +600,8 @@ export default function App() {
               transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
               className="text-[12vw] md:text-[8vw] font-bold leading-[0.85] tracking-tighter"
             >
-              CRAFTING <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-b from-white to-[#7000FF]">INTELLIGENCE</span>
+              {t.hero.crafting} <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-b from-white to-[#7000FF]">{t.hero.intelligence}</span>
             </motion.h1>
 
             <motion.div 
@@ -644,7 +622,7 @@ export default function App() {
             }}
             className="absolute bottom-12 flex flex-col items-center gap-2"
           >
-            <span className="text-[9px] uppercase tracking-[0.3em] opacity-40">Scroll to Explore</span>
+            <span className="text-[9px] uppercase tracking-[0.3em] opacity-40">{t.hero.scroll}</span>
             <div className="w-[1px] h-12 bg-gradient-to-b from-[#7000FF] to-transparent"></div>
           </motion.div>
         </section>
@@ -655,8 +633,8 @@ export default function App() {
                <Reveal>
                    <div className="flex flex-col md:flex-row justify-between items-end">
                        <div>
-                          <h2 className="text-[10px] uppercase tracking-[0.5em] text-[#7000FF] mb-4">Selected Work</h2>
-                          <h3 className="text-4xl md:text-5xl font-light tracking-tight">Digital <span className="italic">Frontiers</span></h3>
+                          <h2 className="text-[10px] uppercase tracking-[0.5em] text-[#7000FF] mb-4">{t.work.selected}</h2>
+                          <h3 className="text-4xl md:text-5xl font-light tracking-tight">{t.work.digital} <span className="italic">{t.work.frontiers}</span></h3>
                        </div>
                        <div className="hidden md:block text-[10px] tracking-widest opacity-40 uppercase">
                            2023 — 2025
@@ -680,7 +658,7 @@ export default function App() {
                                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent z-10" />
 
                                <div className="absolute bottom-0 left-0 p-8 z-20">
-                                   <div className="text-[10px] text-[#7000FF] tracking-widest mb-2">CASE STUDY {project.id}</div>
+                                   <div className="text-[10px] text-[#7000FF] tracking-widest mb-2">{t.work.caseStudy} {project.id}</div>
                                    <div className="text-2xl md:text-4xl font-bold uppercase tracking-tighter">{project.title}</div>
                                    <div className="text-[10px] text-white/40 tracking-widest mt-2 uppercase">{project.category}</div>
                                </div>
@@ -690,15 +668,15 @@ export default function App() {
                </div>
 
                {/* End of section text */}
-               <div className="mt-24 md:mt-32 pt-20 pb-40 text-center"> {/* Added pt-20 pb-40 for scroll padding */}
+               <div className="mt-24 md:mt-32 pt-20 pb-40 text-center">
                  <Reveal viewport={{ once: true, amount: 0.8 }}>
                    <p className="text-[8vw] md:text-[6vw] font-black uppercase text-[#7000FF] leading-none mb-8">
-                     AND ANYMORE...
+                     {t.work.anymore}
                    </p>
                  </Reveal>
                  <Reveal viewport={{ once: true, amount: 0.8 }}>
                    <p className="text-[8vw] md:text-[6vw] font-black uppercase text-[#7000FF] leading-none">
-                     YOU CAN BE PART OF IT.
+                     {t.work.partOfIt}
                    </p>
                  </Reveal>
                  {/* New "Start Project" button */}
@@ -710,7 +688,7 @@ export default function App() {
                    viewport={{ once: true, amount: 0.5 }}
                    transition={{ delay: 0.8, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
                  >
-                   Start Project
+                   {t.work.startProject}
                  </motion.button>
                </div>
            </div>
@@ -719,12 +697,12 @@ export default function App() {
         {/* --- SERVICES BENTO GRID --- */}
         <section id="services" className="py-32 px-8 max-w-[1400px] mx-auto">
           <Reveal>
-            <h2 className="text-[10px] uppercase tracking-[0.5em] text-[#7000FF] mb-4">What we do</h2>
-            <h3 className="text-4xl md:text-6xl font-light mb-20 tracking-tight">Our Core <span className="italic">Capabilities</span></h3>
+            <h2 className="text-[10px] uppercase tracking-[0.5em] text-[#7000FF] mb-4">{t.services.title}</h2>
+            <h3 className="text-4xl md:text-6xl font-light mb-20 tracking-tight">{t.services.subtitle} <span className="italic">{t.services.subtitleItalic}</span></h3>
           </Reveal>
 
           <div className="grid md:grid-cols-3 gap-4">
-            {services.map((service) => (
+            {t.services.items.map((service) => (
               <motion.div 
                 key={service.id}
                 whileHover={{ backgroundColor: "rgba(112, 0, 255, 0.03)" }}
@@ -735,7 +713,7 @@ export default function App() {
                 <h4 className="text-2xl font-bold mb-6 tracking-tight group-hover:text-[#7000FF] transition-colors">{service.title}</h4>
                 <p className="text-white/40 font-light leading-relaxed mb-10 text-sm md:text-base">{service.desc}</p>
                 <div className="flex items-center gap-3 text-[10px] tracking-widest font-bold">
-                  VIEW PROJECT <span className="w-8 h-[1px] bg-white group-hover:bg-[#7000FF] group-hover:w-12 transition-all"></span>
+                  {t.services.viewProject} <span className="w-8 h-[1px] bg-white group-hover:bg-[#7000FF] group-hover:w-12 transition-all"></span>
                 </div>
               </motion.div>
             ))}
@@ -745,19 +723,19 @@ export default function App() {
         {/* --- HOW WE WORK --- */}
         <section className="py-32 bg-white text-black rounded-[3rem] md:rounded-[4rem] relative z-10 mx-4 md:mx-8 mb-20">
           <div className="max-w-7xl mx-auto px-8">
-            <h2 className="text-[10px] tracking-[0.5em] text-[#7000FF] mb-20 uppercase font-bold text-center">The Blueprint</h2>
+            <h2 className="text-[10px] tracking-[0.5em] text-[#7000FF] mb-20 uppercase font-bold text-center">{t.blueprint.title}</h2>
             <div className="grid md:grid-cols-3 gap-16">
               <div className="border-l border-black/10 pl-6">
-                <h4 className="text-3xl font-bold mb-4">STRATEGY</h4>
-                <p className="opacity-70">Deep dive into your ecosystem to identify AI leverage points.</p>
+                <h4 className="text-3xl font-bold mb-4">{t.blueprint.strategy.title}</h4>
+                <p className="opacity-70">{t.blueprint.strategy.desc}</p>
               </div>
               <div className="border-l border-black/10 pl-6">
-                <h4 className="text-3xl font-bold mb-4">BUILD</h4>
-                <p className="opacity-70">Agile development of your custom intelligent solution.</p>
+                <h4 className="text-3xl font-bold mb-4">{t.blueprint.build.title}</h4>
+                <p className="opacity-70">{t.blueprint.build.desc}</p>
               </div>
               <div className="border-l border-black/10 pl-6">
-                <h4 className="text-3xl font-bold mb-4">LAUNCH</h4>
-                <p className="opacity-70">Deployment and continuous optimization for maximum ROI.</p>
+                <h4 className="text-3xl font-bold mb-4">{t.blueprint.launch.title}</h4>
+                <p className="opacity-70">{t.blueprint.launch.desc}</p>
               </div>
             </div>
           </div>
@@ -777,7 +755,7 @@ export default function App() {
                  >
                    {[1, 2].map((i) => (
                       <div key={i} className="flex gap-20 text-6xl md:text-8xl font-black opacity-20 pr-20 items-center">
-                       <span>SMALL BUSINESS</span> <span>PERSONAL BRANDS</span> <span>GROWTH FIRMS</span> <span className="text-[#7000FF] opacity-100">EVERYONNE</span>
+                       <span>{t.marquee.small}</span> <span>{t.marquee.personal}</span> <span>{t.marquee.growth}</span> <span className="text-[#7000FF] opacity-100">{t.marquee.everyone}</span>
                      </div>
                    ))}
                  </motion.div>
@@ -786,13 +764,13 @@ export default function App() {
         </section>
 
         {/* --- WHY ZERONNE (Interactive Growth Impact) --- */}
-        <GrowthImpactSection />
+        <GrowthImpactSection text={t.impact} />
 
         {/* --- AGENCY DEFINITION --- */}
         <section className="pb-32 px-8 text-center relative z-10">
           <Reveal>
             <h3 className="text-2xl md:text-4xl font-light max-w-5xl mx-auto leading-relaxed text-white/80">
-              <span className="text-[#7000FF] font-bold">ZERO ONNE</span> is a next-gen <span className="text-[#7000FF] font-bold">AI agency</span> focused on <span className="text-[#7000FF] font-bold">creative</span> and <span className="text-[#7000FF] font-bold">workflow optimization</span>.
+              <span className="text-[#7000FF] font-bold">ZERO ONNE</span> {t.agency.text1} <span className="text-[#7000FF] font-bold">{t.agency.text2}</span> {t.agency.text3} <span className="text-[#7000FF] font-bold">{t.agency.text4}</span> {t.agency.text5} <span className="text-[#7000FF] font-bold">{t.agency.text6}</span>.
             </h3>
           </Reveal>
         </section>
@@ -822,7 +800,7 @@ export default function App() {
                     ✕
                   </button>
                 </div>
-                <span className="text-[#7000FF] font-mono text-xs tracking-wider">Service Details</span>
+                <span className="text-[#7000FF] font-mono text-xs tracking-wider">{t.modal.details}</span>
                 <h3 className="text-3xl md:text-5xl font-bold mt-4 mb-8 tracking-tight">{selectedService.title}</h3>
                 <p className="text-lg md:text-xl text-white/60 leading-relaxed mb-12 font-light italic border-l-2 border-[#7000FF] pl-6">
                   "{selectedService.detail}"
@@ -831,14 +809,14 @@ export default function App() {
                   onClick={() => { setSelectedService(null); setIsContactOpen(true); }}
                   className="bg-white text-black px-8 py-4 rounded-full font-bold uppercase text-[10px] tracking-widest hover:bg-[#7000FF] hover:text-white transition-all duration-300"
                 >
-                  Enquire Now
+                  {t.modal.enquire}
                 </button>
               </motion.div>
             </motion.div>
           )}
         </AnimatePresence>
 
-          {/* --- CONTACT / LEAD CAPTURE (Bottom Section) --- */}
+        {/* --- CONTACT / LEAD CAPTURE (Bottom Section) --- */}
         <section id="contact" className="py-40 relative overflow-hidden">
           {/* Decorative background element for contact */}
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#7000FF]/5 rounded-full blur-[100px] pointer-events-none" />
@@ -894,7 +872,7 @@ export default function App() {
             <a href="https://www.facebook.com/zeronneai/" target="_blank" rel="noopener noreferrer" className="hover:text-[#7000FF] transition-colors">Facebook</a>
             <a href="mailto:zeronne.ai@gmail.com" className="hover:text-[#7000FF] transition-colors">Email</a>
           </div>
-          <div className="text-[10px] tracking-[0.2em] font-light text-white/20 italic">Designed by AI. Built for Humans.</div>
+          <div className="text-[10px] tracking-[0.2em] font-light text-white/20 italic">{t.footer.designed}</div>
         </footer>
       </div>
     </div>
