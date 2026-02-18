@@ -1,7 +1,225 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Service, RevealProps } from './types';
-
+// --- TRANSLATIONS ---
+const translations = {
+  en: {
+    nav: {
+      services: "Our Services +",
+      close: "Close",
+      contact: "Contact"
+    },
+    hero: {
+      evolution: "Evolution is not optional",
+      crafting: "CRAFTING",
+      intelligence: "INTELLIGENCE",
+      scroll: "Scroll to Explore"
+    },
+    work: {
+      selected: "Selected Work",
+      digital: "Digital",
+      frontiers: "Frontiers",
+      caseStudy: "CASE STUDY",
+      anymore: "AND ANYMORE...",
+      partOfIt: "YOU CAN BE PART OF IT.",
+      startProject: "Start Project"
+    },
+    services: {
+      title: "What we do",
+      subtitle: "Our Core",
+      subtitleItalic: "Capabilities",
+      viewProject: "VIEW PROJECT",
+      items: [
+        { 
+          id: '01', 
+          title: 'AI STRATEGY', 
+          desc: 'We architect the intelligent core of your business future.', 
+          detail: 'From custom LLM integration to predictive analytics, we design the roadmap for your AI transformation.' 
+        },
+        { 
+          id: '02', 
+          title: 'LUXURY LANDINGS', 
+          desc: 'High-conversion interfaces powered by cognitive psychology.', 
+          detail: 'Our landing pages aren’t just beautiful; they use AI-driven heatmaps to ensure every pixel converts.' 
+        },
+        { 
+          id: '03', 
+          title: 'CREATIVE AUTOMATION', 
+          desc: 'Scaling content production without losing human soul.', 
+          detail: 'Custom diffusion models trained specifically on your brand’s visual DNA for infinite, consistent assets.' 
+        }
+      ],
+      list: [
+        "Web Design", "Web Hosting", "App Design", "UI Design", "UX", 
+        "Custom Software", "AI Video", "AI Graphic Design", "AI Images", 
+        "AI Upscaling", "AI Creative Strategy", "AI Automation", 
+        "AI Education", "AI Integration", "AI Installation"
+      ]
+    },
+    blueprint: {
+      title: "The Blueprint",
+      strategy: { title: "STRATEGY", desc: "Deep dive into your ecosystem to identify AI leverage points." },
+      build: { title: "BUILD", desc: "Agile development of your custom intelligent solution." },
+      launch: { title: "LAUNCH", desc: "Deployment and continuous optimization for maximum ROI." }
+    },
+    marquee: {
+      small: "SMALL BUSINESS",
+      personal: "PERSONAL BRANDS",
+      growth: "GROWTH FIRMS",
+      everyone: "EVERYONNE"
+    },
+    impact: {
+      question: "How much",
+      questionItalic: "growth",
+      questionEnd: "is your brand sacrificing by ignoring AI?",
+      button: "Click to reveal the gap",
+      advantage: "The Advantage",
+      faster: "FASTER",
+      statDesc: "Companies integrating AI-driven creative strategies see an average surge in digital authority within the first 12 months.",
+      back: "← Back to question"
+    },
+    agency: {
+      text1: "is a next-gen",
+      text2: "AI agency",
+      text3: "focused on",
+      text4: "creative",
+      text5: "and",
+      text6: "workflow optimization"
+    },
+    contact: {
+      ready: "READY TO",
+      transcend: "TRANSCEND?",
+      mark: "Leave your mark below",
+      namePlaceholder: "Full Name",
+      emailPlaceholder: "Business Email",
+      msgPlaceholder: "Tell us about your vision",
+      submit: "Submit Request"
+    },
+    modal: {
+      details: "Service Details",
+      enquire: "Enquire Now",
+      start: "Start a",
+      project: "Project",
+      startDesc: "Tell us about your vision. We will guide you from there.",
+      labelName: "Name",
+      labelProject: "Project Name",
+      labelEmail: "Email",
+      labelDesc: "Project Description",
+      submitProposal: "Submit Proposal"
+    },
+    footer: {
+      designed: "Designed by AI. Built for Humans."
+    }
+  },
+  es: {
+    nav: {
+      services: "Nuestros Servicios +",
+      close: "Cerrar",
+      contact: "Contacto"
+    },
+    hero: {
+      evolution: "La evolución no es opcional",
+      crafting: "CREANDO",
+      intelligence: "INTELIGENCIA",
+      scroll: "Desliza para Explorar"
+    },
+    work: {
+      selected: "Trabajos Seleccionados",
+      digital: "Fronteras",
+      frontiers: "Digitales",
+      caseStudy: "ESTUDIO DE CASO",
+      anymore: "Y AÚN HAY MÁS...",
+      partOfIt: "TÚ PUEDES SER PARTE.",
+      startProject: "Iniciar Proyecto"
+    },
+    services: {
+      title: "Lo que hacemos",
+      subtitle: "Nuestras Capacidades",
+      subtitleItalic: "Centrales",
+      viewProject: "VER PROYECTO",
+      items: [
+        { 
+          id: '01', 
+          title: 'ESTRATEGIA IA', 
+          desc: 'Arquitectamos el núcleo inteligente del futuro de tu negocio.', 
+          detail: 'Desde la integración de LLM personalizados hasta análisis predictivos, diseñamos la hoja de ruta para tu transformación con IA.' 
+        },
+        { 
+          id: '02', 
+          title: 'LANDINGS DE LUJO', 
+          desc: 'Interfaces de alta conversión impulsadas por psicología cognitiva.', 
+          detail: 'Nuestras landing pages no son solo hermosas; usan mapas de calor impulsados por IA para asegurar que cada píxel convierta.' 
+        },
+        { 
+          id: '03', 
+          title: 'AUTOMATIZACIÓN CREATIVA', 
+          desc: 'Escalando la producción de contenido sin perder el alma humana.', 
+          detail: 'Modelos de difusión personalizados entrenados específicamente en el ADN visual de tu marca para activos infinitos y consistentes.' 
+        }
+      ],
+      list: [
+        "Diseño Web", "Hosting Web", "Diseño de Apps", "Diseño UI", "UX", 
+        "Software a Medida", "Video IA", "Diseño Gráfico IA", "Imágenes IA", 
+        "Escalado IA", "Estrategia Creativa IA", "Automatización IA", 
+        "Educación IA", "Integración IA", "Instalación IA"
+      ]
+    },
+    blueprint: {
+      title: "El Plano",
+      strategy: { title: "ESTRATEGIA", desc: "Profundizamos en tu ecosistema para identificar puntos de apalancamiento de IA." },
+      build: { title: "CONSTRUCCIÓN", desc: "Desarrollo ágil de tu solución inteligente personalizada." },
+      launch: { title: "LANZAMIENTO", desc: "Implementación y optimización continua para el máximo ROI." }
+    },
+    marquee: {
+      small: "PEQUEÑOS NEGOCIOS",
+      personal: "MARCAS PERSONALES",
+      growth: "EMPRESAS EN CRECIMIENTO",
+      everyone: "TODOS"
+    },
+    impact: {
+      question: "¿Cuánto",
+      questionItalic: "crecimiento",
+      questionEnd: "está sacrificando tu marca al ignorar la IA?",
+      button: "Clic para revelar la brecha",
+      advantage: "La Ventaja",
+      faster: "MÁS RÁPIDO",
+      statDesc: "Las empresas que integran estrategias creativas impulsadas por IA ven un aumento promedio en autoridad digital en los primeros 12 meses.",
+      back: "← Volver a la pregunta"
+    },
+    agency: {
+      text1: "es una",
+      text2: "agencia de IA",
+      text3: "de próxima generación enfocada en",
+      text4: "creatividad",
+      text5: "y",
+      text6: "optimización de flujos de trabajo"
+    },
+    contact: {
+      ready: "¿LISTO PARA",
+      transcend: "TRANSCENDER?",
+      mark: "Deja tu huella abajo",
+      namePlaceholder: "Nombre Completo",
+      emailPlaceholder: "Correo Empresarial",
+      msgPlaceholder: "Cuéntanos sobre tu visión",
+      submit: "Enviar Solicitud"
+    },
+    modal: {
+      details: "Detalles del Servicio",
+      enquire: "Consultar Ahora",
+      start: "Inicia un",
+      project: "Proyecto",
+      startDesc: "Cuéntanos sobre tu visión. Te guiaremos desde allí.",
+      labelName: "Nombre",
+      labelProject: "Nombre del Proyecto",
+      labelEmail: "Correo",
+      labelDesc: "Descripción del Proyecto",
+      submitProposal: "Enviar Propuesta"
+    },
+    footer: {
+      designed: "Diseñado por IA. Construido para Humanos."
+    }
+  }
+};
 // --- ANIMATION WRAPPER ---
 const Reveal: React.FC<RevealProps> = ({ children }) => (
   <motion.div 
