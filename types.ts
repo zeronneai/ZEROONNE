@@ -10,4 +10,9 @@ export interface Service {
 
 export interface RevealProps {
   children: React.ReactNode;
+  viewport?: {
+    once?: boolean;
+    amount?: number | "some" | "all";
+    margin?: string;
+  };
 }
