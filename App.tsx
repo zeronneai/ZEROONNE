@@ -525,52 +525,75 @@ export default function App() {
                   <p className="text-white/40 text-sm">{t.modal.startDesc}</p>
                 </div>
 
-                <form className="space-y-8" onSubmit={(e) => { e.preventDefault(); setIsContactOpen(false); }}>
-                  <div className="grid md:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                       <label className="text-[10px] uppercase tracking-widest text-[#7000FF]">{t.modal.labelName}</label>
-                       <input 
-                        type="text" 
-                        placeholder={t.contact.namePlaceholder} 
-                        className="w-full bg-transparent border-b border-white/10 py-2 focus:outline-none focus:border-[#7000FF] transition-colors placeholder:text-white/20 text-white font-light"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                       <label className="text-[10px] uppercase tracking-widest text-[#7000FF]">{t.modal.labelProject}</label>
-                       <input 
-                        type="text" 
-                        placeholder={t.modal.projectPlaceholder} 
-                        className="w-full bg-transparent border-b border-white/10 py-2 focus:outline-none focus:border-[#7000FF] transition-colors placeholder:text-white/20 text-white font-light"
-                      />
-                    </div>
-                  </div>
+               <form className="space-y-8" onSubmit={async (e) => {
+  e.preventDefault();
+  const formData = {
+    name: e.target.name.value,
+    email: e.target.email.value,
+    projectName: e.target.projectName.value,
+    description: e.target.description.value,
+  };
+  try {
+    await fetch("https://script.google.com/macros/s/AKfycbwXwWFhbXD-7zyVhCcpfA_def8aykuX_r9DphgsIeEdWEfQg1YjER9EW25J4cmyjUSq/exec", {
+      method: "POST",
+      body: JSON.stringify(formData),
+    });
+    alert("Your proposal has been submitted! We'll be in touch soon.");
+    setIsContactOpen(false);
+  } catch (error) {
+    alert("Something went wrong. Please try again.");
+  }
+}}>
+  <div className="grid md:grid-cols-2 gap-6">
+    <div className="space-y-2">
+      <label className="text-[10px] uppercase tracking-widest text-[#7000FF]">{t.modal.labelName}</label>
+      <input 
+        type="text"
+        name="name"
+        placeholder={t.contact.namePlaceholder} 
+        className="w-full bg-transparent border-b border-white/10 py-2 focus:outline-none focus:border-[#7000FF] transition-colors placeholder:text-white/20 text-white font-light"
+      />
+    </div>
+    <div className="space-y-2">
+      <label className="text-[10px] uppercase tracking-widest text-[#7000FF]">{t.modal.labelProject}</label>
+      <input 
+        type="text"
+        name="projectName"
+        placeholder={t.modal.projectPlaceholder} 
+        className="w-full bg-transparent border-b border-white/10 py-2 focus:outline-none focus:border-[#7000FF] transition-colors placeholder:text-white/20 text-white font-light"
+      />
+    </div>
+  </div>
 
-                  <div className="space-y-2">
-                    <label className="text-[10px] uppercase tracking-widest text-[#7000FF]">{t.modal.labelEmail}</label>
-                    <input 
-                      type="email" 
-                      placeholder="name@company.com" 
-                      className="w-full bg-transparent border-b border-white/10 py-2 focus:outline-none focus:border-[#7000FF] transition-colors placeholder:text-white/20 text-white font-light" 
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <label className="text-[10px] uppercase tracking-widest text-[#7000FF]">{t.modal.labelDesc}</label>
-                    <textarea 
-                      placeholder={t.contact.msgPlaceholder}
-                      rows={4} 
-                      className="w-full bg-transparent border-b border-white/10 py-2 focus:outline-none focus:border-[#7000FF] transition-colors placeholder:text-white/20 text-white font-light resize-none"
-                    ></textarea>
-                  </div>
+  <div className="space-y-2">
+    <label className="text-[10px] uppercase tracking-widest text-[#7000FF]">{t.modal.labelEmail}</label>
+    <input 
+      type="email"
+      name="email"
+      placeholder="name@company.com" 
+      className="w-full bg-transparent border-b border-white/10 py-2 focus:outline-none focus:border-[#7000FF] transition-colors placeholder:text-white/20 text-white font-light" 
+    />
+  </div>
+  
+  <div className="space-y-2">
+    <label className="text-[10px] uppercase tracking-widest text-[#7000FF]">{t.modal.labelDesc}</label>
+    <textarea 
+      name="description"
+      placeholder={t.contact.msgPlaceholder}
+      rows={4} 
+      className="w-full bg-transparent border-b border-white/10 py-2 focus:outline-none focus:border-[#7000FF] transition-colors placeholder:text-white/20 text-white font-light resize-none"
+    ></textarea>
+  </div>
 
-                  <motion.button 
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="w-full bg-white text-black py-4 rounded-xl font-bold uppercase tracking-[0.2em] text-[10px] hover:bg-[#7000FF] hover:text-white transition-all duration-300"
-                  >
-                    {t.modal.submitProposal}
-                  </motion.button>
-                </form>
+  <motion.button 
+    type="submit"
+    whileHover={{ scale: 1.02 }}
+    whileTap={{ scale: 0.98 }}
+    className="w-full bg-white text-black py-4 rounded-xl font-bold uppercase tracking-[0.2em] text-[10px] hover:bg-[#7000FF] hover:text-white transition-all duration-300"
+  >
+    {t.modal.submitProposal}
+  </motion.button>
+</form>
               </motion.div>
             </motion.div>
           )}
