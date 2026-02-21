@@ -118,7 +118,6 @@ const GrowthImpactSection = ({ text }: { text: typeof translations.en.impact }) 
     </section>
   );
 }
-
 // --- 3D INTERACTIVE BRANDING SCENE WITH AI HAND TRACKING ---
 const EscenaZeronne = () => {
   const mountRef = useRef<HTMLDivElement>(null);
@@ -157,7 +156,7 @@ const EscenaZeronne = () => {
       side: THREE.DoubleSide 
     });
 
-    const particlesCount = 1500; // Optimizado para que la cámara corra perfectamente
+    const particlesCount = 1500; 
     const instancedMesh = new THREE.InstancedMesh(geometry, material, particlesCount);
     scene.add(instancedMesh);
 
@@ -294,14 +293,11 @@ const EscenaZeronne = () => {
 
     const handleResize = () => {
       if (!mountRef.current) return;
-      setTimeout(() => {
-        if (!mountRef.current) return;
-        const width = mountRef.current.clientWidth;
-        const height = mountRef.current.clientHeight;
-        camera.aspect = width / height;
-        camera.updateProjectionMatrix();
-        renderer.setSize(width, height);
-      }, 100);
+      const width = mountRef.current.clientWidth;
+      const height = mountRef.current.clientHeight;
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+      renderer.setSize(width, height);
     };
     window.addEventListener('resize', handleResize);
     handleResize();
@@ -319,7 +315,7 @@ const EscenaZeronne = () => {
       if (cameraRef.current) cameraRef.current.stop();
       if (handsRef.current) handsRef.current.close();
     };
-  }, [isFullScreen]);
+  }, []); // <--- ESTO ESTABA EN [isFullScreen]. DEJARLO VACÍO ARREGLA EL PROBLEMA.
 
   const stopAI = () => {
     if (cameraRef.current) cameraRef.current.stop();
@@ -327,6 +323,8 @@ const EscenaZeronne = () => {
     setCameraActive(false);
     setIsFullScreen(false);
     (window as any).handLost();
+    // Forzar reajuste de tamaño de pantalla suave
+    setTimeout(() => window.dispatchEvent(new Event('resize')), 100);
   };
 
   const initAI = async () => {
@@ -371,17 +369,15 @@ const EscenaZeronne = () => {
       }
     });
 
-    // Se necesita el video activo para que MediaPipe lea los fotogramas
     if (videoRef.current) {
-      // Forzamos la reproducción por si el navegador la pausa
-      videoRef.current.play().catch(e => console.log("Video autoplay prevented", e));
+      videoRef.current.play().catch(e => console.log("Autoplay check", e));
       
       const camera = new Camera(videoRef.current, {
         onFrame: async () => {
           await hands.send({ image: videoRef.current! });
         },
-        width: 1280,
-        height: 720
+        width: 640,
+        height: 480
       });
       cameraRef.current = camera;
       
@@ -389,6 +385,8 @@ const EscenaZeronne = () => {
       setCameraActive(true);
       setLoadingAI(false);
       setIsFullScreen(true);
+      // Forzar reajuste para pantalla completa
+      setTimeout(() => window.dispatchEvent(new Event('resize')), 100);
     }
   };
 
@@ -396,10 +394,10 @@ const EscenaZeronne = () => {
     <div className={`${isFullScreen ? 'fixed inset-0 z-[9999] w-screen h-screen rounded-none bg-black' : 'relative w-full h-[600px] rounded-3xl border border-white/10 bg-[#050505]'} overflow-hidden transition-all duration-700 ease-in-out`}>
       
       <div ref={mountRef} className="absolute inset-0 z-10" />
-      {/* ATENCIÓN AQUÍ: Se agregaron autoPlay, muted y playsInline para que la cámara funcione correctamente en todos los navegadores */}
-      <video ref={videoRef} className="hidden" autoPlay muted playsInline />
+      
+      {/* VIDEO 100% INVISIBLE PERO EN EL DOM (Evita que Safari/Chrome lo maten) */}
+      <video ref={videoRef} style={{ position: 'absolute', width: '1px', height: '1px', opacity: 0, pointerEvents: 'none' }} autoPlay muted playsInline />
 
-      {/* BOTÓN DE CIERRE MOVIDO AL CENTRO ARRIBA PARA QUE NO ESTORBE */}
       {isFullScreen && (
         <button
           onClick={stopAI}
@@ -424,7 +422,7 @@ const EscenaZeronne = () => {
               disabled={loadingAI}
               className="bg-white text-black px-8 py-4 rounded-full font-bold uppercase tracking-widest text-[10px] hover:bg-[#7000FF] hover:text-white transition-all w-full disabled:opacity-50 hover:shadow-[0_0_30px_rgba(112,0,255,0.5)]"
             >
-              {loadingAI ? 'Iniciando Sistemas...' : 'Entrar a la Experiencia'}
+              {loadingAI ? 'Iniciando Red Neuronal...' : 'Entrar a la Experiencia'}
             </button>
           </div>
         )}
@@ -439,7 +437,6 @@ const EscenaZeronne = () => {
     </div>
   );
 };
-
 // --- MAIN APP COMPONENT ---
 export default function App() {
   const [lang, setLang] = useState<'en' | 'es'>('en');
