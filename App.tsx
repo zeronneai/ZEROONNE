@@ -2,8 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Service, RevealProps } from './types';
 import * as THREE from 'three';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment';
 
 // --- TRANSLATIONS ---
 const translations = {
@@ -341,87 +339,104 @@ const GrowthImpactSection = ({ text }: { text: typeof translations.en.impact }) 
   );
 }
 
-// --- 3D PARTICLE SCENE WITH AI HAND TRACKING ---
+// --- 3D PARTICLE SCENE WITH FULLSCREEN AI HAND TRACKING ---
 const EscenaZeronne = () => {
   const mountRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const handsRef = useRef<any>(null);
+  const cameraRef = useRef<any>(null);
+
   const [cameraActive, setCameraActive] = useState(false);
   const [loadingAI, setLoadingAI] = useState(false);
+  const [isFullScreen, setIsFullScreen] = useState(false);
 
   useEffect(() => {
     if (!mountRef.current) return;
 
-    // 1. Configuración de Three.js
+    // --- THREE.JS SETUP ---
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, mountRef.current.clientWidth / mountRef.current.clientHeight, 0.1, 100);
-    camera.position.z = 5;
+    const camera = new THREE.PerspectiveCamera(70, mountRef.current.clientWidth / mountRef.current.clientHeight, 0.1, 100);
+    camera.position.z = 4;
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(mountRef.current.clientWidth, mountRef.current.clientHeight);
     mountRef.current.appendChild(renderer.domElement);
 
-    // 2. Crear las Partículas (El polvo digital)
+    // --- PARTÍCULAS ---
     const particlesGeometry = new THREE.BufferGeometry();
-    const particlesCount = 4000;
+    const particlesCount = 5000;
     const posArray = new Float32Array(particlesCount * 3);
-    const basePosArray = new Float32Array(particlesCount * 3); // Para recordar dónde estaban originalmente
+    const basePosArray = new Float32Array(particlesCount * 3);
 
     for (let i = 0; i < particlesCount * 3; i++) {
-      const val = (Math.random() - 0.5) * 12;
+      const val = (Math.random() - 0.5) * 15; 
       posArray[i] = val;
       basePosArray[i] = val;
     }
 
     particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
     
-    // Material de las partículas (Color morado Zeronne)
     const particlesMaterial = new THREE.PointsMaterial({
-      size: 0.03,
+      size: 0.04,
       color: 0x7000FF,
       transparent: true,
-      opacity: 0.8,
-      blending: THREE.AdditiveBlending
+      opacity: 0.9,
+      blending: THREE.AdditiveBlending,
+      sizeAttenuation: true
     });
 
     const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
     scene.add(particlesMesh);
 
-    // 3. Variables para la interacción
+    // --- LÓGICA DE INTERACCIÓN (MOUSE/TOUCH/IA) ---
     let handX = 0;
     let handY = 0;
     let isHandPresent = false;
     
-    // Si no hay cámara, usamos el mouse como fallback
-    const onMouseMove = (event: MouseEvent) => {
-      if (isHandPresent) return; // Si la IA controla, ignoramos el mouse
+    // Fallback para Mouse y Touch (Celular)
+    const onInteraction = (event: MouseEvent | TouchEvent) => {
+      if (isHandPresent) return; 
       
       const rect = mountRef.current?.getBoundingClientRect();
       if (!rect) return;
-      
-      // Convertir coordenadas del ratón a espacio 3D
-      handX = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-      handY = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-      
-      // Ajustar escala para Three.js
-      handX *= 6;
-      handY *= 4;
-    };
-    window.addEventListener('mousemove', onMouseMove);
 
-    // Función para actualizar las partículas desde la IA
+      let clientX, clientY;
+      if ('touches' in event) {
+        clientX = event.touches[0].clientX;
+        clientY = event.touches[0].clientY;
+      } else {
+        clientX = (event as MouseEvent).clientX;
+        clientY = (event as MouseEvent).clientY;
+      }
+      
+      handX = ((clientX - rect.left) / rect.width) * 2 - 1;
+      handY = -((clientY - rect.top) / rect.height) * 2 + 1;
+      
+      const aspect = rect.width / rect.height;
+      handX *= 7 * aspect; 
+      handY *= 7;
+    };
+
+    window.addEventListener('mousemove', onInteraction);
+    window.addEventListener('touchmove', onInteraction, { passive: true });
+    window.addEventListener('touchstart', onInteraction, { passive: true });
+
+    // Funciones globales para la IA
     (window as any).updateHandPosition = (x: number, y: number) => {
       isHandPresent = true;
-      // Invertir X por el efecto espejo de la cámara y mapear a 3D
-      handX = -((x * 2) - 1) * 6;
-      handY = -((y * 2) - 1) * 4;
+      const rect = mountRef.current?.getBoundingClientRect();
+      if(!rect) return;
+      const aspect = rect.width / rect.height;
+      handX = -((x * 2) - 1) * (7 * aspect);
+      handY = -((y * 2) - 1) * 7;
     };
 
     (window as any).handLost = () => {
       isHandPresent = false;
     };
 
-    // 4. Bucle de Animación (La magia del movimiento)
+    // --- BUCLE DE ANIMACIÓN ---
     const clock = new THREE.Clock();
     let frameId: number;
 
@@ -429,10 +444,9 @@ const EscenaZeronne = () => {
       frameId = requestAnimationFrame(animate);
       const elapsedTime = clock.getElapsedTime();
 
-      // Rotación suave de toda la galaxia de partículas
-      particlesMesh.rotation.y = elapsedTime * 0.05;
+      particlesMesh.rotation.y = elapsedTime * 0.03;
+      particlesMesh.rotation.z = elapsedTime * 0.01;
 
-      // Animar cada partícula individualmente (Física de repulsión)
       const positions = particlesGeometry.attributes.position.array as Float32Array;
       
       for (let i = 0; i < particlesCount; i++) {
@@ -441,56 +455,77 @@ const EscenaZeronne = () => {
         const y = basePosArray[i3 + 1];
         const z = basePosArray[i3 + 2];
 
-        // Calcular distancia a la "mano" o "ratón"
-        // Como la malla rota, tenemos que hacer una aproximación sencilla
         const dx = positions[i3] - handX;
         const dy = positions[i3 + 1] - handY;
-        const dist = Math.sqrt(dx * dx + dy * dy);
+        const dz = positions[i3 + 2] - (isHandPresent ? 1 : 0); 
+        const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
 
-        // Si la mano está cerca, repeler la partícula
-        if (dist < 2.5) {
-          const force = (2.5 - dist) / 2.5;
-          positions[i3] += (dx / dist) * force * 0.1;
-          positions[i3 + 1] += (dy / dist) * force * 0.1;
-          positions[i3 + 2] += force * 0.1;
+        const repulsionRadius = 3.5;
+
+        if (dist < repulsionRadius) {
+          const force = (repulsionRadius - dist) / repulsionRadius;
+          positions[i3] += (dx / dist) * force * 0.3;
+          positions[i3 + 1] += (dy / dist) * force * 0.3;
+          positions[i3 + 2] += (dz / dist) * force * 0.3;
         } else {
-          // Regresar lentamente a su posición original
-          positions[i3] += (x - positions[i3]) * 0.02;
-          positions[i3 + 1] += (y - positions[i3 + 1]) * 0.02;
-          positions[i3 + 2] += (z - positions[i3 + 2]) * 0.02;
+          positions[i3] += (x - positions[i3]) * 0.03;
+          positions[i3 + 1] += (y - positions[i3 + 1]) * 0.03;
+          positions[i3 + 2] += (z - positions[i3 + 2]) * 0.03;
         }
       }
       particlesGeometry.attributes.position.needsUpdate = true;
-
       renderer.render(scene, camera);
     };
     animate();
 
+    // --- RESPONSIVIDAD CRÍTICA ---
     const handleResize = () => {
       if (!mountRef.current) return;
-      camera.aspect = mountRef.current.clientWidth / mountRef.current.clientHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(mountRef.current.clientWidth, mountRef.current.clientHeight);
+      setTimeout(() => {
+        if (!mountRef.current) return;
+        const width = mountRef.current.clientWidth;
+        const height = mountRef.current.clientHeight;
+        camera.aspect = width / height;
+        camera.updateProjectionMatrix();
+        renderer.setSize(width, height);
+      }, 100);
     };
     window.addEventListener('resize', handleResize);
+    handleResize();
 
     return () => {
       window.removeEventListener('resize', handleResize);
-      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('mousemove', onInteraction);
+      window.removeEventListener('touchmove', onInteraction);
+      window.removeEventListener('touchstart', onInteraction);
       cancelAnimationFrame(frameId);
       if (mountRef.current) mountRef.current.removeChild(renderer.domElement);
       particlesGeometry.dispose();
       particlesMaterial.dispose();
       renderer.dispose();
+      if (cameraRef.current) cameraRef.current.stop();
+      if (handsRef.current) handsRef.current.close();
     };
-  }, []);
+  }, [isFullScreen]);
 
-  // Función para inyectar MediaPipe y activar la cámara
+  // --- FUNCIÓN PARA DETENER LA EXPERIENCIA ---
+  const stopAI = () => {
+    if (cameraRef.current) cameraRef.current.stop();
+    if (handsRef.current) handsRef.current.close();
+    setCameraActive(false);
+    setIsFullScreen(false);
+    (window as any).handLost();
+  };
+
+  // --- FUNCIÓN PARA INICIAR LA EXPERIENCIA ---
   const initAI = async () => {
     setLoadingAI(true);
     
-    // 1. Inyectar scripts de MediaPipe de Google
     const loadScript = (src: string) => new Promise((resolve) => {
+      if (document.querySelector(`script[src="${src}"]`)) {
+        resolve(true);
+        return;
+      }
       const script = document.createElement('script');
       script.src = src;
       script.crossOrigin = "anonymous";
@@ -501,83 +536,92 @@ const EscenaZeronne = () => {
     await loadScript("https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js");
     await loadScript("https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js");
 
-    // 2. Configurar la IA de Manos
     const Hands = (window as any).Hands;
     const Camera = (window as any).Camera;
 
     const hands = new Hands({
       locateFile: (file: string) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
     });
+    handsRef.current = hands;
 
     hands.setOptions({
       maxNumHands: 1,
       modelComplexity: 1,
-      minDetectionConfidence: 0.6,
-      minTrackingConfidence: 0.6
+      minDetectionConfidence: 0.7,
+      minTrackingConfidence: 0.7
     });
 
     hands.onResults((results: any) => {
       if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
-        // Obtenemos la punta del dedo índice (landmark 8)
         const indexFinger = results.multiHandLandmarks[0][8];
-        // Enviamos las coordenadas a Three.js
         (window as any).updateHandPosition(indexFinger.x, indexFinger.y);
       } else {
         (window as any).handLost();
       }
     });
 
-    // 3. Iniciar la cámara
     if (videoRef.current) {
       const camera = new Camera(videoRef.current, {
         onFrame: async () => {
           await hands.send({ image: videoRef.current! });
         },
-        width: 640,
-        height: 480
+        width: 1280,
+        height: 720
       });
-      camera.start();
+      cameraRef.current = camera;
+      
+      await camera.start();
       setCameraActive(true);
       setLoadingAI(false);
+      setIsFullScreen(true);
     }
   };
 
   return (
-    <div className="relative w-full h-[600px] rounded-3xl overflow-hidden border border-white/10 bg-[#050505]">
-      {/* Contenedor 3D */}
+    <div className={`${isFullScreen 
+      ? 'fixed inset-0 z-[9999] w-screen h-screen rounded-none bg-black' 
+      : 'relative w-full h-[600px] rounded-3xl border border-white/10 bg-[#050505]'
+      } overflow-hidden transition-all duration-700 ease-in-out`}>
+      
       <div ref={mountRef} className="absolute inset-0 z-10" />
-
-      {/* Video oculto para procesar la cámara */}
       <video ref={videoRef} className="hidden" playsInline />
 
-      {/* Botón de activación y estado */}
-      <div className="absolute inset-0 z-20 flex flex-col items-center justify-center pointer-events-none">
+      {isFullScreen && (
+        <button
+          onClick={stopAI}
+          className="absolute top-8 right-8 z-50 w-12 h-12 flex items-center justify-center rounded-full bg-black/40 backdrop-blur-md border border-white/20 text-white/70 hover:bg-white hover:text-black transition-all duration-300 group"
+        >
+          <span className="text-xl font-light group-hover:rotate-90 transition-transform">✕</span>
+        </button>
+      )}
+
+      <div className={`absolute inset-0 z-20 flex flex-col items-center justify-center pointer-events-none transition-opacity duration-500 ${cameraActive ? 'opacity-0' : 'opacity-100'}`}>
         {!cameraActive && (
           <div className="bg-black/60 backdrop-blur-md p-8 rounded-2xl border border-white/10 text-center max-w-md pointer-events-auto">
             <div className="mb-4">
-              <span className="text-[#7000FF] text-[10px] uppercase tracking-[0.4em] font-bold">Experiencia IA</span>
+              <span className="text-[#7000FF] text-[10px] uppercase tracking-[0.4em] font-bold animate-pulse">Experiencia Inmersiva IA</span>
             </div>
-            <h3 className="text-2xl font-light mb-4 text-white">Interactúa con el entorno</h3>
-            <p className="text-white/50 text-sm mb-8 font-light">
-              Mueve el ratón para repeler las partículas, o activa tu cámara para controlarlas con el movimiento real de tu mano.
+            <h3 className="text-2xl font-light mb-4 text-white">Controla la matriz digital</h3>
+            <p className="text-white/50 text-sm mb-8 font-light leading-relaxed">
+              Utiliza tu ratón o dedo para interactuar. Para la experiencia completa, activa tu cámara y controla las partículas con gestos en el aire.
             </p>
             <button 
               onClick={initAI}
               disabled={loadingAI}
-              className="bg-white text-black px-8 py-4 rounded-full font-bold uppercase tracking-widest text-[10px] hover:bg-[#7000FF] hover:text-white transition-all w-full disabled:opacity-50"
+              className="bg-white text-black px-8 py-4 rounded-full font-bold uppercase tracking-widest text-[10px] hover:bg-[#7000FF] hover:text-white transition-all w-full disabled:opacity-50 hover:shadow-[0_0_30px_rgba(112,0,255,0.5)]"
             >
-              {loadingAI ? 'Iniciando Red Neuronal...' : 'Activar Reconocimiento Gestual'}
+              {loadingAI ? 'Iniciando Sistemas...' : 'Entrar a la Experiencia'}
             </button>
           </div>
         )}
-        
-        {cameraActive && (
-          <div className="absolute bottom-6 left-6 flex items-center gap-3">
-             <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-             <span className="text-[10px] tracking-widest uppercase text-white/50 font-bold">Rastreo de mano activo</span>
-          </div>
-        )}
       </div>
+      
+      {cameraActive && isFullScreen && (
+         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-3 bg-black/30 backdrop-blur-sm px-6 py-3 rounded-full border border-white/5 pointer-events-none">
+            <div className="w-2 h-2 rounded-full bg-[#7000FF] animate-ping"></div>
+            <span className="text-[9px] tracking-[0.3em] uppercase text-white/60 font-bold">Rastreo Gestual Activo</span>
+         </div>
+       )}
     </div>
   );
 };
@@ -962,7 +1006,7 @@ export default function App() {
            </div>
         </section>
 
-        {/* --- 3D INTERACTIVE SCENE --- */}
+        {/* --- 3D INTERACTIVE SCENE WITH AI --- */}
         <section className="relative z-10 w-full flex justify-center py-20 px-8">
            <div className="max-w-[1400px] w-full">
                <EscenaZeronne />
