@@ -1,6 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Service, RevealProps } from './types';
+import * as THREE from 'three';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment';
 
 // --- TRANSLATIONS ---
 const translations = {
@@ -338,6 +341,97 @@ const GrowthImpactSection = ({ text }: { text: typeof translations.en.impact }) 
   );
 }
 
+// --- 3D SCENE COMPONENT ---
+const EscenaZeronne = () => {
+  const mountRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!mountRef.current) return;
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(45, mountRef.current.clientWidth / mountRef.current.clientHeight, 0.1, 100);
+    camera.position.set(0, 0, 5);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setSize(mountRef.current.clientWidth, mountRef.current.clientHeight);
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.2;
+    mountRef.current.appendChild(renderer.domElement);
+
+    const pmremGenerator = new THREE.PMREMGenerator(renderer);
+    scene.environment = pmremGenerator.fromScene(new RoomEnvironment(), 0.04).texture;
+
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.04;
+    controls.enablePan = false;
+    controls.minDistance = 3;
+    controls.maxDistance = 10;
+
+    const geometry = new THREE.TorusKnotGeometry(1, 0.35, 256, 64, 2, 3);
+    const material = new THREE.MeshPhysicalMaterial({
+      color: 0x111111,
+      metalness: 0.1,
+      roughness: 0.05,
+      envMapIntensity: 1.5,
+      clearcoat: 1.0,
+      clearcoatRoughness: 0.1,
+      transmission: 0.95,
+      thickness: 1.5,
+      ior: 1.5,
+    });
+    const toroide = new THREE.Mesh(geometry, material);
+    scene.add(toroide);
+
+    const luzFria = new THREE.DirectionalLight(0xe0f7ff, 3);
+    luzFria.position.set(5, 5, 2);
+    scene.add(luzFria);
+
+    const luzRelleno = new THREE.DirectionalLight(0x2a2a2a, 2);
+    luzRelleno.position.set(-5, -5, 2);
+    scene.add(luzRelleno);
+
+    const clock = new THREE.Clock();
+    let frameId: number;
+
+    const animate = () => {
+      frameId = requestAnimationFrame(animate);
+      const elapsedTime = clock.getElapsedTime();
+      
+      toroide.rotation.y = elapsedTime * 0.15;
+      toroide.rotation.x = elapsedTime * 0.1;
+      toroide.position.y = Math.sin(elapsedTime * 0.5) * 0.1;
+      
+      controls.update();
+      renderer.render(scene, camera);
+    };
+    animate();
+
+    const handleResize = () => {
+      if (!mountRef.current) return;
+      camera.aspect = mountRef.current.clientWidth / mountRef.current.clientHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(mountRef.current.clientWidth, mountRef.current.clientHeight);
+    };
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      cancelAnimationFrame(frameId);
+      if (mountRef.current) {
+        mountRef.current.removeChild(renderer.domElement);
+      }
+      geometry.dispose();
+      material.dispose();
+      renderer.dispose();
+    };
+  }, []);
+
+  return <div ref={mountRef} style={{ width: '100%', height: '500px', backgroundColor: 'transparent' }} />;
+};
+
+// --- MAIN APP COMPONENT ---
 export default function App() {
   const [lang, setLang] = useState<'en' | 'es'>('en');
   const [selectedService, setSelectedService] = useState<Service | null>(null);
@@ -525,7 +619,7 @@ export default function App() {
                   <p className="text-white/40 text-sm">{t.modal.startDesc}</p>
                 </div>
 
-               <form className="space-y-8" onSubmit={async (e) => {
+               <form className="space-y-8" onSubmit={async (e: any) => {
   e.preventDefault();
   const formData = {
     name: e.target.name.value,
@@ -717,6 +811,13 @@ export default function App() {
            </div>
         </section>
 
+        {/* --- 3D INTERACTIVE SCENE --- */}
+        <section className="relative z-10 w-full flex justify-center py-20 px-8">
+           <div className="max-w-[1400px] w-full">
+               <EscenaZeronne />
+           </div>
+        </section>
+
         {/* --- SERVICES BENTO GRID --- */}
         <section id="services" className="py-32 px-8 max-w-[1400px] mx-auto">
           <Reveal>
@@ -851,7 +952,7 @@ export default function App() {
                 <p className="text-white/40 tracking-widest text-[10px] uppercase font-light">{t.contact.mark}</p>
               </div>
               
-              <form className="space-y-6" onSubmit={async (e) => {
+              <form className="space-y-6" onSubmit={async (e: any) => {
   e.preventDefault();
   const formData = {
     name: e.target.name.value,
