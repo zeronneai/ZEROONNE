@@ -29,7 +29,17 @@ const translations = {
     agency: { text1: "is a next-gen", text2: "AI agency", text3: "focused on", text4: "creative", text5: "and", text6: "workflow optimization" },
     contact: { ready: "READY TO", transcend: "TRANSCEND?", mark: "Leave your mark below", namePlaceholder: "Full Name", emailPlaceholder: "Business Email", msgPlaceholder: "Tell us about your vision", submit: "Submit Request" },
     modal: { details: "Service Details", enquire: "Enquire Now", start: "Start a", project: "Project", startDesc: "Tell us about your vision. We will guide you from there.", labelName: "Name", labelProject: "Project Name", projectPlaceholder: "Project Title", labelEmail: "Email", labelDesc: "Project Description", submitProposal: "Submit Proposal" },
-    footer: { designed: "Designed by AI. Built for Humans." }
+    footer: { designed: "Designed by AI. Built for Humans." },
+    // NUEVAS TRADUCCIONES PARA LA ESCENA 3D
+    scene: { 
+      badge: "Immersive AI Experience", 
+      title: "Control the digital matrix", 
+      desc: "Use your mouse or touch the screen. For the real magic, turn on your camera, hold your hand a bit away from the screen, and move it in the air to control the elements.", 
+      loading: "Initiating Neural Network...", 
+      start: "Enter the Experience", 
+      close: "✕ Close Experience", 
+      tracking: "Gesture Tracking Active" 
+    }
   },
   es: {
     nav: { services: "Nuestros Servicios +", close: "Cerrar", contact: "Contacto" },
@@ -55,7 +65,17 @@ const translations = {
     agency: { text1: "es una", text2: "agencia de IA", text3: "de próxima generación enfocada en", text4: "creatividad", text5: "y", text6: "optimización de flujos de trabajo" },
     contact: { ready: "¿LISTO PARA", transcend: "TRANSCENDER?", mark: "Deja tu huella abajo", namePlaceholder: "Nombre Completo", emailPlaceholder: "Correo Empresarial", msgPlaceholder: "Cuéntanos sobre tu visión", submit: "Enviar Solicitud" },
     modal: { details: "Detalles del Servicio", enquire: "Consultar Ahora", start: "Inicia un", project: "Proyecto", startDesc: "Cuéntanos sobre tu visión. Te guiaremos desde allí.", labelName: "Nombre", labelProject: "Nombre del Proyecto", projectPlaceholder: "Título del Proyecto", labelEmail: "Correo", labelDesc: "Descripción del Proyecto", submitProposal: "Enviar Propuesta" },
-    footer: { designed: "Diseñado por IA. Construido para Humanos." }
+    footer: { designed: "Diseñado por IA. Construido para Humanos." },
+    // NUEVAS TRADUCCIONES PARA LA ESCENA 3D
+    scene: { 
+      badge: "Experiencia Inmersiva IA", 
+      title: "Controla la matriz digital", 
+      desc: "Usa tu ratón o toca la pantalla. Para la magia real, activa tu cámara, pon tu mano un poco lejos de la pantalla y muévela en el aire para controlar los elementos.", 
+      loading: "Iniciando Red Neuronal...", 
+      start: "Entrar a la Experiencia", 
+      close: "✕ Cerrar Experiencia", 
+      tracking: "Rastreo Gestual Activo" 
+    }
   }
 };
 
@@ -118,8 +138,10 @@ const GrowthImpactSection = ({ text }: { text: typeof translations.en.impact }) 
     </section>
   );
 }
+
 // --- 3D INTERACTIVE BRANDING SCENE WITH AI HAND TRACKING ---
-const EscenaZeronne = () => {
+// Nota: Ahora recibe 't' (las traducciones) como prop
+const EscenaZeronne = ({ t }: { t: typeof translations.en.scene }) => {
   const mountRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const handsRef = useRef<any>(null);
@@ -132,7 +154,6 @@ const EscenaZeronne = () => {
   useEffect(() => {
     if (!mountRef.current) return;
 
-    // --- THREE.JS SETUP ---
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(70, mountRef.current.clientWidth / mountRef.current.clientHeight, 0.1, 100);
     camera.position.z = 4;
@@ -142,7 +163,6 @@ const EscenaZeronne = () => {
     renderer.setSize(mountRef.current.clientWidth, mountRef.current.clientHeight);
     mountRef.current.appendChild(renderer.domElement);
 
-    // --- CARGAR LOGO DE ZERONNE ---
     const textureLoader = new THREE.TextureLoader();
     textureLoader.setCrossOrigin('anonymous'); 
     const logoTexture = textureLoader.load('https://res.cloudinary.com/dsprn0ew4/image/upload/v1771716684/z01_morado_nbanli.png');
@@ -181,7 +201,6 @@ const EscenaZeronne = () => {
       currentScales[i] = 1.0; 
     }
 
-    // --- LÓGICA DE INTERACCIÓN ---
     let handX = 0;
     let handY = 0;
     let isHandPresent = false;
@@ -226,7 +245,6 @@ const EscenaZeronne = () => {
       isHandPresent = false;
     };
 
-    // --- BUCLE DE ANIMACIÓN ---
     const clock = new THREE.Clock();
     let frameId: number;
 
@@ -315,7 +333,7 @@ const EscenaZeronne = () => {
       if (cameraRef.current) cameraRef.current.stop();
       if (handsRef.current) handsRef.current.close();
     };
-  }, []); // <--- ESTO ESTABA EN [isFullScreen]. DEJARLO VACÍO ARREGLA EL PROBLEMA.
+  }, []);
 
   const stopAI = () => {
     if (cameraRef.current) cameraRef.current.stop();
@@ -323,7 +341,6 @@ const EscenaZeronne = () => {
     setCameraActive(false);
     setIsFullScreen(false);
     (window as any).handLost();
-    // Forzar reajuste de tamaño de pantalla suave
     setTimeout(() => window.dispatchEvent(new Event('resize')), 100);
   };
 
@@ -385,7 +402,6 @@ const EscenaZeronne = () => {
       setCameraActive(true);
       setLoadingAI(false);
       setIsFullScreen(true);
-      // Forzar reajuste para pantalla completa
       setTimeout(() => window.dispatchEvent(new Event('resize')), 100);
     }
   };
@@ -394,16 +410,11 @@ const EscenaZeronne = () => {
     <div className={`${isFullScreen ? 'fixed inset-0 z-[9999] w-screen h-screen rounded-none bg-black' : 'relative w-full h-[600px] rounded-3xl border border-white/10 bg-[#050505]'} overflow-hidden transition-all duration-700 ease-in-out`}>
       
       <div ref={mountRef} className="absolute inset-0 z-10" />
-      
-      {/* VIDEO 100% INVISIBLE PERO EN EL DOM (Evita que Safari/Chrome lo maten) */}
       <video ref={videoRef} style={{ position: 'absolute', width: '1px', height: '1px', opacity: 0, pointerEvents: 'none' }} autoPlay muted playsInline />
 
       {isFullScreen && (
-        <button
-          onClick={stopAI}
-          className="absolute top-12 left-1/2 -translate-x-1/2 z-50 flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-white hover:bg-[#7000FF] hover:border-[#7000FF] transition-all duration-300 shadow-[0_0_30px_rgba(0,0,0,0.5)]"
-        >
-          <span className="text-sm font-bold uppercase tracking-widest">✕ Cerrar Experiencia</span>
+        <button onClick={stopAI} className="absolute top-12 left-1/2 -translate-x-1/2 z-50 flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-white hover:bg-[#7000FF] hover:border-[#7000FF] transition-all duration-300 shadow-[0_0_30px_rgba(0,0,0,0.5)]">
+          <span className="text-sm font-bold uppercase tracking-widest">{t.close}</span>
         </button>
       )}
 
@@ -411,18 +422,14 @@ const EscenaZeronne = () => {
         {!cameraActive && (
           <div className="bg-black/60 backdrop-blur-md p-8 rounded-2xl border border-white/10 text-center max-w-md pointer-events-auto">
             <div className="mb-4">
-              <span className="text-[#7000FF] text-[10px] uppercase tracking-[0.4em] font-bold animate-pulse">Experiencia Inmersiva IA</span>
+              <span className="text-[#7000FF] text-[10px] uppercase tracking-[0.4em] font-bold animate-pulse">{t.badge}</span>
             </div>
-            <h3 className="text-2xl font-light mb-4 text-white">Controla la matriz digital</h3>
+            <h3 className="text-2xl font-light mb-4 text-white">{t.title}</h3>
             <p className="text-white/50 text-sm mb-8 font-light leading-relaxed">
-              Utiliza tu ratón o dedo para interactuar. Para la experiencia completa, activa tu cámara y controla la nube de marcas con gestos en el aire.
+              {t.desc}
             </p>
-            <button 
-              onClick={initAI}
-              disabled={loadingAI}
-              className="bg-white text-black px-8 py-4 rounded-full font-bold uppercase tracking-widest text-[10px] hover:bg-[#7000FF] hover:text-white transition-all w-full disabled:opacity-50 hover:shadow-[0_0_30px_rgba(112,0,255,0.5)]"
-            >
-              {loadingAI ? 'Iniciando Red Neuronal...' : 'Entrar a la Experiencia'}
+            <button onClick={initAI} disabled={loadingAI} className="bg-white text-black px-8 py-4 rounded-full font-bold uppercase tracking-widest text-[10px] hover:bg-[#7000FF] hover:text-white transition-all w-full disabled:opacity-50 hover:shadow-[0_0_30px_rgba(112,0,255,0.5)]">
+              {loadingAI ? t.loading : t.start}
             </button>
           </div>
         )}
@@ -431,12 +438,13 @@ const EscenaZeronne = () => {
       {cameraActive && isFullScreen && (
          <div className="absolute bottom-12 left-1/2 -translate-x-1/2 flex items-center gap-3 bg-black/30 backdrop-blur-sm px-6 py-3 rounded-full border border-white/5 pointer-events-none">
             <div className="w-2 h-2 rounded-full bg-[#7000FF] animate-ping"></div>
-            <span className="text-[9px] tracking-[0.3em] uppercase text-white/60 font-bold">Rastreo Gestual Activo</span>
+            <span className="text-[9px] tracking-[0.3em] uppercase text-white/60 font-bold">{t.tracking}</span>
          </div>
        )}
     </div>
   );
 };
+
 // --- MAIN APP COMPONENT ---
 export default function App() {
   const [lang, setLang] = useState<'en' | 'es'>('en');
@@ -593,7 +601,7 @@ export default function App() {
         {/* --- 3D INTERACTIVE SCENE WITH AI --- */}
         <section className="relative z-10 w-full flex justify-center py-20 px-8">
            <div className="max-w-[1400px] w-full">
-               <EscenaZeronne />
+               <EscenaZeronne t={t.scene} />
            </div>
         </section>
 
