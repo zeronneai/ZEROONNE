@@ -556,25 +556,82 @@ export default function App() {
         </AnimatePresence>
 
         {/* --- HERO SECTION --- */}
-        <section className="relative h-screen flex flex-col justify-center items-center px-6 overflow-hidden">
+          <section className="relative h-screen flex flex-col justify-center items-center px-6 overflow-hidden">
+          {/* Deep Glow Background */}
           <div className="absolute inset-0 z-0 pointer-events-none">
             <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-[#7000FF]/10 rounded-full blur-[150px]"></div>
             <div className="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-[#7000FF]/5 rounded-full blur-[150px]"></div>
           </div>
+
           <div className="z-10 text-center relative">
-            <motion.span initial={{ opacity: 0 }} animate={{ opacity: 0.5 }} transition={{ delay: 0.2 }} className="text-[12px] tracking-[0.5em] uppercase mb-4 block">{t.hero.evolution}</motion.span>
-            <motion.h1 initial={{ opacity: 0, y: 100 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }} className="text-[12vw] md:text-[8vw] font-bold leading-[0.85] tracking-tighter">
+            <motion.span 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 0.5 }}
+              transition={{ delay: 0.2 }}
+              className="text-[12px] tracking-[0.5em] uppercase mb-4 block"
+            >
+              {t.hero.evolution}
+            </motion.span>
+            
+            <motion.h1 
+              initial={{ opacity: 0, y: 100 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
+              className="text-[12vw] md:text-[8vw] font-bold leading-[0.85] tracking-tighter"
+            >
               {t.hero.crafting} <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-b from-white to-[#7000FF]">{t.hero.intelligence}</span>
             </motion.h1>
-            <motion.div initial={{ width: 0 }} animate={{ width: '100%' }} transition={{ delay: 1, duration: 1.5 }} className="h-[1px] bg-gradient-to-r from-transparent via-[#7000FF] to-transparent mt-12 max-w-4xl mx-auto" />
+
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 0.7, y: 0 }}
+              transition={{ delay: 0.8, duration: 1 }}
+              className="mt-8 text-sm md:text-xl max-w-2xl mx-auto font-light leading-relaxed tracking-wide"
+            >
+              {t.hero.description}
+            </motion.p>
+
+            <motion.button
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ 
+                opacity: 1, 
+                y: 0,
+                scale: [1, 1.05, 1],
+              }}
+              transition={{ 
+                opacity: { delay: 1.2, duration: 1 },
+                y: { delay: 1.2, duration: 1 },
+                scale: { repeat: Infinity, duration: 2, ease: "easeInOut" }
+              }}
+              onClick={() => setIsContactOpen(true)}
+              className="mt-10 bg-[#7000FF] text-white px-10 py-5 rounded-full text-[11px] font-bold uppercase tracking-[0.3em] shadow-[0_0_30px_rgba(112,0,255,0.3)] hover:shadow-[0_0_50px_rgba(112,0,255,0.5)] transition-all duration-300"
+            >
+              {t.hero.cta}
+            </motion.button>
+
+            <motion.div 
+              initial={{ width: 0 }}
+              animate={{ width: '100%' }}
+              transition={{ delay: 1, duration: 1.5 }}
+              className="h-[1px] bg-gradient-to-r from-transparent via-[#7000FF] to-transparent mt-12 max-w-4xl mx-auto"
+            />
           </div>
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1, y: [0, 15, 0] }} transition={{ opacity: { delay: 1.5, duration: 1 }, y: { repeat: Infinity, duration: 2, ease: "easeInOut" } }} className="absolute bottom-12 flex flex-col items-center gap-2">
+
+          {/* Scroll Indicator */}
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1, y: [0, 15, 0] }}
+            transition={{ 
+              opacity: { delay: 1.5, duration: 1 },
+              y: { repeat: Infinity, duration: 2, ease: "easeInOut" } 
+            }}
+            className="absolute bottom-12 flex flex-col items-center gap-2"
+          >
             <span className="text-[9px] uppercase tracking-[0.3em] opacity-40">{t.hero.scroll}</span>
             <div className="w-[1px] h-12 bg-gradient-to-b from-[#7000FF] to-transparent"></div>
           </motion.div>
         </section>
-
         {/* --- WORK SECTION --- */}
         <section id="work" className="py-20 border-b border-white/5 overflow-hidden">
            <div className="px-8 max-w-[1400px] mx-auto mb-12">
