@@ -12,10 +12,24 @@ const translations = {
       crafting: "Scale Faster.",
       intelligence: "Dominate Completely.",
       description: "While traditional agencies take weeks, we use AI and automated workflows to launch premium video ads, branding, and web platforms that crush your competitors instantly.",
-      cta: "STAR SCALING NOW",
+      cta: "START SCALING NOW",
       scroll: "Scroll to Explore"
     },
-    work: { selected: "Selected Work", digital: "Digital", frontiers: "Frontiers", caseStudy: "CASE STUDY", anymore: "AND ANYMORE...", partOfIt: "YOU CAN BE PART OF IT.", startProject: "Start Project" },
+    // NUEVA SECCIÓN: EL ARSENAL (REEMPLAZA A WORK)
+    arsenal: {
+      title: "PROOF OF EXECUTION",
+      subtitle: "High-Converting Assets",
+      subtitleItalic: "Built at Scale.",
+      landings: "High-Velocity Landings & Web",
+      videos: "AI-Powered Video Ads",
+      branding: "Rapid-Deployment Branding",
+      hookTitle: "Maximum Impact. Zero Delays.",
+      hookDesc: "While your competitors are stuck in endless Zoom meetings, we are deploying months of creative work in a matter of days. Stop waiting. Start scaling.",
+      hookCta: "Start Your Project",
+      tagLive: "Live Platform",
+      tagVideo: "AI Video Ad",
+      tagBrand: "Brand Identity"
+    },
     services: {
       title: "What we do", subtitle: "Our Core", subtitleItalic: "Capabilities", viewProject: "VIEW PROJECT",
       items: [
@@ -37,7 +51,6 @@ const translations = {
     contact: { ready: "READY TO", transcend: "TRANSCEND?", mark: "Leave your mark below", namePlaceholder: "Full Name", emailPlaceholder: "Business Email", msgPlaceholder: "Tell us about your vision", submit: "Submit Request" },
     modal: { details: "Service Details", enquire: "Enquire Now", start: "Start a", project: "Project", startDesc: "Tell us about your vision. We will guide you from there.", labelName: "Name", labelProject: "Project Name", projectPlaceholder: "Project Title", labelEmail: "Email", labelDesc: "Project Description", submitProposal: "Submit Proposal" },
     footer: { designed: "Designed by AI. Built for Humans." },
-    // NUEVAS TRADUCCIONES PARA LA ESCENA 3D
     scene: { 
       badge: "Immersive AI Experience", 
       title: "Control the digital matrix", 
@@ -50,7 +63,7 @@ const translations = {
   },
   es: {
     nav: { services: "Nuestros Servicios +", close: "Cerrar", contact: "Contacto" },
-   hero: {
+    hero: {
       evolution: "La evolución no es opcional",
       crafting: "Escala Más Rápido.",
       intelligence: "Domina Completamente.",
@@ -58,7 +71,21 @@ const translations = {
       cta: "EMPIEZA A ESCALAR AHORA",
       scroll: "Desliza para Explorar"
     },
-    work: { selected: "Trabajos Seleccionados", digital: "Fronteras", frontiers: "Digitales", caseStudy: "ESTUDIO DE CASO", anymore: "Y AÚN HAY MÁS...", partOfIt: "TÚ PUEDES SER PARTE.", startProject: "Iniciar Proyecto" },
+    // NUEVA SECCIÓN: EL ARSENAL
+    arsenal: {
+      title: "PRUEBA DE EJECUCIÓN",
+      subtitle: "Activos de Alta Conversión",
+      subtitleItalic: "Creados a Escala.",
+      landings: "Landings y Web de Alta Velocidad",
+      videos: "Video Ads Impulsados por IA",
+      branding: "Branding de Despliegue Rápido",
+      hookTitle: "Máximo Impacto. Cero Retrasos.",
+      hookDesc: "Mientras tu competencia está atrapada en reuniones de Zoom interminables, nosotros desplegamos meses de trabajo creativo en cuestión de días. Deja de esperar. Empieza a escalar.",
+      hookCta: "Inicia tu Proyecto",
+      tagLive: "Plataforma Activa",
+      tagVideo: "Video Ad con IA",
+      tagBrand: "Identidad de Marca"
+    },
     services: {
       title: "Lo que hacemos", subtitle: "Nuestras Capacidades", subtitleItalic: "Centrales", viewProject: "VER PROYECTO",
       items: [
@@ -80,7 +107,6 @@ const translations = {
     contact: { ready: "¿LISTO PARA", transcend: "TRANSCENDER?", mark: "Deja tu huella abajo", namePlaceholder: "Nombre Completo", emailPlaceholder: "Correo Empresarial", msgPlaceholder: "Cuéntanos sobre tu visión", submit: "Enviar Solicitud" },
     modal: { details: "Detalles del Servicio", enquire: "Consultar Ahora", start: "Inicia un", project: "Proyecto", startDesc: "Cuéntanos sobre tu visión. Te guiaremos desde allí.", labelName: "Nombre", labelProject: "Nombre del Proyecto", projectPlaceholder: "Título del Proyecto", labelEmail: "Correo", labelDesc: "Descripción del Proyecto", submitProposal: "Enviar Propuesta" },
     footer: { designed: "Diseñado por IA. Construido para Humanos." },
-    // NUEVAS TRADUCCIONES PARA LA ESCENA 3D
     scene: { 
       badge: "Experiencia Inmersiva IA", 
       title: "Controla la matriz digital", 
@@ -154,7 +180,6 @@ const GrowthImpactSection = ({ text }: { text: typeof translations.en.impact }) 
 }
 
 // --- 3D INTERACTIVE BRANDING SCENE WITH AI HAND TRACKING ---
-// Nota: Ahora recibe 't' (las traducciones) como prop
 const EscenaZeronne = ({ t }: { t: typeof translations.en.scene }) => {
   const mountRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -459,6 +484,63 @@ const EscenaZeronne = ({ t }: { t: typeof translations.en.scene }) => {
   );
 };
 
+
+// --- COMPONENTE DE CARRUSEL "SELL LIKE CRAZY" ---
+const ArsenalCarousel = ({ title, items, type, tagLine }: { title: string, items: any[], type: 'landing' | 'video' | 'branding', tagLine: string }) => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  
+  const nextSlide = () => setCurrentIndex((prev) => (prev + 1 === items.length ? 0 : prev + 1));
+  const prevSlide = () => setCurrentIndex((prev) => (prev === 0 ? items.length - 1 : prev - 1));
+
+  return (
+    <div className="mb-24 relative w-full">
+       <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4">
+         <h3 className="text-2xl md:text-3xl font-bold tracking-tighter uppercase">{title}</h3>
+         <div className="flex gap-4">
+           <button onClick={prevSlide} className="w-12 h-12 flex items-center justify-center rounded-full border border-white/20 hover:bg-[#7000FF] hover:border-[#7000FF] transition-all text-white backdrop-blur-md">←</button>
+           <button onClick={nextSlide} className="w-12 h-12 flex items-center justify-center rounded-full border border-white/20 hover:bg-[#7000FF] hover:border-[#7000FF] transition-all text-white backdrop-blur-md">→</button>
+         </div>
+       </div>
+       
+       <div className="relative w-full aspect-[4/3] md:aspect-[21/9] bg-[#050505] border border-white/10 rounded-[2rem] overflow-hidden group">
+         <AnimatePresence mode="wait">
+            <motion.div 
+              key={currentIndex} 
+              initial={{ opacity: 0, x: 50 }} 
+              animate={{ opacity: 1, x: 0 }} 
+              exit={{ opacity: 0, x: -50 }} 
+              transition={{ duration: 0.4, ease: "easeInOut" }} 
+              className="absolute inset-0 w-full h-full"
+            >
+               {type === 'video' ? (
+                  <video src={items[currentIndex].videoSrc} autoPlay muted loop playsInline className="w-full h-full object-cover opacity-60 group-hover:opacity-90 transition-opacity duration-700" />
+               ) : (
+                  type === 'landing' && items[currentIndex].link ? (
+                    <a href={items[currentIndex].link} target="_blank" rel="noreferrer" className="block w-full h-full">
+                      <img src={items[currentIndex].img} alt={items[currentIndex].title} className="w-full h-full object-cover opacity-60 group-hover:opacity-90 transition-all duration-700 group-hover:scale-105 cursor-pointer" />
+                    </a>
+                  ) : (
+                    <img src={items[currentIndex].img} alt={items[currentIndex].title} className="w-full h-full object-cover opacity-60 group-hover:opacity-90 transition-all duration-700 group-hover:scale-105" />
+                  )
+               )}
+               
+               {/* Gradiente Oscuro de Fondo para lectura */}
+               <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent pointer-events-none" />
+               
+               {/* Textos del Slide */}
+               <div className="absolute bottom-0 left-0 p-8 md:p-12 z-20 pointer-events-none">
+                  <div className="text-[10px] text-[#7000FF] font-bold tracking-[0.3em] mb-3 uppercase">{tagLine}</div>
+                  <div className="text-3xl md:text-5xl font-black uppercase tracking-tighter mb-2">{items[currentIndex].title}</div>
+                  <div className="text-sm md:text-base text-white/60 tracking-widest font-light">{items[currentIndex].desc}</div>
+               </div>
+            </motion.div>
+         </AnimatePresence>
+       </div>
+    </div>
+  )
+}
+
+
 // --- MAIN APP COMPONENT ---
 export default function App() {
   const [lang, setLang] = useState<'en' | 'es'>('en');
@@ -468,12 +550,26 @@ export default function App() {
 
   const t = translations[lang];
 
-  const projects = [
-    { id: '01', title: 'HOUSE OF KINGS', category: lang === 'en' ? 'Immersive Web Experience' : 'Experiencia Web Inmersiva', image: 'https://res.cloudinary.com/dsprn0ew4/image/upload/v1770931913/Remove_the_loose_4k_202602100841_ed1o70.jpg' },
-    { id: '02', title: 'AMO CAFE', category: lang === 'en' ? 'Sensory Brand Identity' : 'Identidad de Marca Sensorial', image: 'https://res.cloudinary.com/dsprn0ew4/image/upload/v1770932056/Generate_this_image_4k_202602121532_oyxlid.jpg' },
-    { id: '03', title: 'ALEXBOOTS', category: lang === 'en' ? 'High-Fidelity E-Commerce' : 'E-Commerce de Alta Fidelidad', image: 'https://res.cloudinary.com/dsprn0ew4/image/upload/v1770931913/A_detailed_cinematic_4k_202602091405_lnlgb5.jpg' },
-    { id: '04', title: 'THECOCREATIVE HUB', category: lang === 'en' ? 'Innovation Platform' : 'Plataforma de Innovación', image: 'https://res.cloudinary.com/dsprn0ew4/image/upload/v1770932085/A_photorealistic_wide_4k_202602121534_zixtsc.jpg' }
-  ];
+  // --- DATOS DE TUS PROYECTOS (Reemplaza los placeholders con tus links reales) ---
+  const portfolioData = {
+    landings: [
+      { id: 1, title: 'The CoCreative Hub', desc: 'Innovation Platform', img: 'https://res.cloudinary.com/dsprn0ew4/image/upload/v1770932085/A_photorealistic_wide_4k_202602121534_zixtsc.jpg', link: 'https://thecocreativehub.com' }, // Agrega tu link real
+      { id: 2, title: 'AlexBoots', desc: 'High-Fidelity E-Commerce', img: 'https://res.cloudinary.com/dsprn0ew4/image/upload/v1770931913/A_detailed_cinematic_4k_202602091405_lnlgb5.jpg', link: 'https://alexboots.com' }, // Agrega tu link real
+      { id: 3, title: 'Leslivefit', desc: 'Fitness Lead-Gen', img: 'https://res.cloudinary.com/dsprn0ew4/image/upload/v1770931913/A_detailed_cinematic_4k_202602091405_lnlgb5.jpg', link: '#' } // Cambia la imagen y link por los de Leslivefit
+    ],
+    videos: [
+      { id: 4, title: 'House of Kings', desc: 'Casino Promo', videoSrc: 'https://res.cloudinary.com/dsprn0ew4/video/upload/v1770924915/Generate_a_cinematic_1080p_202602121329_eiuxgx.mp4' }, // Reemplaza con video real
+      { id: 5, title: 'Amo Cafe', desc: 'Sensory Experience', videoSrc: 'https://res.cloudinary.com/dsprn0ew4/video/upload/v1770924915/Generate_a_cinematic_1080p_202602121329_eiuxgx.mp4' }, // Reemplaza con video real
+      { id: 6, title: 'SunlandPark', desc: 'Event Ad', videoSrc: 'https://res.cloudinary.com/dsprn0ew4/video/upload/v1770924915/Generate_a_cinematic_1080p_202602121329_eiuxgx.mp4' }, // Reemplaza con video real
+      { id: 7, title: 'Zeronne Agency', desc: 'Corporate Growth', videoSrc: 'https://res.cloudinary.com/dsprn0ew4/video/upload/v1770924915/Generate_a_cinematic_1080p_202602121329_eiuxgx.mp4' } // Reemplaza con video real
+    ],
+    branding: [
+      { id: 8, title: 'The CoCreative Hub', desc: 'Full Identity', img: 'https://res.cloudinary.com/dsprn0ew4/image/upload/v1770932085/A_photorealistic_wide_4k_202602121534_zixtsc.jpg' },
+      { id: 9, title: "Chingon Cuh'ts", desc: 'Rapid Graphics', img: 'https://res.cloudinary.com/dsprn0ew4/image/upload/v1770931913/Remove_the_loose_4k_202602100841_ed1o70.jpg' }, // Reemplaza con collage chingon
+      { id: 10, title: 'BadAssHuman', desc: 'Apparel & Brand', img: 'https://res.cloudinary.com/dsprn0ew4/image/upload/v1770932056/Generate_this_image_4k_202602121532_oyxlid.jpg' }, // Reemplaza con collage
+      { id: 11, title: 'House of Kings', desc: 'Luxury Collaterals', img: 'https://res.cloudinary.com/dsprn0ew4/image/upload/v1770931913/Remove_the_loose_4k_202602100841_ed1o70.jpg' } // Reemplaza con collage
+    ]
+  };
 
   const handleWhatsAppClick = () => {
     const phoneNumber = '+5216142857193';
@@ -632,42 +728,51 @@ export default function App() {
             <div className="w-[1px] h-12 bg-gradient-to-b from-[#7000FF] to-transparent"></div>
           </motion.div>
         </section>
-        {/* --- WORK SECTION --- */}
-        <section id="work" className="py-20 border-b border-white/5 overflow-hidden">
-           <div className="px-8 max-w-[1400px] mx-auto mb-12">
+
+
+        {/* --- THE ARSENAL SECTION (NUEVA SECCIÓN REEMPLAZA A 'WORK') --- */}
+        <section id="work" className="py-32 border-b border-white/5 overflow-hidden">
+           <div className="px-8 max-w-[1400px] mx-auto mb-20">
                <Reveal>
-                   <div className="flex flex-col md:flex-row justify-between items-end">
-                       <div>
-                          <h2 className="text-[10px] uppercase tracking-[0.5em] text-[#7000FF] mb-4">{t.work.selected}</h2>
-                          <h3 className="text-4xl md:text-5xl font-light tracking-tight">{t.work.digital} <span className="italic">{t.work.frontiers}</span></h3>
-                       </div>
-                       <div className="hidden md:block text-[10px] tracking-widest opacity-40 uppercase">2023 — 2025</div>
+                   <div className="flex flex-col text-center items-center">
+                       <h2 className="text-[10px] uppercase tracking-[0.5em] text-[#7000FF] mb-4">{t.arsenal.title}</h2>
+                       <h3 className="text-4xl md:text-6xl font-light tracking-tight">{t.arsenal.subtitle} <span className="italic font-bold text-[#7000FF]">{t.arsenal.subtitleItalic}</span></h3>
                    </div>
                </Reveal>
            </div>
-           <div className="relative w-full px-8 max-w-[1400px] mx-auto">
-               <div className="grid grid-cols-1 gap-16 md:gap-24">
-                   {projects.map((project, index) => (
-                       <Reveal key={project.id}>
-                           <div className="group relative w-full aspect-video md:aspect-[16/7] bg-[#080808] border border-white/5 rounded-2xl overflow-hidden cursor-pointer">
-                               <img src={project.image} alt={project.title} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-80 group-hover:opacity-100" />
-                               <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent z-10" />
-                               <div className="absolute bottom-0 left-0 p-8 z-20">
-                                   <div className="text-[10px] text-[#7000FF] tracking-widest mb-2">{t.work.caseStudy} {project.id}</div>
-                                   <div className="text-2xl md:text-4xl font-bold uppercase tracking-tighter">{project.title}</div>
-                                   <div className="text-[10px] text-white/40 tracking-widest mt-2 uppercase">{project.category}</div>
-                               </div>
-                           </div>
-                       </Reveal>
-                   ))}
-               </div>
-               <div className="mt-24 md:mt-32 pt-20 pb-40 text-center">
-                 <Reveal viewport={{ once: true, amount: 0.8 }}><p className="text-[8vw] md:text-[6vw] font-black uppercase text-[#7000FF] leading-none mb-8">{t.work.anymore}</p></Reveal>
-                 <Reveal viewport={{ once: true, amount: 0.8 }}><p className="text-[8vw] md:text-[6vw] font-black uppercase text-[#7000FF] leading-none">{t.work.partOfIt}</p></Reveal>
-                 <motion.button onClick={handleWhatsAppClick} className="mt-16 bg-[#7000FF] text-white px-10 py-5 rounded-full font-bold uppercase tracking-[0.2em] text-[12px] hover:shadow-[0_0_50px_rgba(112,0,255,0.4)] transition-all duration-300" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.5 }} transition={{ delay: 0.8, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}>{t.work.startProject}</motion.button>
+           
+           <div className="px-8 max-w-[1400px] mx-auto">
+               <Reveal>
+                  <ArsenalCarousel title={t.arsenal.landings} items={portfolioData.landings} type="landing" tagLine={t.arsenal.tagLive} />
+               </Reveal>
+               
+               <Reveal>
+                  <ArsenalCarousel title={t.arsenal.videos} items={portfolioData.videos} type="video" tagLine={t.arsenal.tagVideo} />
+               </Reveal>
+               
+               <Reveal>
+                  <ArsenalCarousel title={t.arsenal.branding} items={portfolioData.branding} type="branding" tagLine={t.arsenal.tagBrand} />
+               </Reveal>
+
+               {/* EL GANCHO FINAL (HOOK "SELL LIKE CRAZY") */}
+               <div className="mt-32 mb-10 text-center relative p-12 md:p-24 rounded-[3rem] border border-[#7000FF]/20 bg-gradient-to-b from-[#7000FF]/5 to-transparent overflow-hidden">
+                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[1px] bg-gradient-to-r from-transparent via-[#7000FF] to-transparent"></div>
+                 <Reveal viewport={{ once: true, amount: 0.5 }}>
+                   <h3 className="text-4xl md:text-6xl font-black uppercase text-white tracking-tighter mb-6">{t.arsenal.hookTitle}</h3>
+                   <p className="text-lg md:text-2xl font-light text-white/60 max-w-4xl mx-auto mb-12">{t.arsenal.hookDesc}</p>
+                   <motion.button 
+                     onClick={() => setIsContactOpen(true)} 
+                     className="bg-[#7000FF] text-white px-12 py-5 rounded-full font-bold uppercase tracking-[0.2em] text-[12px] hover:shadow-[0_0_50px_rgba(112,0,255,0.4)] transition-all duration-300"
+                     whileHover={{ scale: 1.05 }}
+                     whileTap={{ scale: 0.95 }}
+                   >
+                     {t.arsenal.hookCta}
+                   </motion.button>
+                 </Reveal>
                </div>
            </div>
         </section>
+
 
         {/* --- 3D INTERACTIVE SCENE WITH AI --- */}
         <section className="relative z-10 w-full flex justify-center py-20 px-8">
@@ -716,7 +821,7 @@ export default function App() {
                    {[1, 2].map((i) => (
                       <div key={i} className="flex gap-20 text-6xl md:text-8xl font-black opacity-20 pr-20 items-center">
                        <span>{t.marquee.small}</span> <span>{t.marquee.personal}</span> <span>{t.marquee.growth}</span> <span className="text-[#7000FF] opacity-100">{t.marquee.everyone}</span>
-                     </div>
+                      </div>
                    ))}
                  </motion.div>
                </div>
