@@ -7,7 +7,7 @@ import * as THREE from 'three';
 const translations = {
   en: {
     nav: { services: "Our Services +", close: "Close", contact: "Contact" },
-   hero: {
+    hero: {
       evolution: "Evolution is not optional",
       crafting: "How much revenue are you losing",
       intelligence: "by relying on traditional marketing?",
@@ -15,7 +15,6 @@ const translations = {
       cta: "START SCALING NOW",
       scroll: "Scroll to Explore"
     },
-    // SECCIÓN: EL ARSENAL (OPCIÓN 3 APLICADA)
     arsenal: {
       title: "PROOF OF EXECUTION",
       subtitle: "Automated Ecosystems Built",
@@ -63,7 +62,7 @@ const translations = {
   },
   es: {
     nav: { services: "Nuestros Servicios +", close: "Cerrar", contact: "Contacto" },
-   hero: {
+    hero: {
       evolution: "La evolución no es opcional",
       crafting: "¿Cuánto dinero estás perdiendo",
       intelligence: "por depender del marketing tradicional?",
@@ -71,7 +70,6 @@ const translations = {
       cta: "EMPIEZA A ESCALAR AHORA",
       scroll: "Desliza para Explorar"
     },
-    // SECCIÓN: EL ARSENAL (OPCIÓN 3 APLICADA)
     arsenal: {
       title: "PRUEBA DE EJECUCIÓN",
       subtitle: "Ecosistemas Automatizados Creados",
@@ -577,19 +575,11 @@ export default function App() {
   };
 
   return (
-   <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 2, ease: "easeOut", delay: 0.5 }} className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
-        <video 
-          autoPlay 
-          loop 
-          muted 
-          playsInline 
-          preload="metadata"
-          poster="https://res.cloudinary.com/dsprn0ew4/image/upload/f_auto,q_auto,w_1280/v1770924915/Generate_a_cinematic_1080p_202602121329_eiuxgx.jpg"
-          className="w-full h-full object-cover opacity-40 grayscale-[0.5]"
-        >
-          {/* Formato ultra-comprimido moderno (WebM) gracias a f_auto */}
-          <source src="https://res.cloudinary.com/dsprn0ew4/video/upload/f_auto,q_auto,w_1280/v1770924915/Generate_a_cinematic_1080p_202602121329_eiuxgx.mp4" type="video/webm" />
-          {/* Respaldo tradicional (MP4) comprimido por q_auto */}
+    <div className="bg-[#000000] text-white font-sans selection:bg-[#7000FF] selection:text-white min-h-screen relative">
+      
+      {/* --- BACKGROUND VIDEO OPTIMIZADO (Seguro y Rápido) --- */}
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 2, ease: "easeOut", delay: 0.5 }} className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+        <video autoPlay loop muted playsInline className="w-full h-full object-cover opacity-40 grayscale-[0.5]">
           <source src="https://res.cloudinary.com/dsprn0ew4/video/upload/q_auto,w_1280/v1770924915/Generate_a_cinematic_1080p_202602121329_eiuxgx.mp4" type="video/mp4" />
         </video>
         <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px]"></div>
@@ -667,17 +657,17 @@ export default function App() {
             <div className="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-[#7000FF]/5 rounded-full blur-[150px]"></div>
           </div>
 
-          <div className="z-10 text-center relative">
+          <div className="z-10 text-center relative w-full px-4">
             <motion.span 
               initial={{ opacity: 0 }}
               animate={{ opacity: 0.5 }}
               transition={{ delay: 0.2 }}
-              className="text-[12px] tracking-[0.5em] uppercase mb-4 block"
+              className="text-[12px] tracking-[0.5em] uppercase mb-6 block"
             >
               {t.hero.evolution}
             </motion.span>
             
-           <motion.h1 
+            <motion.h1 
               initial={{ opacity: 0, y: 100 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
