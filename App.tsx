@@ -50,7 +50,14 @@ const translations = {
   },
   es: {
     nav: { services: "Nuestros Servicios +", close: "Cerrar", contact: "Contacto" },
-    hero: { evolution: "La evolución no es opcional", crafting: "CREANDO", intelligence: "INTELIGENCIA", scroll: "Desliza para Explorar" },
+   hero: {
+      evolution: "La evolución no es opcional",
+      crafting: "Escala Más Rápido.",
+      intelligence: "Domina Completamente.",
+      description: "Mientras que las agencias tradicionales tardan semanas, nosotros utilizamos IA y flujos de trabajo automatizados para lanzar anuncios de video premium, branding y plataformas web que aplastan a tu competencia al instante.",
+      cta: "EMPIEZA A ESCALAR AHORA",
+      scroll: "Desliza para Explorar"
+    },
     work: { selected: "Trabajos Seleccionados", digital: "Fronteras", frontiers: "Digitales", caseStudy: "ESTUDIO DE CASO", anymore: "Y AÚN HAY MÁS...", partOfIt: "TÚ PUEDES SER PARTE.", startProject: "Iniciar Proyecto" },
     services: {
       title: "Lo que hacemos", subtitle: "Nuestras Capacidades", subtitleItalic: "Centrales", viewProject: "VER PROYECTO",
