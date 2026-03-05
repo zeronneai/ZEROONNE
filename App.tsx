@@ -7,11 +7,11 @@ import * as THREE from 'three';
 const translations = {
   en: {
     nav: { services: "Our Services +", close: "Close", contact: "Contact" },
-    hero: {
+   hero: {
       evolution: "Evolution is not optional",
-      crafting: "Scale Faster.",
-      intelligence: "Dominate Completely.",
-      description: "While traditional agencies take weeks, we use AI and automated workflows to launch premium video ads, branding, and web platforms that crush your competitors instantly.",
+      crafting: "How much revenue are you losing",
+      intelligence: "by relying on traditional marketing?",
+      description: "Scale faster. Dominate completely. While traditional agencies take weeks, we use AI and automated workflows to launch premium video ads, branding, and web platforms that crush your competitors instantly.",
       cta: "START SCALING NOW",
       scroll: "Scroll to Explore"
     },
@@ -63,11 +63,11 @@ const translations = {
   },
   es: {
     nav: { services: "Nuestros Servicios +", close: "Cerrar", contact: "Contacto" },
-    hero: {
+   hero: {
       evolution: "La evolución no es opcional",
-      crafting: "Escala Más Rápido.",
-      intelligence: "Domina Completamente.",
-      description: "Mientras que las agencias tradicionales tardan semanas, nosotros utilizamos IA y flujos de trabajo automatizados para lanzar anuncios de video premium, branding y plataformas web que aplastan a tu competencia al instante.",
+      crafting: "¿Cuánto dinero estás perdiendo",
+      intelligence: "por depender del marketing tradicional?",
+      description: "Escala más rápido. Domina completamente. Mientras que las agencias tradicionales tardan semanas, nosotros utilizamos IA y flujos de trabajo automatizados para lanzar anuncios de video premium, branding y plataformas web que aplastan a tu competencia al instante.",
       cta: "EMPIEZA A ESCALAR AHORA",
       scroll: "Desliza para Explorar"
     },
@@ -667,11 +667,11 @@ export default function App() {
               {t.hero.evolution}
             </motion.span>
             
-            <motion.h1 
+           <motion.h1 
               initial={{ opacity: 0, y: 100 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-              className="text-[12vw] md:text-[8vw] font-bold leading-[0.85] tracking-tighter"
+              className="text-4xl md:text-6xl lg:text-7xl font-bold leading-tight tracking-tighter max-w-5xl mx-auto"
             >
               {t.hero.crafting} <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-b from-white to-[#7000FF]">{t.hero.intelligence}</span>
