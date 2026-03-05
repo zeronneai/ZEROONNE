@@ -7,7 +7,14 @@ import * as THREE from 'three';
 const translations = {
   en: {
     nav: { services: "Our Services +", close: "Close", contact: "Contact" },
-    hero: { evolution: "Evolution is not optional", crafting: "CRAFTING", intelligence: "INTELLIGENCE", scroll: "Scroll to Explore" },
+    hero: {
+      evolution: "Evolution is not optional",
+      crafting: "Scale Faster.",
+      intelligence: "Dominate Completely.",
+      description: "While traditional agencies take weeks, we use AI and automated workflows to launch premium video ads, branding, and web platforms that crush your competitors instantly.",
+      cta: "STAR SCALING NOW",
+      scroll: "Scroll to Explore"
+    },
     work: { selected: "Selected Work", digital: "Digital", frontiers: "Frontiers", caseStudy: "CASE STUDY", anymore: "AND ANYMORE...", partOfIt: "YOU CAN BE PART OF IT.", startProject: "Start Project" },
     services: {
       title: "What we do", subtitle: "Our Core", subtitleItalic: "Capabilities", viewProject: "VIEW PROJECT",
