@@ -577,10 +577,20 @@ export default function App() {
   };
 
   return (
-    <div className="bg-[#000000] text-white font-sans selection:bg-[#7000FF] selection:text-white min-h-screen relative">
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 2, ease: "easeOut", delay: 0.5 }} className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
-        <video autoPlay loop muted playsInline className="w-full h-full object-cover opacity-40 grayscale-[0.5]">
-          <source src="https://res.cloudinary.com/dsprn0ew4/video/upload/v1770924915/Generate_a_cinematic_1080p_202602121329_eiuxgx.mp4" type="video/mp4" />
+   <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 2, ease: "easeOut", delay: 0.5 }} className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+        <video 
+          autoPlay 
+          loop 
+          muted 
+          playsInline 
+          preload="metadata"
+          poster="https://res.cloudinary.com/dsprn0ew4/image/upload/f_auto,q_auto,w_1280/v1770924915/Generate_a_cinematic_1080p_202602121329_eiuxgx.jpg"
+          className="w-full h-full object-cover opacity-40 grayscale-[0.5]"
+        >
+          {/* Formato ultra-comprimido moderno (WebM) gracias a f_auto */}
+          <source src="https://res.cloudinary.com/dsprn0ew4/video/upload/f_auto,q_auto,w_1280/v1770924915/Generate_a_cinematic_1080p_202602121329_eiuxgx.mp4" type="video/webm" />
+          {/* Respaldo tradicional (MP4) comprimido por q_auto */}
+          <source src="https://res.cloudinary.com/dsprn0ew4/video/upload/q_auto,w_1280/v1770924915/Generate_a_cinematic_1080p_202602121329_eiuxgx.mp4" type="video/mp4" />
         </video>
         <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px]"></div>
       </motion.div>
