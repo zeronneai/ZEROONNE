@@ -15,11 +15,11 @@ const translations = {
       cta: "START SCALING NOW",
       scroll: "Scroll to Explore"
     },
-    // NUEVA SECCIÓN: EL ARSENAL (REEMPLAZA A WORK)
+    // SECCIÓN: EL ARSENAL (OPCIÓN 3 APLICADA)
     arsenal: {
       title: "PROOF OF EXECUTION",
-      subtitle: "High-Converting Assets",
-      subtitleItalic: "Built at Scale.",
+      subtitle: "Automated Ecosystems Built",
+      subtitleItalic: "To Scale Your Brand.",
       landings: "High-Velocity Landings & Web",
       videos: "AI-Powered Video Ads",
       branding: "Rapid-Deployment Branding",
@@ -71,11 +71,11 @@ const translations = {
       cta: "EMPIEZA A ESCALAR AHORA",
       scroll: "Desliza para Explorar"
     },
-    // NUEVA SECCIÓN: EL ARSENAL
+    // SECCIÓN: EL ARSENAL (OPCIÓN 3 APLICADA)
     arsenal: {
       title: "PRUEBA DE EJECUCIÓN",
-      subtitle: "Activos de Alta Conversión",
-      subtitleItalic: "Creados a Escala.",
+      subtitle: "Ecosistemas Automatizados Creados",
+      subtitleItalic: "Para Escalar Tu Marca.",
       landings: "Landings y Web de Alta Velocidad",
       videos: "Video Ads Impulsados por IA",
       branding: "Branding de Despliegue Rápido",
@@ -484,7 +484,6 @@ const EscenaZeronne = ({ t }: { t: typeof translations.en.scene }) => {
   );
 };
 
-
 // --- COMPONENTE DE CARRUSEL "SELL LIKE CRAZY" ---
 const ArsenalCarousel = ({ title, items, type, tagLine }: { title: string, items: any[], type: 'landing' | 'video' | 'branding', tagLine: string }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -540,7 +539,6 @@ const ArsenalCarousel = ({ title, items, type, tagLine }: { title: string, items
   )
 }
 
-
 // --- MAIN APP COMPONENT ---
 export default function App() {
   const [lang, setLang] = useState<'en' | 'es'>('en');
@@ -550,24 +548,24 @@ export default function App() {
 
   const t = translations[lang];
 
-  // --- DATOS DE TUS PROYECTOS (Reemplaza los placeholders con tus links reales) ---
+  // --- DATOS DE TUS PROYECTOS INTEGRADOS ---
   const portfolioData = {
     landings: [
-      { id: 1, title: 'The CoCreative Hub', desc: 'Innovation Platform', img: 'https://res.cloudinary.com/dsprn0ew4/image/upload/v1770932085/A_photorealistic_wide_4k_202602121534_zixtsc.jpg', link: 'https://thecocreativehub.com' }, // Agrega tu link real
-      { id: 2, title: 'AlexBoots', desc: 'High-Fidelity E-Commerce', img: 'https://res.cloudinary.com/dsprn0ew4/image/upload/v1770931913/A_detailed_cinematic_4k_202602091405_lnlgb5.jpg', link: 'https://alexboots.com' }, // Agrega tu link real
-      { id: 3, title: 'Leslivefit', desc: 'Fitness Lead-Gen', img: 'https://res.cloudinary.com/dsprn0ew4/image/upload/v1770931913/A_detailed_cinematic_4k_202602091405_lnlgb5.jpg', link: '#' } // Cambia la imagen y link por los de Leslivefit
+      { id: 1, title: 'The CoCreative Hub', desc: 'Innovation Platform', img: 'https://res.cloudinary.com/dsprn0ew4/image/upload/v1772737712/Quiero_crear_una_iamgen_asi_como_la_de_las_botas_p_delpmaspu_jjdwz4.jpg', link: 'https://www.thecocreativehub.us/' },
+      { id: 2, title: 'AlexBoots', desc: 'High-Fidelity E-Commerce', img: 'https://res.cloudinary.com/dsprn0ew4/image/upload/v1772737038/A_highend_leather_4k_202602161658_rkl4ba.jpg', link: 'https://alexboots.vercel.app/' },
+      { id: 3, title: 'Leslivefit', desc: 'Fitness Lead-Gen', img: 'https://res.cloudinary.com/dsprn0ew4/image/upload/v1772737785/Quiero_que_el_tenis_sea_color_rosa_y_que_se_vea_te_delpmaspu_j0mggo.jpg', link: 'https://leslivefit.com/' }
     ],
     videos: [
-      { id: 4, title: 'House of Kings', desc: 'Casino Promo', videoSrc: 'https://res.cloudinary.com/dsprn0ew4/video/upload/v1770924915/Generate_a_cinematic_1080p_202602121329_eiuxgx.mp4' }, // Reemplaza con video real
-      { id: 5, title: 'Amo Cafe', desc: 'Sensory Experience', videoSrc: 'https://res.cloudinary.com/dsprn0ew4/video/upload/v1770924915/Generate_a_cinematic_1080p_202602121329_eiuxgx.mp4' }, // Reemplaza con video real
-      { id: 6, title: 'SunlandPark', desc: 'Event Ad', videoSrc: 'https://res.cloudinary.com/dsprn0ew4/video/upload/v1770924915/Generate_a_cinematic_1080p_202602121329_eiuxgx.mp4' }, // Reemplaza con video real
-      { id: 7, title: 'Zeronne Agency', desc: 'Corporate Growth', videoSrc: 'https://res.cloudinary.com/dsprn0ew4/video/upload/v1770924915/Generate_a_cinematic_1080p_202602121329_eiuxgx.mp4' } // Reemplaza con video real
+      { id: 4, title: 'House of Kings', desc: 'Casino Promo', videoSrc: 'https://res.cloudinary.com/dsprn0ew4/video/upload/v1772738027/WhatsApp_Video_2026-03-05_at_1.11.55_PM_q5rdqg.mp4' },
+      { id: 5, title: 'Amo Cafe', desc: 'Sensory Experience', videoSrc: 'https://res.cloudinary.com/dsprn0ew4/video/upload/v1772738027/WhatsApp_Video_2026-03-05_at_1.12.55_PM_ax3f8b.mp4' },
+      { id: 6, title: 'SunlandPark', desc: 'Event Ad', videoSrc: 'https://res.cloudinary.com/dsprn0ew4/video/upload/v1772738027/WhatsApp_Video_2026-03-05_at_1.12.28_PM_yyry1n.mp4' },
+      { id: 7, title: 'Zeronne Agency', desc: 'Corporate Growth', videoSrc: 'https://res.cloudinary.com/dsprn0ew4/video/upload/v1772738025/WhatsApp_Video_2026-03-05_at_1.11.33_PM_esx5ko.mp4' }
     ],
     branding: [
-      { id: 8, title: 'The CoCreative Hub', desc: 'Full Identity', img: 'https://res.cloudinary.com/dsprn0ew4/image/upload/v1770932085/A_photorealistic_wide_4k_202602121534_zixtsc.jpg' },
-      { id: 9, title: "Chingon Cuh'ts", desc: 'Rapid Graphics', img: 'https://res.cloudinary.com/dsprn0ew4/image/upload/v1770931913/Remove_the_loose_4k_202602100841_ed1o70.jpg' }, // Reemplaza con collage chingon
-      { id: 10, title: 'BadAssHuman', desc: 'Apparel & Brand', img: 'https://res.cloudinary.com/dsprn0ew4/image/upload/v1770932056/Generate_this_image_4k_202602121532_oyxlid.jpg' }, // Reemplaza con collage
-      { id: 11, title: 'House of Kings', desc: 'Luxury Collaterals', img: 'https://res.cloudinary.com/dsprn0ew4/image/upload/v1770931913/Remove_the_loose_4k_202602100841_ed1o70.jpg' } // Reemplaza con collage
+      { id: 8, title: 'The CoCreative Hub', desc: 'Full Identity', img: 'https://res.cloudinary.com/dsprn0ew4/image/upload/v1772737346/Crea_una_imagen_uniendo_esas_4_imagenes_en_tipo_co_delpmaspu_smuprv.jpg' },
+      { id: 9, title: "Chingon Cuh'ts", desc: 'Rapid Graphics', img: 'https://res.cloudinary.com/dsprn0ew4/image/upload/v1772737409/Crea_una_imagen_uniendo_esas_3_imagenes_en_tipo_co_delpmaspu_1_yqixns.jpg' },
+      { id: 10, title: 'BadAssHuman', desc: 'Apparel & Brand', img: 'https://res.cloudinary.com/dsprn0ew4/image/upload/v1772737346/Crea_una_imagen_uniendo_esas_3_imagenes_en_tipo_co_delpmaspu_vzyfgr.jpg' },
+      { id: 11, title: 'House of Kings', desc: 'Luxury Collaterals', img: 'https://res.cloudinary.com/dsprn0ew4/image/upload/v1772737346/Crea_una_imagen_uniendo_esas_4_imagenes_en_tipo_co_delpmaspu_1_m78dys.jpg' }
     ]
   };
 
@@ -730,7 +728,7 @@ export default function App() {
         </section>
 
 
-        {/* --- THE ARSENAL SECTION (NUEVA SECCIÓN REEMPLAZA A 'WORK') --- */}
+        {/* --- THE ARSENAL SECTION --- */}
         <section id="work" className="py-32 border-b border-white/5 overflow-hidden">
            <div className="px-8 max-w-[1400px] mx-auto mb-20">
                <Reveal>
