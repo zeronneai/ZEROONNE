@@ -536,189 +536,180 @@ const ArsenalCarousel = ({ title, items, type, tagLine }: { title: string, items
 }
 
 // ============================================================
-// CANVAS FRAME-BY-FRAME — estrategia Apple/Stripe
-//
-// Cómo funciona:
-// 1. Cargamos el video en un <video> oculto
-// 2. Extraemos N frames dibujándolos en un OffscreenCanvas
-//    (cada seek → drawImage → createImageBitmap → guardado en array)
-// 3. Al scrollear, solo hacemos ctx.drawImage(frames[i]) en el canvas
-//    visible — sin seeks, sin decodificación, 60fps real garantizado
-//
-// El video avanza de frame 0→last SOLO en las primeras 2 secciones.
-// Después se queda congelado en el último frame para toda la página.
+// SCROLL VIDEO BACKGROUND
+// Estrategia híbrida robusta:
+// 1. El video se reproduce normalmente con play() al inicio
+//    para forzar buffer completo
+// 2. Una vez cargado, usamos currentTime con requestVideoFrameCallback
+//    (si disponible) o RAF + throttle para máxima fluidez
+// 3. El video avanza SOLO en las primeras ~2 pantallas de scroll
 // ============================================================
 
 const VIDEO_URL =
   'https://res.cloudinary.com/dsprn0ew4/video/upload/v1774294850/veo-3.1-fast-generate-preview_A_cinematic_3D_animation_starting_from_a_solid_sleek_dark_glass_monolith_floatin-0_hr6b17.mp4';
 
-// Cuántos frames extraer. Más = más suave pero más RAM.
-// Para 5-10s a 60fps real, 120 frames es más que suficiente (1 c/~60ms)
-const TOTAL_FRAMES = 120;
-
-// Scroll zone: cuántos vh cubren la animación completa
 const SCROLL_VH = 2.2;
 
 const ScrollVideoBackground = () => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const framesRef = useRef<ImageBitmap[]>([]);
-  const currentFrameRef = useRef(0);
-  const targetFrameRef = useRef(0);
-  const rafRef = useRef(0);
-  const [loadState, setLoadState] = useState<'idle' | 'loading' | 'ready'>('idle');
-  const [loadPct, setLoadPct] = useState(0);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [ready, setReady] = useState(false);
   const [progress, setProgress] = useState(0);
 
-  // ── 1. Extraer frames ──────────────────────────────────────
+  const durRef = useRef(0);
+  const targetRef = useRef(0);   // tiempo objetivo (segundos)
+  const lerpedRef = useRef(0);   // tiempo actual interpolado
+  const rafRef = useRef(0);
+  const rvfcRef = useRef(0);
+  const buffered = useRef(false);
+
+  // ── Paso 1: cargar y pre-buffear dejando que el video corra ──
   useEffect(() => {
-    setLoadState('loading');
+    const video = videoRef.current;
+    if (!video) return;
 
-    const video = document.createElement('video');
-    video.muted = true;
-    video.playsInline = true;
-    video.crossOrigin = 'anonymous';
-    video.preload = 'auto';
-    video.src = VIDEO_URL;
+    // Dejar que el video corra en silencio hasta el final para llenar buffer
+    const onMeta = () => {
+      durRef.current = video.duration;
+      video.playbackRate = 8; // avanza rápido para buffear
+      video.play().catch(() => {});
+    };
 
-    const W = 1280;
-    const H = 720;
-    const offscreen = document.createElement('canvas');
-    offscreen.width = W;
-    offscreen.height = H;
-    const ctx2d = offscreen.getContext('2d')!;
+    const onEnded = () => {
+      video.pause();
+      video.currentTime = 0;
+      video.playbackRate = 1;
+      buffered.current = true;
+      setReady(true);
+    };
 
-    let cancelled = false;
+    // Fallback: si no puede reproducir, igual intentamos
+    const onError = () => {
+      video.pause();
+      durRef.current = video.duration || 8;
+      setReady(true);
+    };
 
-    const extractFrames = async () => {
-      await new Promise<void>((res) => {
-        video.addEventListener('loadedmetadata', () => res(), { once: true });
-        video.load();
-      });
-
-      const dur = video.duration;
-      const frames: ImageBitmap[] = [];
-
-      for (let i = 0; i < TOTAL_FRAMES; i++) {
-        if (cancelled) return;
-        const t = (i / (TOTAL_FRAMES - 1)) * dur;
-
-        // seek al tiempo exacto y esperar que el frame esté listo
-        await new Promise<void>((res) => {
-          video.addEventListener('seeked', () => res(), { once: true });
-          video.currentTime = t;
-        });
-
-        ctx2d.drawImage(video, 0, 0, W, H);
-        const bitmap = await createImageBitmap(offscreen);
-        frames.push(bitmap);
-        setLoadPct(Math.round(((i + 1) / TOTAL_FRAMES) * 100));
-      }
-
-      if (!cancelled) {
-        framesRef.current = frames;
-        setLoadState('ready');
-        setLoadPct(100);
+    // También marcamos ready si tarda mucho (canplaythrough)
+    const onCanPlay = () => {
+      if (!buffered.current) {
+        // No esperamos ended, arrancamos de una vez
+        video.pause();
+        video.currentTime = 0;
+        video.playbackRate = 1;
+        durRef.current = video.duration;
+        buffered.current = true;
+        setReady(true);
       }
     };
 
-    extractFrames();
-    return () => { cancelled = true; };
+    video.addEventListener('loadedmetadata', onMeta);
+    video.addEventListener('ended', onEnded);
+    video.addEventListener('canplaythrough', onCanPlay);
+    video.addEventListener('error', onError);
+
+    return () => {
+      video.removeEventListener('loadedmetadata', onMeta);
+      video.removeEventListener('ended', onEnded);
+      video.removeEventListener('canplaythrough', onCanPlay);
+      video.removeEventListener('error', onError);
+    };
   }, []);
 
-  // ── 2. Scroll → targetFrame (solo primeras SCROLL_VH pantallas) ──
+  // ── Paso 2: scroll → targetRef ──────────────────────────────
   useEffect(() => {
-    if (loadState !== 'ready') return;
+    if (!ready) return;
+    const zone = window.innerHeight * SCROLL_VH;
 
-    const scrollZone = window.innerHeight * SCROLL_VH;
-
-    const handleScroll = () => {
-      const p = Math.min(1, window.scrollY / scrollZone);
+    const onScroll = () => {
+      const p = Math.min(1, window.scrollY / zone);
       setProgress(p);
-      targetFrameRef.current = Math.round(p * (TOTAL_FRAMES - 1));
+      targetRef.current = p * durRef.current;
     };
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll();
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [loadState]);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [ready]);
 
-  // ── 3. RAF loop: lerp currentFrame → targetFrame y dibujar ──
+  // ── Paso 3: RAF lerp → video.currentTime ────────────────────
+  // Usamos requestVideoFrameCallback si existe (Chrome 83+, Edge, Safari 15.4+)
+  // para sincronizar exactamente con el pipeline de decodificación del video
   useEffect(() => {
-    if (loadState !== 'ready') return;
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d')!;
+    if (!ready) return;
+    const video = videoRef.current;
+    if (!video) return;
 
-    const tick = () => {
+    const hasRVFC = 'requestVideoFrameCallback' in video;
+
+    const update = () => {
+      // Lerp cinematográfico: 8% por frame (~0.5s para recorrer toda la distancia)
+      lerpedRef.current += (targetRef.current - lerpedRef.current) * 0.08;
+
+      const diff = Math.abs(lerpedRef.current - video.currentTime);
+      // Solo setar currentTime si hay diferencia real (evita seeks innecesarios)
+      if (diff > 0.015) {
+        video.currentTime = lerpedRef.current;
+      }
+    };
+
+    if (hasRVFC) {
+      // requestVideoFrameCallback se llama justo antes de que el browser pinte
+      // cada frame del video — perfectamente sincronizado
+      const rvfc = () => {
+        update();
+        rvfcRef.current = (video as any).requestVideoFrameCallback(rvfc);
+      };
+      rvfcRef.current = (video as any).requestVideoFrameCallback(rvfc);
+      return () => (video as any).cancelVideoFrameCallback(rvfcRef.current);
+    } else {
+      // Fallback RAF clásico
+      const tick = () => {
+        update();
+        rafRef.current = requestAnimationFrame(tick);
+      };
       rafRef.current = requestAnimationFrame(tick);
-      const frames = framesRef.current;
-      if (!frames.length) return;
-
-      // Lerp suave entre frames (0.10 = fluido, 0.18 = más reactivo)
-      currentFrameRef.current +=
-        (targetFrameRef.current - currentFrameRef.current) * 0.10;
-
-      const idx = Math.round(currentFrameRef.current);
-      const clamped = Math.max(0, Math.min(frames.length - 1, idx));
-
-      ctx.drawImage(frames[clamped], 0, 0, canvas.width, canvas.height);
-    };
-
-    rafRef.current = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(rafRef.current);
-  }, [loadState]);
-
-  // ── Resize canvas ──────────────────────────────────────────
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const fit = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    };
-    fit();
-    window.addEventListener('resize', fit);
-    return () => window.removeEventListener('resize', fit);
-  }, []);
+      return () => cancelAnimationFrame(rafRef.current);
+    }
+  }, [ready]);
 
   return (
     <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
 
-      {/* Canvas principal — muestra los frames */}
-      <canvas
-        ref={canvasRef}
-        className="absolute inset-0 w-full h-full"
+      {/* El video — siempre visible, sin canvas, sin CORS */}
+      <video
+        ref={videoRef}
+        muted
+        playsInline
+        preload="auto"
+        src={VIDEO_URL}
+        className="absolute inset-0 w-full h-full object-cover"
         style={{
-          opacity: loadState === 'ready' ? 0.72 : 0,
-          transition: 'opacity 1.2s ease',
-          objectFit: 'cover',
+          opacity: ready ? 0.68 : 0,
+          transition: 'opacity 1.4s ease',
         }}
       />
 
-      {/* Overlay oscuro base para legibilidad del texto */}
-      <div className="absolute inset-0 bg-black/48" />
+      {/* Overlay oscuro base */}
+      <div className="absolute inset-0 bg-black/50" />
 
-      {/* Glow morado que explota con el progreso */}
+      {/* Glow morado que explota conforme avanza el video */}
       <div
-        className="absolute inset-0 transition-opacity duration-300"
+        className="absolute inset-0"
         style={{
           background: `radial-gradient(ellipse at 50% 45%,
-            rgba(112,0,255,${(progress * 0.35).toFixed(3)}) 0%,
-            rgba(80,0,200,${(progress * 0.12).toFixed(3)}) 40%,
-            transparent 70%)`,
+            rgba(112,0,255,${(progress * 0.38).toFixed(3)}) 0%,
+            rgba(80,0,180,${(progress * 0.15).toFixed(3)}) 40%,
+            transparent 68%)`,
         }}
       />
 
-      {/* Viñeta inferior para que el contenido siempre sea legible */}
-      <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-black/70 to-transparent" />
+      {/* Viñeta inferior */}
+      <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-black/65 to-transparent" />
 
-      {/* Barra de carga — solo mientras extrae frames */}
-      {loadState === 'loading' && (
-        <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-white/5">
-          <div
-            className="h-full bg-[#7000FF] transition-all duration-200"
-            style={{ width: `${loadPct}%` }}
-          />
+      {/* Barra de precarga — desaparece cuando está listo */}
+      {!ready && (
+        <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-white/5 overflow-hidden">
+          <div className="h-full bg-[#7000FF]/60 animate-pulse w-full" />
         </div>
       )}
     </div>
