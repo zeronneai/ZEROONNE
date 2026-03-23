@@ -33,8 +33,8 @@ const translations = {
       title: "What we do", subtitle: "Our Core", subtitleItalic: "Capabilities", viewProject: "VIEW PROJECT",
       items: [
         { id: '01', title: 'AI STRATEGY', desc: 'We architect the intelligent core of your business future.', detail: 'From custom LLM integration to predictive analytics, we design the roadmap for your AI transformation.' },
-        { id: '02', title: 'LUXURY LANDINGS', desc: 'High-conversion interfaces powered by cognitive psychology.', detail: 'Our landing pages aren't just beautiful; they use AI-driven heatmaps to ensure every pixel converts.' },
-        { id: '03', title: 'CREATIVE AUTOMATION', desc: 'Scaling content production without losing human soul.', detail: 'Custom diffusion models trained specifically on your brand's visual DNA for infinite, consistent assets.' }
+        { id: '02', title: 'LUXURY LANDINGS', desc: 'High-conversion interfaces powered by cognitive psychology.', detail: "Our landing pages aren't just beautiful; they use AI-driven heatmaps to ensure every pixel converts." },
+        { id: '03', title: 'CREATIVE AUTOMATION', desc: 'Scaling content production without losing human soul.', detail: "Custom diffusion models trained specifically on your brand's visual DNA for infinite, consistent assets." }
       ],
       list: ["Web Design", "Web Hosting", "App Design", "UI Design", "UX", "Custom Software", "AI Video", "AI Graphic Design", "AI Images", "AI Upscaling", "AI Creative Strategy", "AI Automation", "AI Education", "AI Integration", "AI Installation"]
     },
