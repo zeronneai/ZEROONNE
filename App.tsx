@@ -521,10 +521,8 @@ const ArsenalCarousel = ({ title, items, type, tagLine }: { title: string, items
                   )
                )}
                
-               {/* Gradiente Oscuro de Fondo para lectura */}
                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent pointer-events-none" />
                
-               {/* Textos del Slide */}
                <div className="absolute bottom-0 left-0 p-8 md:p-12 z-20 pointer-events-none">
                   <div className="text-[10px] text-[#7000FF] font-bold tracking-[0.3em] mb-3 uppercase">{tagLine}</div>
                   <div className="text-3xl md:text-5xl font-black uppercase tracking-tighter mb-2">{items[currentIndex].title}</div>
@@ -537,6 +535,224 @@ const ArsenalCarousel = ({ title, items, type, tagLine }: { title: string, items
   )
 }
 
+// ============================================================
+// --- SCROLL-DRIVEN VIDEO HERO ---
+// El video del monolito es controlado por scroll.
+// El usuario scrollea dentro de la sección "sticky" y el
+// currentTime del video avanza proporcionalmente.
+// ============================================================
+const ScrollVideoHero = ({
+  t,
+  onCtaClick,
+}: {
+  t: typeof translations.en.hero;
+  onCtaClick: () => void;
+}) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const rafRef = useRef<number>(0);
+  const targetTimeRef = useRef(0);
+  const currentTimeRef = useRef(0);
+  const [videoReady, setVideoReady] = useState(false);
+  const [scrollProgress, setScrollProgress] = useState(0);
+
+  // Cuántos vh de scroll ocupa la animación completa.
+  // 300vh = el usuario scrollea 3 pantallas para ver todo el video.
+  const SCROLL_HEIGHT = 300;
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    video.preload = 'auto';
+    video.muted = true;
+    video.playsInline = true;
+    video.src =
+      'https://res.cloudinary.com/dsprn0ew4/video/upload/v1774294850/veo-3.1-fast-generate-preview_A_cinematic_3D_animation_starting_from_a_solid_sleek_dark_glass_monolith_floatin-0_hr6b17.mp4';
+
+    const onLoaded = () => {
+      // Pausa el video: sólo lo movemos con scroll
+      video.pause();
+      video.currentTime = 0;
+      setVideoReady(true);
+    };
+
+    video.addEventListener('loadedmetadata', onLoaded);
+    video.load();
+
+    return () => {
+      video.removeEventListener('loadedmetadata', onLoaded);
+    };
+  }, []);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video || !videoReady) return;
+
+    // Animación suave: lerp entre currentTime y targetTime
+    const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
+
+    const tick = () => {
+      currentTimeRef.current = lerp(
+        currentTimeRef.current,
+        targetTimeRef.current,
+        0.1 // suavidad (0.05 = muy suave, 0.15 = más rápido)
+      );
+      video.currentTime = currentTimeRef.current;
+      rafRef.current = requestAnimationFrame(tick);
+    };
+
+    rafRef.current = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(rafRef.current);
+  }, [videoReady]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const container = containerRef.current;
+      const video = videoRef.current;
+      if (!container || !video || !videoReady) return;
+
+      const rect = container.getBoundingClientRect();
+      const containerHeight = container.offsetHeight;
+      const viewportHeight = window.innerHeight;
+
+      // scrolled: cuánto ha avanzado el scroll dentro del contenedor
+      // Va de 0 (inicio) a (containerHeight - viewportHeight) (final)
+      const scrolled = -rect.top;
+      const maxScroll = containerHeight - viewportHeight;
+      const progress = Math.max(0, Math.min(1, scrolled / maxScroll));
+
+      setScrollProgress(progress);
+      targetTimeRef.current = progress * (video.duration || 0);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [videoReady]);
+
+  return (
+    // Contenedor alto que da "espacio" para el scroll
+    <div
+      ref={containerRef}
+      style={{ height: `${SCROLL_HEIGHT}vh` }}
+      className="relative"
+    >
+      {/* Sticky: el contenido se queda fijo mientras el usuario scrollea */}
+      <div className="sticky top-0 h-screen overflow-hidden flex items-center justify-center">
+
+        {/* ---- VIDEO DE FONDO (scroll-driven) ---- */}
+        <video
+          ref={videoRef}
+          muted
+          playsInline
+          preload="auto"
+          className="absolute inset-0 w-full h-full object-cover"
+          style={{ opacity: videoReady ? 1 : 0, transition: 'opacity 0.6s ease' }}
+        />
+
+        {/* Overlay oscuro que se desvanece conforme avanza el scroll */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background: `linear-gradient(to bottom,
+              rgba(0,0,0,${0.75 - scrollProgress * 0.3}) 0%,
+              rgba(0,0,0,${0.4 - scrollProgress * 0.2}) 50%,
+              rgba(0,0,0,0.85) 100%
+            )`,
+          }}
+        />
+
+        {/* Glow morado que aparece con el progreso */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background: `radial-gradient(ellipse at center, rgba(112,0,255,${scrollProgress * 0.25}) 0%, transparent 70%)`,
+          }}
+        />
+
+        {/* ---- CONTENIDO DEL HERO ---- */}
+        <div className="relative z-10 text-center px-4 w-full max-w-5xl mx-auto">
+          <motion.span
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 0.5 }}
+            transition={{ delay: 0.2 }}
+            className="text-[12px] tracking-[0.5em] uppercase mb-6 block"
+          >
+            {t.evolution}
+          </motion.span>
+
+          <motion.h1
+            initial={{ opacity: 0, y: 100 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
+            className="text-4xl md:text-6xl lg:text-7xl font-bold leading-tight tracking-tighter"
+          >
+            {t.crafting} <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-b from-white to-[#7000FF]">
+              {t.intelligence}
+            </span>
+          </motion.h1>
+
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 0.7, y: 0 }}
+            transition={{ delay: 0.8, duration: 1 }}
+            className="mt-8 text-sm md:text-xl max-w-2xl mx-auto font-light leading-relaxed tracking-wide"
+          >
+            {t.description}
+          </motion.p>
+
+          <motion.button
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0, scale: [1, 1.05, 1] }}
+            transition={{
+              opacity: { delay: 1.2, duration: 1 },
+              y: { delay: 1.2, duration: 1 },
+              scale: { repeat: Infinity, duration: 2, ease: 'easeInOut' },
+            }}
+            onClick={onCtaClick}
+            className="mt-10 bg-[#7000FF] text-white px-10 py-5 rounded-full text-[11px] font-bold uppercase tracking-[0.3em] shadow-[0_0_30px_rgba(112,0,255,0.3)] hover:shadow-[0_0_50px_rgba(112,0,255,0.5)] transition-all duration-300"
+          >
+            {t.cta}
+          </motion.button>
+
+          <motion.div
+            initial={{ width: 0 }}
+            animate={{ width: '100%' }}
+            transition={{ delay: 1, duration: 1.5 }}
+            className="h-[1px] bg-gradient-to-r from-transparent via-[#7000FF] to-transparent mt-12 max-w-4xl mx-auto"
+          />
+        </div>
+
+        {/* Scroll indicator — desaparece con el progreso */}
+        <motion.div
+          className="absolute bottom-12 flex flex-col items-center gap-2 pointer-events-none"
+          style={{ opacity: 1 - scrollProgress * 3 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1, y: [0, 15, 0] }}
+          transition={{
+            opacity: { delay: 1.5, duration: 1 },
+            y: { repeat: Infinity, duration: 2, ease: 'easeInOut' },
+          }}
+        >
+          <span className="text-[9px] uppercase tracking-[0.3em] opacity-40">{t.scroll}</span>
+          <div className="w-[1px] h-12 bg-gradient-to-b from-[#7000FF] to-transparent" />
+        </motion.div>
+
+        {/* Barra de progreso del scroll (sutil, esquina inferior derecha) */}
+        <div className="absolute bottom-12 right-8 flex flex-col items-center gap-2 pointer-events-none">
+          <div className="w-[2px] h-16 bg-white/10 rounded-full overflow-hidden">
+            <div
+              className="w-full bg-[#7000FF] rounded-full transition-none"
+              style={{ height: `${scrollProgress * 100}%` }}
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 // --- MAIN APP COMPONENT ---
 export default function App() {
   const [lang, setLang] = useState<'en' | 'es'>('en');
@@ -546,7 +762,6 @@ export default function App() {
 
   const t = translations[lang];
 
-  // --- DATOS DE TUS PROYECTOS INTEGRADOS ---
   const portfolioData = {
     landings: [
       { id: 1, title: 'The CoCreative Hub', desc: 'Innovation Platform', img: 'https://res.cloudinary.com/dsprn0ew4/image/upload/v1772737712/Quiero_crear_una_iamgen_asi_como_la_de_las_botas_p_delpmaspu_jjdwz4.jpg', link: 'https://www.thecocreativehub.us/' },
@@ -576,226 +791,106 @@ export default function App() {
 
   return (
     <div className="bg-[#000000] text-white font-sans selection:bg-[#7000FF] selection:text-white min-h-screen relative">
-      
-      {/* --- BACKGROUND VIDEO OPTIMIZADO (Seguro y Rápido) --- */}
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 2, ease: "easeOut", delay: 0.5 }} className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
-        <video autoPlay loop muted playsInline className="w-full h-full object-cover opacity-40 grayscale-[0.5]">
-          <source src="https://res.cloudinary.com/dsprn0ew4/video/upload/q_auto,w_1280/v1770924915/Generate_a_cinematic_1080p_202602121329_eiuxgx.mp4" type="video/mp4" />
-        </video>
-        <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px]"></div>
-      </motion.div>
 
-      <div className="relative z-10">
-
-        {/* ============================================================
-            NAVBAR — FIXED, MOBILE-FIRST
-            - En móvil: 2 filas. Fila 1: logo + idioma. Fila 2: botones.
-            - En desktop (md+): 1 fila horizontal como antes.
-            - Sin mix-blend-difference para que no haya texto sobrepuesto.
-            - Fondo semitransparente con blur para que flote limpio.
-        ============================================================ */}
-        <nav className="fixed top-0 w-full z-[100] bg-black/70 backdrop-blur-md border-b border-white/5">
-
-          {/* Fila superior: logo + idioma (siempre visible) */}
-          <div className="flex items-center justify-between px-5 pt-4 pb-2 md:hidden">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="text-lg font-bold tracking-[0.3em] cursor-pointer"
-              onClick={() => window.scrollTo(0, 0)}
-            >
+      {/* ============================================================
+          NAVBAR
+      ============================================================ */}
+      <nav className="fixed top-0 w-full z-[100] bg-black/70 backdrop-blur-md border-b border-white/5">
+        <div className="flex items-center justify-between px-5 pt-4 pb-2 md:hidden">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-lg font-bold tracking-[0.3em] cursor-pointer"
+            onClick={() => window.scrollTo(0, 0)}
+          >
+            ZERONNE<span className="text-[#7000FF]">.</span>
+          </motion.div>
+          <div className="flex items-center gap-1">
+            <button onClick={() => setLang('en')} className={`text-[9px] font-bold uppercase tracking-widest transition-colors ${lang === 'en' ? 'text-white' : 'text-white/40 hover:text-white'}`}>EN</button>
+            <span className="text-white/20 text-[9px]">/</span>
+            <button onClick={() => setLang('es')} className={`text-[9px] font-bold uppercase tracking-widest transition-colors ${lang === 'es' ? 'text-white' : 'text-white/40 hover:text-white'}`}>ES</button>
+          </div>
+        </div>
+        <div className="flex items-center justify-between gap-3 px-5 pb-4 md:hidden">
+          <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="flex-1 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full border border-white/10 text-[9px] uppercase tracking-widest font-bold hover:bg-[#7000FF] transition-all text-center">
+            {isMenuOpen ? t.nav.close : t.nav.services}
+          </button>
+          <button onClick={() => setIsContactOpen(true)} className="flex-1 bg-white text-black px-4 py-2 rounded-full text-[9px] font-bold uppercase tracking-widest hover:bg-[#7000FF] hover:text-white transition-all text-center">
+            {t.nav.contact}
+          </button>
+        </div>
+        <div className="hidden md:flex items-center justify-between px-8 py-5">
+          <div className="flex items-center gap-6">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-xl font-bold tracking-[0.3em] cursor-pointer" onClick={() => window.scrollTo(0, 0)}>
               ZERONNE<span className="text-[#7000FF]">.</span>
             </motion.div>
             <div className="flex items-center gap-1">
-              <button
-                onClick={() => setLang('en')}
-                className={`text-[9px] font-bold uppercase tracking-widest transition-colors ${lang === 'en' ? 'text-white' : 'text-white/40 hover:text-white'}`}
-              >EN</button>
+              <button onClick={() => setLang('en')} className={`text-[9px] font-bold uppercase tracking-widest transition-colors ${lang === 'en' ? 'text-white' : 'text-white/40 hover:text-white'}`}>EN</button>
               <span className="text-white/20 text-[9px]">/</span>
-              <button
-                onClick={() => setLang('es')}
-                className={`text-[9px] font-bold uppercase tracking-widest transition-colors ${lang === 'es' ? 'text-white' : 'text-white/40 hover:text-white'}`}
-              >ES</button>
+              <button onClick={() => setLang('es')} className={`text-[9px] font-bold uppercase tracking-widest transition-colors ${lang === 'es' ? 'text-white' : 'text-white/40 hover:text-white'}`}>ES</button>
             </div>
           </div>
-
-          {/* Fila inferior móvil: botones de acción */}
-          <div className="flex items-center justify-between gap-3 px-5 pb-4 md:hidden">
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="flex-1 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full border border-white/10 text-[9px] uppercase tracking-widest font-bold hover:bg-[#7000FF] transition-all text-center"
-            >
+          <div className="flex items-center gap-4">
+            <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="bg-white/10 backdrop-blur-md px-6 py-2 rounded-full border border-white/10 text-[10px] uppercase tracking-widest font-bold hover:bg-[#7000FF] transition-all z-[101]">
               {isMenuOpen ? t.nav.close : t.nav.services}
             </button>
-            <button
-              onClick={() => setIsContactOpen(true)}
-              className="flex-1 bg-white text-black px-4 py-2 rounded-full text-[9px] font-bold uppercase tracking-widest hover:bg-[#7000FF] hover:text-white transition-all text-center"
-            >
+            <button onClick={() => setIsContactOpen(true)} className="bg-white text-black px-6 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest hover:bg-[#7000FF] hover:text-white transition-all">
               {t.nav.contact}
             </button>
           </div>
+        </div>
+      </nav>
 
-          {/* Layout desktop: 1 sola fila */}
-          <div className="hidden md:flex items-center justify-between px-8 py-5">
-            <div className="flex items-center gap-6">
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="text-xl font-bold tracking-[0.3em] cursor-pointer"
-                onClick={() => window.scrollTo(0, 0)}
-              >
-                ZERONNE<span className="text-[#7000FF]">.</span>
-              </motion.div>
-              <div className="flex items-center gap-1">
-                <button
-                  onClick={() => setLang('en')}
-                  className={`text-[9px] font-bold uppercase tracking-widest transition-colors ${lang === 'en' ? 'text-white' : 'text-white/40 hover:text-white'}`}
-                >EN</button>
-                <span className="text-white/20 text-[9px]">/</span>
-                <button
-                  onClick={() => setLang('es')}
-                  className={`text-[9px] font-bold uppercase tracking-widest transition-colors ${lang === 'es' ? 'text-white' : 'text-white/40 hover:text-white'}`}
-                >ES</button>
-              </div>
-            </div>
-            <div className="flex items-center gap-4">
-              <button
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="bg-white/10 backdrop-blur-md px-6 py-2 rounded-full border border-white/10 text-[10px] uppercase tracking-widest font-bold hover:bg-[#7000FF] transition-all z-[101]"
-              >
-                {isMenuOpen ? t.nav.close : t.nav.services}
-              </button>
-              <button
-                onClick={() => setIsContactOpen(true)}
-                className="bg-white text-black px-6 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest hover:bg-[#7000FF] hover:text-white transition-all"
-              >
-                {t.nav.contact}
-              </button>
-            </div>
-          </div>
-        </nav>
-        {/* ============================================================ */}
-
-        {/* --- DROPDOWN SERVICES --- */}
-        <AnimatePresence>
-          {isMenuOpen && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[90] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4" onClick={() => setIsMenuOpen(false)}>
-              <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} transition={{ type: "spring", duration: 0.5, bounce: 0.2 }} className="w-full max-w-5xl bg-[#0A0A0A] p-8 md:p-12 rounded-[2rem] border border-white/10 grid grid-cols-2 md:grid-cols-4 gap-x-8 gap-y-6 shadow-2xl shadow-[#7000FF]/20 max-h-[85vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
-                {t.services.list.map((service, index) => (
-                  <button key={index} onClick={() => { setSelectedService({ id: `EXP-${index + 1}`, title: service, desc: lang === 'en' ? "Specialized solution by Zeronne AI Studio." : "Solución especializada por Zeronne AI Studio.", detail: lang === 'en' ? "We harness the power of advanced artificial intelligence to deliver this service with maximizing efficiency and creativity. Contact us to discuss your bespoke requirements." : "Aprovechamos el poder de la inteligencia artificial avanzada para ofrecer este servicio maximizando la eficiencia y la creatividad. Contáctanos para discutir tus requisitos personalizados." }); setIsMenuOpen(false); }} className="text-left text-[11px] uppercase tracking-tighter opacity-60 hover:opacity-100 hover:text-[#7000FF] transition-all py-2 border-b border-white/5 pb-2">
-                    {service}
-                  </button>
-                ))}
-              </motion.div>
+      {/* --- DROPDOWN SERVICES --- */}
+      <AnimatePresence>
+        {isMenuOpen && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[90] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4" onClick={() => setIsMenuOpen(false)}>
+            <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} transition={{ type: "spring", duration: 0.5, bounce: 0.2 }} className="w-full max-w-5xl bg-[#0A0A0A] p-8 md:p-12 rounded-[2rem] border border-white/10 grid grid-cols-2 md:grid-cols-4 gap-x-8 gap-y-6 shadow-2xl shadow-[#7000FF]/20 max-h-[85vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+              {t.services.list.map((service, index) => (
+                <button key={index} onClick={() => { setSelectedService({ id: `EXP-${index + 1}`, title: service, desc: lang === 'en' ? "Specialized solution by Zeronne AI Studio." : "Solución especializada por Zeronne AI Studio.", detail: lang === 'en' ? "We harness the power of advanced artificial intelligence to deliver this service with maximizing efficiency and creativity. Contact us to discuss your bespoke requirements." : "Aprovechamos el poder de la inteligencia artificial avanzada para ofrecer este servicio maximizando la eficiencia y la creatividad. Contáctanos para discutir tus requisitos personalizados." }); setIsMenuOpen(false); }} className="text-left text-[11px] uppercase tracking-tighter opacity-60 hover:opacity-100 hover:text-[#7000FF] transition-all py-2 border-b border-white/5 pb-2">
+                  {service}
+                </button>
+              ))}
             </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* --- CONTACT MODAL --- */}
-        <AnimatePresence>
-          {isContactOpen && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[110] flex items-center justify-center bg-black/90 backdrop-blur-md p-4" onClick={() => setIsContactOpen(false)}>
-              <motion.div initial={{ scale: 0.95, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 20, opacity: 0 }} className="relative w-full max-w-2xl bg-[#0A0A0A] p-8 md:p-16 rounded-[2rem] border border-white/10 shadow-2xl shadow-[#7000FF]/10" onClick={(e) => e.stopPropagation()}>
-                 <div className="absolute top-0 right-0 p-8">
-                  <button onClick={() => setIsContactOpen(false)} className="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 text-white/50 hover:bg-white/10 hover:text-white transition-all">✕</button>
-                </div>
-                <div className="mb-10">
-                  <h3 className="text-3xl font-light tracking-tight mb-2">{t.modal.start} <span className="text-[#7000FF]">{t.modal.project}</span></h3>
-                  <p className="text-white/40 text-sm">{t.modal.startDesc}</p>
-                </div>
-               <form className="space-y-8" onSubmit={async (e: any) => { e.preventDefault(); const formData = { name: e.target.name.value, email: e.target.email.value, projectName: e.target.projectName.value, description: e.target.description.value }; try { await fetch("https://script.google.com/macros/s/AKfycbwXwWFhbXD-7zyVhCcpfA_def8aykuX_r9DphgsIeEdWEfQg1YjER9EW25J4cmyjUSq/exec", { method: "POST", body: JSON.stringify(formData) }); alert("Your proposal has been submitted! We'll be in touch soon."); setIsContactOpen(false); } catch (error) { alert("Something went wrong. Please try again."); } }}>
-                  <div className="grid md:grid-cols-2 gap-6">
-                    <div className="space-y-2"><label className="text-[10px] uppercase tracking-widest text-[#7000FF]">{t.modal.labelName}</label><input type="text" name="name" placeholder={t.contact.namePlaceholder} className="w-full bg-transparent border-b border-white/10 py-2 focus:outline-none focus:border-[#7000FF] transition-colors placeholder:text-white/20 text-white font-light"/></div>
-                    <div className="space-y-2"><label className="text-[10px] uppercase tracking-widest text-[#7000FF]">{t.modal.labelProject}</label><input type="text" name="projectName" placeholder={t.modal.projectPlaceholder} className="w-full bg-transparent border-b border-white/10 py-2 focus:outline-none focus:border-[#7000FF] transition-colors placeholder:text-white/20 text-white font-light"/></div>
-                  </div>
-                  <div className="space-y-2"><label className="text-[10px] uppercase tracking-widest text-[#7000FF]">{t.modal.labelEmail}</label><input type="email" name="email" placeholder="name@company.com" className="w-full bg-transparent border-b border-white/10 py-2 focus:outline-none focus:border-[#7000FF] transition-colors placeholder:text-white/20 text-white font-light" /></div>
-                  <div className="space-y-2"><label className="text-[10px] uppercase tracking-widest text-[#7000FF]">{t.modal.labelDesc}</label><textarea name="description" placeholder={t.contact.msgPlaceholder} rows={4} className="w-full bg-transparent border-b border-white/10 py-2 focus:outline-none focus:border-[#7000FF] transition-colors placeholder:text-white/20 text-white font-light resize-none"></textarea></div>
-                  <motion.button type="submit" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="w-full bg-white text-black py-4 rounded-xl font-bold uppercase tracking-[0.2em] text-[10px] hover:bg-[#7000FF] hover:text-white transition-all duration-300">{t.modal.submitProposal}</motion.button>
-                </form>
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* --- HERO SECTION --- */}
-        {/* pt-28 en móvil para compensar la navbar de 2 filas; pt-24 en desktop */}
-        <section className="relative h-screen flex flex-col justify-center items-center px-6 overflow-hidden pt-28 md:pt-24">
-          {/* Deep Glow Background */}
-          <div className="absolute inset-0 z-0 pointer-events-none">
-            <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-[#7000FF]/10 rounded-full blur-[150px]"></div>
-            <div className="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-[#7000FF]/5 rounded-full blur-[150px]"></div>
-          </div>
-
-          <div className="z-10 text-center relative w-full px-4">
-            <motion.span 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 0.5 }}
-              transition={{ delay: 0.2 }}
-              className="text-[12px] tracking-[0.5em] uppercase mb-6 block"
-            >
-              {t.hero.evolution}
-            </motion.span>
-            
-            <motion.h1 
-              initial={{ opacity: 0, y: 100 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-              className="text-4xl md:text-6xl lg:text-7xl font-bold leading-tight tracking-tighter max-w-5xl mx-auto"
-            >
-              {t.hero.crafting} <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-b from-white to-[#7000FF]">{t.hero.intelligence}</span>
-            </motion.h1>
-
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 0.7, y: 0 }}
-              transition={{ delay: 0.8, duration: 1 }}
-              className="mt-8 text-sm md:text-xl max-w-2xl mx-auto font-light leading-relaxed tracking-wide"
-            >
-              {t.hero.description}
-            </motion.p>
-
-            <motion.button
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ 
-                opacity: 1, 
-                y: 0,
-                scale: [1, 1.05, 1],
-              }}
-              transition={{ 
-                opacity: { delay: 1.2, duration: 1 },
-                y: { delay: 1.2, duration: 1 },
-                scale: { repeat: Infinity, duration: 2, ease: "easeInOut" }
-              }}
-              onClick={() => setIsContactOpen(true)}
-              className="mt-10 bg-[#7000FF] text-white px-10 py-5 rounded-full text-[11px] font-bold uppercase tracking-[0.3em] shadow-[0_0_30px_rgba(112,0,255,0.3)] hover:shadow-[0_0_50px_rgba(112,0,255,0.5)] transition-all duration-300"
-            >
-              {t.hero.cta}
-            </motion.button>
-
-            <motion.div 
-              initial={{ width: 0 }}
-              animate={{ width: '100%' }}
-              transition={{ delay: 1, duration: 1.5 }}
-              className="h-[1px] bg-gradient-to-r from-transparent via-[#7000FF] to-transparent mt-12 max-w-4xl mx-auto"
-            />
-          </div>
-
-          {/* Scroll Indicator */}
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1, y: [0, 15, 0] }}
-            transition={{ 
-              opacity: { delay: 1.5, duration: 1 },
-              y: { repeat: Infinity, duration: 2, ease: "easeInOut" } 
-            }}
-            className="absolute bottom-12 flex flex-col items-center gap-2"
-          >
-            <span className="text-[9px] uppercase tracking-[0.3em] opacity-40">{t.hero.scroll}</span>
-            <div className="w-[1px] h-12 bg-gradient-to-b from-[#7000FF] to-transparent"></div>
           </motion.div>
-        </section>
+        )}
+      </AnimatePresence>
 
+      {/* --- CONTACT MODAL --- */}
+      <AnimatePresence>
+        {isContactOpen && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[110] flex items-center justify-center bg-black/90 backdrop-blur-md p-4" onClick={() => setIsContactOpen(false)}>
+            <motion.div initial={{ scale: 0.95, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 20, opacity: 0 }} className="relative w-full max-w-2xl bg-[#0A0A0A] p-8 md:p-16 rounded-[2rem] border border-white/10 shadow-2xl shadow-[#7000FF]/10" onClick={(e) => e.stopPropagation()}>
+               <div className="absolute top-0 right-0 p-8">
+                <button onClick={() => setIsContactOpen(false)} className="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 text-white/50 hover:bg-white/10 hover:text-white transition-all">✕</button>
+              </div>
+              <div className="mb-10">
+                <h3 className="text-3xl font-light tracking-tight mb-2">{t.modal.start} <span className="text-[#7000FF]">{t.modal.project}</span></h3>
+                <p className="text-white/40 text-sm">{t.modal.startDesc}</p>
+              </div>
+             <form className="space-y-8" onSubmit={async (e: any) => { e.preventDefault(); const formData = { name: e.target.name.value, email: e.target.email.value, projectName: e.target.projectName.value, description: e.target.description.value }; try { await fetch("https://script.google.com/macros/s/AKfycbwXwWFhbXD-7zyVhCcpfA_def8aykuX_r9DphgsIeEdWEfQg1YjER9EW25J4cmyjUSq/exec", { method: "POST", body: JSON.stringify(formData) }); alert("Your proposal has been submitted! We'll be in touch soon."); setIsContactOpen(false); } catch (error) { alert("Something went wrong. Please try again."); } }}>
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div className="space-y-2"><label className="text-[10px] uppercase tracking-widest text-[#7000FF]">{t.modal.labelName}</label><input type="text" name="name" placeholder={t.contact.namePlaceholder} className="w-full bg-transparent border-b border-white/10 py-2 focus:outline-none focus:border-[#7000FF] transition-colors placeholder:text-white/20 text-white font-light"/></div>
+                  <div className="space-y-2"><label className="text-[10px] uppercase tracking-widest text-[#7000FF]">{t.modal.labelProject}</label><input type="text" name="projectName" placeholder={t.modal.projectPlaceholder} className="w-full bg-transparent border-b border-white/10 py-2 focus:outline-none focus:border-[#7000FF] transition-colors placeholder:text-white/20 text-white font-light"/></div>
+                </div>
+                <div className="space-y-2"><label className="text-[10px] uppercase tracking-widest text-[#7000FF]">{t.modal.labelEmail}</label><input type="email" name="email" placeholder="name@company.com" className="w-full bg-transparent border-b border-white/10 py-2 focus:outline-none focus:border-[#7000FF] transition-colors placeholder:text-white/20 text-white font-light" /></div>
+                <div className="space-y-2"><label className="text-[10px] uppercase tracking-widest text-[#7000FF]">{t.modal.labelDesc}</label><textarea name="description" placeholder={t.contact.msgPlaceholder} rows={4} className="w-full bg-transparent border-b border-white/10 py-2 focus:outline-none focus:border-[#7000FF] transition-colors placeholder:text-white/20 text-white font-light resize-none"></textarea></div>
+                <motion.button type="submit" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="w-full bg-white text-black py-4 rounded-xl font-bold uppercase tracking-[0.2em] text-[10px] hover:bg-[#7000FF] hover:text-white transition-all duration-300">{t.modal.submitProposal}</motion.button>
+              </form>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ============================================================
+          HERO — SCROLL-DRIVEN VIDEO (reemplaza el hero + bg video)
+      ============================================================ */}
+      <div className="pt-16 md:pt-20">
+        <ScrollVideoHero t={t.hero} onCtaClick={() => setIsContactOpen(true)} />
+      </div>
+
+      {/* El resto de la página continúa con z-10 sobre el fondo negro */}
+      <div className="relative z-10 bg-[#000000]">
 
         {/* --- THE ARSENAL SECTION --- */}
         <section id="work" className="py-32 border-b border-white/5 overflow-hidden">
@@ -807,32 +902,16 @@ export default function App() {
                    </div>
                </Reveal>
            </div>
-           
            <div className="px-8 max-w-[1400px] mx-auto">
-               <Reveal>
-                  <ArsenalCarousel title={t.arsenal.landings} items={portfolioData.landings} type="landing" tagLine={t.arsenal.tagLive} />
-               </Reveal>
-               
-               <Reveal>
-                  <ArsenalCarousel title={t.arsenal.videos} items={portfolioData.videos} type="video" tagLine={t.arsenal.tagVideo} />
-               </Reveal>
-               
-               <Reveal>
-                  <ArsenalCarousel title={t.arsenal.branding} items={portfolioData.branding} type="branding" tagLine={t.arsenal.tagBrand} />
-               </Reveal>
-
-               {/* EL GANCHO FINAL (HOOK "SELL LIKE CRAZY") */}
+               <Reveal><ArsenalCarousel title={t.arsenal.landings} items={portfolioData.landings} type="landing" tagLine={t.arsenal.tagLive} /></Reveal>
+               <Reveal><ArsenalCarousel title={t.arsenal.videos} items={portfolioData.videos} type="video" tagLine={t.arsenal.tagVideo} /></Reveal>
+               <Reveal><ArsenalCarousel title={t.arsenal.branding} items={portfolioData.branding} type="branding" tagLine={t.arsenal.tagBrand} /></Reveal>
                <div className="mt-32 mb-10 text-center relative p-12 md:p-24 rounded-[3rem] border border-[#7000FF]/20 bg-gradient-to-b from-[#7000FF]/5 to-transparent overflow-hidden">
                  <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[1px] bg-gradient-to-r from-transparent via-[#7000FF] to-transparent"></div>
                  <Reveal viewport={{ once: true, amount: 0.5 }}>
                    <h3 className="text-4xl md:text-6xl font-black uppercase text-white tracking-tighter mb-6">{t.arsenal.hookTitle}</h3>
                    <p className="text-lg md:text-2xl font-light text-white/60 max-w-4xl mx-auto mb-12">{t.arsenal.hookDesc}</p>
-                   <motion.button 
-                     onClick={() => setIsContactOpen(true)} 
-                     className="bg-[#7000FF] text-white px-12 py-5 rounded-full font-bold uppercase tracking-[0.2em] text-[12px] hover:shadow-[0_0_50px_rgba(112,0,255,0.4)] transition-all duration-300"
-                     whileHover={{ scale: 1.05 }}
-                     whileTap={{ scale: 0.95 }}
-                   >
+                   <motion.button onClick={() => setIsContactOpen(true)} className="bg-[#7000FF] text-white px-12 py-5 rounded-full font-bold uppercase tracking-[0.2em] text-[12px] hover:shadow-[0_0_50px_rgba(112,0,255,0.4)] transition-all duration-300" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                      {t.arsenal.hookCta}
                    </motion.button>
                  </Reveal>
@@ -840,8 +919,7 @@ export default function App() {
            </div>
         </section>
 
-
-        {/* --- 3D INTERACTIVE SCENE WITH AI --- */}
+        {/* --- 3D INTERACTIVE SCENE --- */}
         <section className="relative z-10 w-full flex justify-center py-20 px-8">
            <div className="max-w-[1400px] w-full">
                <EscenaZeronne t={t.scene} />
@@ -866,7 +944,7 @@ export default function App() {
           </div>
         </section>
 
-        {/* --- HOW WE WORK SECTION --- */}
+        {/* --- HOW WE WORK --- */}
         <section className="py-32 bg-white text-black rounded-[3rem] md:rounded-[4rem] relative z-10 mx-4 md:mx-8 mb-20">
           <div className="max-w-7xl mx-auto px-8">
             <h2 className="text-[10px] tracking-[0.5em] text-[#7000FF] mb-20 uppercase font-bold text-center">{t.blueprint.title}</h2>
