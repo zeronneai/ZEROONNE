@@ -536,58 +536,95 @@ const ArsenalCarousel = ({ title, items, type, tagLine }: { title: string, items
 }
 
 // ============================================================
-// --- SCROLL-DRIVEN VIDEO (FIXED BACKGROUND, SECTION-BASED) ---
-// El video está fixed en el fondo de toda la página.
-// Al hacer scroll y cambiar de sección, el currentTime avanza.
+// --- SCROLL-DRIVEN VIDEO (FIXED BACKGROUND)
+// Truco clave: play() → pause() fuerza al browser a descargar
+// el video completo al buffer, haciendo posible el seek frame a frame.
+// Usamos el evento 'seeked' para encolar seeks sin saturar el browser.
 // ============================================================
 const useScrollVideo = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const rafRef = useRef<number>(0);
-  const targetTimeRef = useRef(0);
-  const currentTimeRef = useRef(0);
   const [videoReady, setVideoReady] = useState(false);
   const [progress, setProgress] = useState(0);
+  const durRef = useRef(0);
+  const isSeeking = useRef(false);
+  const pendingSeek = useRef<number | null>(null);
+
+  const doSeek = (video: HTMLVideoElement, time: number) => {
+    isSeeking.current = true;
+    video.currentTime = time;
+  };
 
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
-    video.preload = 'auto';
+
     video.muted = true;
     video.playsInline = true;
+    video.preload = 'auto';
     video.src =
       'https://res.cloudinary.com/dsprn0ew4/video/upload/v1774294850/veo-3.1-fast-generate-preview_A_cinematic_3D_animation_starting_from_a_solid_sleek_dark_glass_monolith_floatin-0_hr6b17.mp4';
-    const onLoaded = () => { video.pause(); video.currentTime = 0; setVideoReady(true); };
-    video.addEventListener('loadedmetadata', onLoaded);
+
+    const onMeta = () => {
+      durRef.current = video.duration;
+      // play+pause es el truco para que el browser llene el buffer completo
+      const playPromise = video.play();
+      if (playPromise) {
+        playPromise.then(() => {
+          video.pause();
+          video.currentTime = 0;
+          setVideoReady(true);
+        }).catch(() => setVideoReady(true));
+      } else {
+        setVideoReady(true);
+      }
+    };
+
+    const onSeeked = () => {
+      // Si hay un seek pendiente, ejecutarlo ahora que el browser terminó el anterior
+      if (pendingSeek.current !== null) {
+        const t = pendingSeek.current;
+        pendingSeek.current = null;
+        video.currentTime = t;
+      } else {
+        isSeeking.current = false;
+      }
+    };
+
+    video.addEventListener('loadedmetadata', onMeta);
+    video.addEventListener('seeked', onSeeked);
     video.load();
-    return () => video.removeEventListener('loadedmetadata', onLoaded);
+
+    return () => {
+      video.removeEventListener('loadedmetadata', onMeta);
+      video.removeEventListener('seeked', onSeeked);
+    };
   }, []);
 
-  // Lerp suave en RAF
   useEffect(() => {
-    const video = videoRef.current;
-    if (!video || !videoReady) return;
-    const tick = () => {
-      const lerped = currentTimeRef.current + (targetTimeRef.current - currentTimeRef.current) * 0.08;
-      currentTimeRef.current = lerped;
-      video.currentTime = lerped;
-      rafRef.current = requestAnimationFrame(tick);
-    };
-    rafRef.current = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(rafRef.current);
-  }, [videoReady]);
+    if (!videoReady) return;
 
-  // Scroll → progress global de 0 a 1
-  useEffect(() => {
     const handleScroll = () => {
       const video = videoRef.current;
-      if (!video || !videoReady) return;
+      if (!video || !durRef.current) return;
+
       const scrollY = window.scrollY;
       const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
       const p = Math.max(0, Math.min(1, scrollY / maxScroll));
       setProgress(p);
-      targetTimeRef.current = p * (video.duration || 0);
+
+      const targetTime = p * durRef.current;
+
+      if (isSeeking.current) {
+        // Browser ocupado → guardar el tiempo más reciente como pendiente
+        pendingSeek.current = targetTime;
+      } else {
+        doSeek(video, targetTime);
+      }
     };
+
     window.addEventListener('scroll', handleScroll, { passive: true });
+    // Disparar una vez al montar para posicionar en frame 0
+    handleScroll();
     return () => window.removeEventListener('scroll', handleScroll);
   }, [videoReady]);
 
