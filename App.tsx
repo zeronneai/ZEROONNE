@@ -33,8 +33,8 @@ const translations = {
       title: "What we do", subtitle: "Our Core", subtitleItalic: "Capabilities", viewProject: "VIEW PROJECT",
       items: [
         { id: '01', title: 'AI STRATEGY', desc: 'We architect the intelligent core of your business future.', detail: 'From custom LLM integration to predictive analytics, we design the roadmap for your AI transformation.' },
-        { id: '02', title: 'LUXURY LANDINGS', desc: 'High-conversion interfaces powered by cognitive psychology.', detail: 'Our landing pages aren’t just beautiful; they use AI-driven heatmaps to ensure every pixel converts.' },
-        { id: '03', title: 'CREATIVE AUTOMATION', desc: 'Scaling content production without losing human soul.', detail: 'Custom diffusion models trained specifically on your brand’s visual DNA for infinite, consistent assets.' }
+        { id: '02', title: 'LUXURY LANDINGS', desc: 'High-conversion interfaces powered by cognitive psychology.', detail: 'Our landing pages aren't just beautiful; they use AI-driven heatmaps to ensure every pixel converts.' },
+        { id: '03', title: 'CREATIVE AUTOMATION', desc: 'Scaling content production without losing human soul.', detail: 'Custom diffusion models trained specifically on your brand's visual DNA for infinite, consistent assets.' }
       ],
       list: ["Web Design", "Web Hosting", "App Design", "UI Design", "UX", "Custom Software", "AI Video", "AI Graphic Design", "AI Images", "AI Upscaling", "AI Creative Strategy", "AI Automation", "AI Education", "AI Integration", "AI Installation"]
     },
@@ -586,27 +586,95 @@ export default function App() {
       </motion.div>
 
       <div className="relative z-10">
-        {/* --- NAVIGATION --- */}
-        <nav className="fixed top-0 w-full z-[100] px-8 py-6 flex justify-between items-center mix-blend-difference">
-          <div className="flex items-center gap-6">
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-xl font-bold tracking-[0.3em] cursor-pointer" onClick={() => window.scrollTo(0, 0)}>
+
+        {/* ============================================================
+            NAVBAR — FIXED, MOBILE-FIRST
+            - En móvil: 2 filas. Fila 1: logo + idioma. Fila 2: botones.
+            - En desktop (md+): 1 fila horizontal como antes.
+            - Sin mix-blend-difference para que no haya texto sobrepuesto.
+            - Fondo semitransparente con blur para que flote limpio.
+        ============================================================ */}
+        <nav className="fixed top-0 w-full z-[100] bg-black/70 backdrop-blur-md border-b border-white/5">
+
+          {/* Fila superior: logo + idioma (siempre visible) */}
+          <div className="flex items-center justify-between px-5 pt-4 pb-2 md:hidden">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="text-lg font-bold tracking-[0.3em] cursor-pointer"
+              onClick={() => window.scrollTo(0, 0)}
+            >
               ZERONNE<span className="text-[#7000FF]">.</span>
             </motion.div>
             <div className="flex items-center gap-1">
-               <button onClick={() => setLang('en')} className={`text-[9px] font-bold uppercase tracking-widest transition-colors ${lang === 'en' ? 'text-white' : 'text-white/40 hover:text-white'}`}>EN</button>
-               <span className="text-white/20 text-[9px]">/</span>
-               <button onClick={() => setLang('es')} className={`text-[9px] font-bold uppercase tracking-widest transition-colors ${lang === 'es' ? 'text-white' : 'text-white/40 hover:text-white'}`}>ES</button>
+              <button
+                onClick={() => setLang('en')}
+                className={`text-[9px] font-bold uppercase tracking-widest transition-colors ${lang === 'en' ? 'text-white' : 'text-white/40 hover:text-white'}`}
+              >EN</button>
+              <span className="text-white/20 text-[9px]">/</span>
+              <button
+                onClick={() => setLang('es')}
+                className={`text-[9px] font-bold uppercase tracking-widest transition-colors ${lang === 'es' ? 'text-white' : 'text-white/40 hover:text-white'}`}
+              >ES</button>
             </div>
           </div>
-          <div className="flex items-center gap-4">
-            <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="bg-white/10 backdrop-blur-md px-6 py-2 rounded-full border border-white/10 text-[10px] uppercase tracking-widest font-bold hover:bg-[#7000FF] transition-all z-[101]">
+
+          {/* Fila inferior móvil: botones de acción */}
+          <div className="flex items-center justify-between gap-3 px-5 pb-4 md:hidden">
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="flex-1 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full border border-white/10 text-[9px] uppercase tracking-widest font-bold hover:bg-[#7000FF] transition-all text-center"
+            >
               {isMenuOpen ? t.nav.close : t.nav.services}
             </button>
-            <button onClick={() => setIsContactOpen(true)} className="hidden md:block bg-white text-black px-6 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest hover:bg-[#7000FF] hover:text-white transition-all">
+            <button
+              onClick={() => setIsContactOpen(true)}
+              className="flex-1 bg-white text-black px-4 py-2 rounded-full text-[9px] font-bold uppercase tracking-widest hover:bg-[#7000FF] hover:text-white transition-all text-center"
+            >
               {t.nav.contact}
             </button>
           </div>
+
+          {/* Layout desktop: 1 sola fila */}
+          <div className="hidden md:flex items-center justify-between px-8 py-5">
+            <div className="flex items-center gap-6">
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="text-xl font-bold tracking-[0.3em] cursor-pointer"
+                onClick={() => window.scrollTo(0, 0)}
+              >
+                ZERONNE<span className="text-[#7000FF]">.</span>
+              </motion.div>
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={() => setLang('en')}
+                  className={`text-[9px] font-bold uppercase tracking-widest transition-colors ${lang === 'en' ? 'text-white' : 'text-white/40 hover:text-white'}`}
+                >EN</button>
+                <span className="text-white/20 text-[9px]">/</span>
+                <button
+                  onClick={() => setLang('es')}
+                  className={`text-[9px] font-bold uppercase tracking-widest transition-colors ${lang === 'es' ? 'text-white' : 'text-white/40 hover:text-white'}`}
+                >ES</button>
+              </div>
+            </div>
+            <div className="flex items-center gap-4">
+              <button
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                className="bg-white/10 backdrop-blur-md px-6 py-2 rounded-full border border-white/10 text-[10px] uppercase tracking-widest font-bold hover:bg-[#7000FF] transition-all z-[101]"
+              >
+                {isMenuOpen ? t.nav.close : t.nav.services}
+              </button>
+              <button
+                onClick={() => setIsContactOpen(true)}
+                className="bg-white text-black px-6 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest hover:bg-[#7000FF] hover:text-white transition-all"
+              >
+                {t.nav.contact}
+              </button>
+            </div>
+          </div>
         </nav>
+        {/* ============================================================ */}
 
         {/* --- DROPDOWN SERVICES --- */}
         <AnimatePresence>
@@ -650,7 +718,8 @@ export default function App() {
         </AnimatePresence>
 
         {/* --- HERO SECTION --- */}
-          <section className="relative h-screen flex flex-col justify-center items-center px-6 overflow-hidden">
+        {/* pt-28 en móvil para compensar la navbar de 2 filas; pt-24 en desktop */}
+        <section className="relative h-screen flex flex-col justify-center items-center px-6 overflow-hidden pt-28 md:pt-24">
           {/* Deep Glow Background */}
           <div className="absolute inset-0 z-0 pointer-events-none">
             <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-[#7000FF]/10 rounded-full blur-[150px]"></div>
