@@ -537,23 +537,28 @@ const ArsenalCarousel = ({ title, items, type, tagLine }: { title: string, items
 
 // ============================================================
 // --- SCROLL-DRIVEN VIDEO (FIXED BACKGROUND)
-// Truco clave: play() → pause() fuerza al browser a descargar
-// el video completo al buffer, haciendo posible el seek frame a frame.
-// Usamos el evento 'seeked' para encolar seeks sin saturar el browser.
+// - El video avanza SOLO durante las primeras 2 secciones (~200vh)
+// - Después se queda fijo en el último frame
+// - Fluido: lerp en RAF + pendingSeek para no saturar el browser
 // ============================================================
+
+// Cuántos px de scroll abarcan la animación completa.
+// 200vh ≈ primeras 2 secciones visibles
+const VIDEO_SCROLL_ZONE = typeof window !== 'undefined' ? window.innerHeight * 2 : 1400;
+
 const useScrollVideo = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [videoReady, setVideoReady] = useState(false);
   const [progress, setProgress] = useState(0);
+
   const durRef = useRef(0);
+  const targetTimeRef = useRef(0);
+  const currentTimeRef = useRef(0);
   const isSeeking = useRef(false);
   const pendingSeek = useRef<number | null>(null);
+  const rafRef = useRef(0);
 
-  const doSeek = (video: HTMLVideoElement, time: number) => {
-    isSeeking.current = true;
-    video.currentTime = time;
-  };
-
+  // --- Carga y pre-buffer del video ---
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
@@ -566,24 +571,20 @@ const useScrollVideo = () => {
 
     const onMeta = () => {
       durRef.current = video.duration;
-      // play+pause es el truco para que el browser llene el buffer completo
-      const playPromise = video.play();
-      if (playPromise) {
-        playPromise.then(() => {
-          video.pause();
-          video.currentTime = 0;
-          setVideoReady(true);
-        }).catch(() => setVideoReady(true));
-      } else {
+      // play→pause fuerza al browser a llenar el buffer completo
+      video.play().then(() => {
+        video.pause();
+        video.currentTime = 0;
         setVideoReady(true);
-      }
+      }).catch(() => setVideoReady(true));
     };
 
+    // seeked: browser terminó el seek → podemos mandar el pendiente
     const onSeeked = () => {
-      // Si hay un seek pendiente, ejecutarlo ahora que el browser terminó el anterior
       if (pendingSeek.current !== null) {
         const t = pendingSeek.current;
         pendingSeek.current = null;
+        isSeeking.current = true;
         video.currentTime = t;
       } else {
         isSeeking.current = false;
@@ -593,37 +594,55 @@ const useScrollVideo = () => {
     video.addEventListener('loadedmetadata', onMeta);
     video.addEventListener('seeked', onSeeked);
     video.load();
-
     return () => {
       video.removeEventListener('loadedmetadata', onMeta);
       video.removeEventListener('seeked', onSeeked);
     };
   }, []);
 
+  // --- RAF loop: lerp suave hacia targetTime ---
+  useEffect(() => {
+    if (!videoReady) return;
+    const video = videoRef.current;
+    if (!video) return;
+
+    const tick = () => {
+      rafRef.current = requestAnimationFrame(tick);
+      const diff = targetTimeRef.current - currentTimeRef.current;
+      // Solo seekear si la diferencia es notable (evita seeks innecesarios)
+      if (Math.abs(diff) < 0.001) return;
+
+      // Lerp: 0.07 = suave y cinematográfico
+      const next = currentTimeRef.current + diff * 0.07;
+      currentTimeRef.current = next;
+
+      if (!isSeeking.current) {
+        isSeeking.current = true;
+        video.currentTime = next;
+      } else {
+        pendingSeek.current = next;
+      }
+    };
+    rafRef.current = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(rafRef.current);
+  }, [videoReady]);
+
+  // --- Scroll → targetTime (solo zona inicial) ---
   useEffect(() => {
     if (!videoReady) return;
 
+    const scrollZone = window.innerHeight * 2;
+
     const handleScroll = () => {
-      const video = videoRef.current;
-      if (!video || !durRef.current) return;
-
+      if (!durRef.current) return;
       const scrollY = window.scrollY;
-      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-      const p = Math.max(0, Math.min(1, scrollY / maxScroll));
+      // p va de 0 a 1 solo dentro de los primeros 2 viewports
+      const p = Math.min(1, scrollY / scrollZone);
       setProgress(p);
-
-      const targetTime = p * durRef.current;
-
-      if (isSeeking.current) {
-        // Browser ocupado → guardar el tiempo más reciente como pendiente
-        pendingSeek.current = targetTime;
-      } else {
-        doSeek(video, targetTime);
-      }
+      targetTimeRef.current = p * durRef.current;
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
-    // Disparar una vez al montar para posicionar en frame 0
     handleScroll();
     return () => window.removeEventListener('scroll', handleScroll);
   }, [videoReady]);
