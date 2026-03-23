@@ -536,148 +536,191 @@ const ArsenalCarousel = ({ title, items, type, tagLine }: { title: string, items
 }
 
 // ============================================================
-// --- SCROLL-DRIVEN VIDEO (FIXED BACKGROUND)
-// - El video avanza SOLO durante las primeras 2 secciones (~200vh)
-// - Después se queda fijo en el último frame
-// - Fluido: lerp en RAF + pendingSeek para no saturar el browser
+// CANVAS FRAME-BY-FRAME — estrategia Apple/Stripe
+//
+// Cómo funciona:
+// 1. Cargamos el video en un <video> oculto
+// 2. Extraemos N frames dibujándolos en un OffscreenCanvas
+//    (cada seek → drawImage → createImageBitmap → guardado en array)
+// 3. Al scrollear, solo hacemos ctx.drawImage(frames[i]) en el canvas
+//    visible — sin seeks, sin decodificación, 60fps real garantizado
+//
+// El video avanza de frame 0→last SOLO en las primeras 2 secciones.
+// Después se queda congelado en el último frame para toda la página.
 // ============================================================
 
-// Cuántos px de scroll abarcan la animación completa.
-// 200vh ≈ primeras 2 secciones visibles
-const VIDEO_SCROLL_ZONE = typeof window !== 'undefined' ? window.innerHeight * 2 : 1400;
+const VIDEO_URL =
+  'https://res.cloudinary.com/dsprn0ew4/video/upload/v1774294850/veo-3.1-fast-generate-preview_A_cinematic_3D_animation_starting_from_a_solid_sleek_dark_glass_monolith_floatin-0_hr6b17.mp4';
 
-const useScrollVideo = () => {
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const [videoReady, setVideoReady] = useState(false);
+// Cuántos frames extraer. Más = más suave pero más RAM.
+// Para 5-10s a 60fps real, 120 frames es más que suficiente (1 c/~60ms)
+const TOTAL_FRAMES = 120;
+
+// Scroll zone: cuántos vh cubren la animación completa
+const SCROLL_VH = 2.2;
+
+const ScrollVideoBackground = () => {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const framesRef = useRef<ImageBitmap[]>([]);
+  const currentFrameRef = useRef(0);
+  const targetFrameRef = useRef(0);
+  const rafRef = useRef(0);
+  const [loadState, setLoadState] = useState<'idle' | 'loading' | 'ready'>('idle');
+  const [loadPct, setLoadPct] = useState(0);
   const [progress, setProgress] = useState(0);
 
-  const durRef = useRef(0);
-  const targetTimeRef = useRef(0);
-  const currentTimeRef = useRef(0);
-  const isSeeking = useRef(false);
-  const pendingSeek = useRef<number | null>(null);
-  const rafRef = useRef(0);
-
-  // --- Carga y pre-buffer del video ---
+  // ── 1. Extraer frames ──────────────────────────────────────
   useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
+    setLoadState('loading');
 
+    const video = document.createElement('video');
     video.muted = true;
     video.playsInline = true;
+    video.crossOrigin = 'anonymous';
     video.preload = 'auto';
-    video.src =
-      'https://res.cloudinary.com/dsprn0ew4/video/upload/v1774294850/veo-3.1-fast-generate-preview_A_cinematic_3D_animation_starting_from_a_solid_sleek_dark_glass_monolith_floatin-0_hr6b17.mp4';
+    video.src = VIDEO_URL;
 
-    const onMeta = () => {
-      durRef.current = video.duration;
-      // play→pause fuerza al browser a llenar el buffer completo
-      video.play().then(() => {
-        video.pause();
-        video.currentTime = 0;
-        setVideoReady(true);
-      }).catch(() => setVideoReady(true));
-    };
+    const W = 1280;
+    const H = 720;
+    const offscreen = document.createElement('canvas');
+    offscreen.width = W;
+    offscreen.height = H;
+    const ctx2d = offscreen.getContext('2d')!;
 
-    // seeked: browser terminó el seek → podemos mandar el pendiente
-    const onSeeked = () => {
-      if (pendingSeek.current !== null) {
-        const t = pendingSeek.current;
-        pendingSeek.current = null;
-        isSeeking.current = true;
-        video.currentTime = t;
-      } else {
-        isSeeking.current = false;
+    let cancelled = false;
+
+    const extractFrames = async () => {
+      await new Promise<void>((res) => {
+        video.addEventListener('loadedmetadata', () => res(), { once: true });
+        video.load();
+      });
+
+      const dur = video.duration;
+      const frames: ImageBitmap[] = [];
+
+      for (let i = 0; i < TOTAL_FRAMES; i++) {
+        if (cancelled) return;
+        const t = (i / (TOTAL_FRAMES - 1)) * dur;
+
+        // seek al tiempo exacto y esperar que el frame esté listo
+        await new Promise<void>((res) => {
+          video.addEventListener('seeked', () => res(), { once: true });
+          video.currentTime = t;
+        });
+
+        ctx2d.drawImage(video, 0, 0, W, H);
+        const bitmap = await createImageBitmap(offscreen);
+        frames.push(bitmap);
+        setLoadPct(Math.round(((i + 1) / TOTAL_FRAMES) * 100));
+      }
+
+      if (!cancelled) {
+        framesRef.current = frames;
+        setLoadState('ready');
+        setLoadPct(100);
       }
     };
 
-    video.addEventListener('loadedmetadata', onMeta);
-    video.addEventListener('seeked', onSeeked);
-    video.load();
-    return () => {
-      video.removeEventListener('loadedmetadata', onMeta);
-      video.removeEventListener('seeked', onSeeked);
-    };
+    extractFrames();
+    return () => { cancelled = true; };
   }, []);
 
-  // --- RAF loop: lerp suave hacia targetTime ---
+  // ── 2. Scroll → targetFrame (solo primeras SCROLL_VH pantallas) ──
   useEffect(() => {
-    if (!videoReady) return;
-    const video = videoRef.current;
-    if (!video) return;
+    if (loadState !== 'ready') return;
 
-    const tick = () => {
-      rafRef.current = requestAnimationFrame(tick);
-      const diff = targetTimeRef.current - currentTimeRef.current;
-      // Solo seekear si la diferencia es notable (evita seeks innecesarios)
-      if (Math.abs(diff) < 0.001) return;
-
-      // Lerp: 0.07 = suave y cinematográfico
-      const next = currentTimeRef.current + diff * 0.07;
-      currentTimeRef.current = next;
-
-      if (!isSeeking.current) {
-        isSeeking.current = true;
-        video.currentTime = next;
-      } else {
-        pendingSeek.current = next;
-      }
-    };
-    rafRef.current = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(rafRef.current);
-  }, [videoReady]);
-
-  // --- Scroll → targetTime (solo zona inicial) ---
-  useEffect(() => {
-    if (!videoReady) return;
-
-    const scrollZone = window.innerHeight * 2;
+    const scrollZone = window.innerHeight * SCROLL_VH;
 
     const handleScroll = () => {
-      if (!durRef.current) return;
-      const scrollY = window.scrollY;
-      // p va de 0 a 1 solo dentro de los primeros 2 viewports
-      const p = Math.min(1, scrollY / scrollZone);
+      const p = Math.min(1, window.scrollY / scrollZone);
       setProgress(p);
-      targetTimeRef.current = p * durRef.current;
+      targetFrameRef.current = Math.round(p * (TOTAL_FRAMES - 1));
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     handleScroll();
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [videoReady]);
+  }, [loadState]);
 
-  return { videoRef, videoReady, progress };
-};
+  // ── 3. RAF loop: lerp currentFrame → targetFrame y dibujar ──
+  useEffect(() => {
+    if (loadState !== 'ready') return;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d')!;
 
-// ============================================================
-// --- COMPONENTE FIXED VIDEO BACKGROUND ---
-// Se renderiza una sola vez, fixed en el fondo de toda la página.
-// ============================================================
-const ScrollVideoBackground = () => {
-  const { videoRef, videoReady, progress } = useScrollVideo();
+    const tick = () => {
+      rafRef.current = requestAnimationFrame(tick);
+      const frames = framesRef.current;
+      if (!frames.length) return;
+
+      // Lerp suave entre frames (0.10 = fluido, 0.18 = más reactivo)
+      currentFrameRef.current +=
+        (targetFrameRef.current - currentFrameRef.current) * 0.10;
+
+      const idx = Math.round(currentFrameRef.current);
+      const clamped = Math.max(0, Math.min(frames.length - 1, idx));
+
+      ctx.drawImage(frames[clamped], 0, 0, canvas.width, canvas.height);
+    };
+
+    rafRef.current = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(rafRef.current);
+  }, [loadState]);
+
+  // ── Resize canvas ──────────────────────────────────────────
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const fit = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
+    fit();
+    window.addEventListener('resize', fit);
+    return () => window.removeEventListener('resize', fit);
+  }, []);
+
   return (
     <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
-      {/* El video */}
-      <video
-        ref={videoRef}
-        muted
-        playsInline
-        preload="auto"
-        className="w-full h-full object-cover"
-        style={{ opacity: videoReady ? 0.55 : 0, transition: 'opacity 1s ease' }}
-      />
-      {/* Overlay base oscuro para legibilidad */}
-      <div className="absolute inset-0 bg-black/55" />
-      {/* Glow morado que crece con el progreso */}
-      <div
-        className="absolute inset-0"
+
+      {/* Canvas principal — muestra los frames */}
+      <canvas
+        ref={canvasRef}
+        className="absolute inset-0 w-full h-full"
         style={{
-          background: `radial-gradient(ellipse at 50% 40%, rgba(112,0,255,${progress * 0.3}) 0%, transparent 65%)`,
+          opacity: loadState === 'ready' ? 0.72 : 0,
+          transition: 'opacity 1.2s ease',
+          objectFit: 'cover',
         }}
       />
-      {/* Gradiente inferior para que el texto siempre sea legible */}
-      <div className="absolute bottom-0 left-0 right-0 h-64 bg-gradient-to-t from-black/80 to-transparent" />
+
+      {/* Overlay oscuro base para legibilidad del texto */}
+      <div className="absolute inset-0 bg-black/48" />
+
+      {/* Glow morado que explota con el progreso */}
+      <div
+        className="absolute inset-0 transition-opacity duration-300"
+        style={{
+          background: `radial-gradient(ellipse at 50% 45%,
+            rgba(112,0,255,${(progress * 0.35).toFixed(3)}) 0%,
+            rgba(80,0,200,${(progress * 0.12).toFixed(3)}) 40%,
+            transparent 70%)`,
+        }}
+      />
+
+      {/* Viñeta inferior para que el contenido siempre sea legible */}
+      <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-black/70 to-transparent" />
+
+      {/* Barra de carga — solo mientras extrae frames */}
+      {loadState === 'loading' && (
+        <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-white/5">
+          <div
+            className="h-full bg-[#7000FF] transition-all duration-200"
+            style={{ width: `${loadPct}%` }}
+          />
+        </div>
+      )}
     </div>
   );
 };
