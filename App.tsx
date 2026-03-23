@@ -536,224 +536,95 @@ const ArsenalCarousel = ({ title, items, type, tagLine }: { title: string, items
 }
 
 // ============================================================
-// --- SCROLL-DRIVEN VIDEO HERO ---
-// El video del monolito es controlado por scroll.
-// El usuario scrollea dentro de la sección "sticky" y el
-// currentTime del video avanza proporcionalmente.
+// --- SCROLL-DRIVEN VIDEO (FIXED BACKGROUND, SECTION-BASED) ---
+// El video está fixed en el fondo de toda la página.
+// Al hacer scroll y cambiar de sección, el currentTime avanza.
 // ============================================================
-const ScrollVideoHero = ({
-  t,
-  onCtaClick,
-}: {
-  t: typeof translations.en.hero;
-  onCtaClick: () => void;
-}) => {
-  const containerRef = useRef<HTMLDivElement>(null);
+const useScrollVideo = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const rafRef = useRef<number>(0);
   const targetTimeRef = useRef(0);
   const currentTimeRef = useRef(0);
   const [videoReady, setVideoReady] = useState(false);
-  const [scrollProgress, setScrollProgress] = useState(0);
-
-  // Cuántos vh de scroll ocupa la animación completa.
-  // 300vh = el usuario scrollea 3 pantallas para ver todo el video.
-  const SCROLL_HEIGHT = 300;
+  const [progress, setProgress] = useState(0);
 
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
-
     video.preload = 'auto';
     video.muted = true;
     video.playsInline = true;
     video.src =
       'https://res.cloudinary.com/dsprn0ew4/video/upload/v1774294850/veo-3.1-fast-generate-preview_A_cinematic_3D_animation_starting_from_a_solid_sleek_dark_glass_monolith_floatin-0_hr6b17.mp4';
-
-    const onLoaded = () => {
-      // Pausa el video: sólo lo movemos con scroll
-      video.pause();
-      video.currentTime = 0;
-      setVideoReady(true);
-    };
-
+    const onLoaded = () => { video.pause(); video.currentTime = 0; setVideoReady(true); };
     video.addEventListener('loadedmetadata', onLoaded);
     video.load();
-
-    return () => {
-      video.removeEventListener('loadedmetadata', onLoaded);
-    };
+    return () => video.removeEventListener('loadedmetadata', onLoaded);
   }, []);
 
+  // Lerp suave en RAF
   useEffect(() => {
     const video = videoRef.current;
     if (!video || !videoReady) return;
-
-    // Animación suave: lerp entre currentTime y targetTime
-    const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
-
     const tick = () => {
-      currentTimeRef.current = lerp(
-        currentTimeRef.current,
-        targetTimeRef.current,
-        0.1 // suavidad (0.05 = muy suave, 0.15 = más rápido)
-      );
-      video.currentTime = currentTimeRef.current;
+      const lerped = currentTimeRef.current + (targetTimeRef.current - currentTimeRef.current) * 0.08;
+      currentTimeRef.current = lerped;
+      video.currentTime = lerped;
       rafRef.current = requestAnimationFrame(tick);
     };
-
     rafRef.current = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(rafRef.current);
   }, [videoReady]);
 
+  // Scroll → progress global de 0 a 1
   useEffect(() => {
     const handleScroll = () => {
-      const container = containerRef.current;
       const video = videoRef.current;
-      if (!container || !video || !videoReady) return;
-
-      const rect = container.getBoundingClientRect();
-      const containerHeight = container.offsetHeight;
-      const viewportHeight = window.innerHeight;
-
-      // scrolled: cuánto ha avanzado el scroll dentro del contenedor
-      // Va de 0 (inicio) a (containerHeight - viewportHeight) (final)
-      const scrolled = -rect.top;
-      const maxScroll = containerHeight - viewportHeight;
-      const progress = Math.max(0, Math.min(1, scrolled / maxScroll));
-
-      setScrollProgress(progress);
-      targetTimeRef.current = progress * (video.duration || 0);
+      if (!video || !videoReady) return;
+      const scrollY = window.scrollY;
+      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+      const p = Math.max(0, Math.min(1, scrollY / maxScroll));
+      setProgress(p);
+      targetTimeRef.current = p * (video.duration || 0);
     };
-
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, [videoReady]);
 
+  return { videoRef, videoReady, progress };
+};
+
+// ============================================================
+// --- COMPONENTE FIXED VIDEO BACKGROUND ---
+// Se renderiza una sola vez, fixed en el fondo de toda la página.
+// ============================================================
+const ScrollVideoBackground = () => {
+  const { videoRef, videoReady, progress } = useScrollVideo();
   return (
-    // Contenedor alto que da "espacio" para el scroll
-    <div
-      ref={containerRef}
-      style={{ height: `${SCROLL_HEIGHT}vh` }}
-      className="relative"
-    >
-      {/* Sticky: el contenido se queda fijo mientras el usuario scrollea */}
-      <div className="sticky top-0 h-screen overflow-hidden flex items-center justify-center">
-
-        {/* ---- VIDEO DE FONDO (scroll-driven) ---- */}
-        <video
-          ref={videoRef}
-          muted
-          playsInline
-          preload="auto"
-          className="absolute inset-0 w-full h-full object-cover"
-          style={{ opacity: videoReady ? 1 : 0, transition: 'opacity 0.6s ease' }}
-        />
-
-        {/* Overlay oscuro que se desvanece conforme avanza el scroll */}
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background: `linear-gradient(to bottom,
-              rgba(0,0,0,${0.75 - scrollProgress * 0.3}) 0%,
-              rgba(0,0,0,${0.4 - scrollProgress * 0.2}) 50%,
-              rgba(0,0,0,0.85) 100%
-            )`,
-          }}
-        />
-
-        {/* Glow morado que aparece con el progreso */}
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background: `radial-gradient(ellipse at center, rgba(112,0,255,${scrollProgress * 0.25}) 0%, transparent 70%)`,
-          }}
-        />
-
-        {/* ---- CONTENIDO DEL HERO ---- */}
-        <div className="relative z-10 text-center px-4 w-full max-w-5xl mx-auto">
-          <motion.span
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 0.5 }}
-            transition={{ delay: 0.2 }}
-            className="text-[12px] tracking-[0.5em] uppercase mb-6 block"
-          >
-            {t.evolution}
-          </motion.span>
-
-          <motion.h1
-            initial={{ opacity: 0, y: 100 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-            className="text-4xl md:text-6xl lg:text-7xl font-bold leading-tight tracking-tighter"
-          >
-            {t.crafting} <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-b from-white to-[#7000FF]">
-              {t.intelligence}
-            </span>
-          </motion.h1>
-
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 0.7, y: 0 }}
-            transition={{ delay: 0.8, duration: 1 }}
-            className="mt-8 text-sm md:text-xl max-w-2xl mx-auto font-light leading-relaxed tracking-wide"
-          >
-            {t.description}
-          </motion.p>
-
-          <motion.button
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0, scale: [1, 1.05, 1] }}
-            transition={{
-              opacity: { delay: 1.2, duration: 1 },
-              y: { delay: 1.2, duration: 1 },
-              scale: { repeat: Infinity, duration: 2, ease: 'easeInOut' },
-            }}
-            onClick={onCtaClick}
-            className="mt-10 bg-[#7000FF] text-white px-10 py-5 rounded-full text-[11px] font-bold uppercase tracking-[0.3em] shadow-[0_0_30px_rgba(112,0,255,0.3)] hover:shadow-[0_0_50px_rgba(112,0,255,0.5)] transition-all duration-300"
-          >
-            {t.cta}
-          </motion.button>
-
-          <motion.div
-            initial={{ width: 0 }}
-            animate={{ width: '100%' }}
-            transition={{ delay: 1, duration: 1.5 }}
-            className="h-[1px] bg-gradient-to-r from-transparent via-[#7000FF] to-transparent mt-12 max-w-4xl mx-auto"
-          />
-        </div>
-
-        {/* Scroll indicator — desaparece con el progreso */}
-        <motion.div
-          className="absolute bottom-12 flex flex-col items-center gap-2 pointer-events-none"
-          style={{ opacity: 1 - scrollProgress * 3 }}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1, y: [0, 15, 0] }}
-          transition={{
-            opacity: { delay: 1.5, duration: 1 },
-            y: { repeat: Infinity, duration: 2, ease: 'easeInOut' },
-          }}
-        >
-          <span className="text-[9px] uppercase tracking-[0.3em] opacity-40">{t.scroll}</span>
-          <div className="w-[1px] h-12 bg-gradient-to-b from-[#7000FF] to-transparent" />
-        </motion.div>
-
-        {/* Barra de progreso del scroll (sutil, esquina inferior derecha) */}
-        <div className="absolute bottom-12 right-8 flex flex-col items-center gap-2 pointer-events-none">
-          <div className="w-[2px] h-16 bg-white/10 rounded-full overflow-hidden">
-            <div
-              className="w-full bg-[#7000FF] rounded-full transition-none"
-              style={{ height: `${scrollProgress * 100}%` }}
-            />
-          </div>
-        </div>
-      </div>
+    <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
+      {/* El video */}
+      <video
+        ref={videoRef}
+        muted
+        playsInline
+        preload="auto"
+        className="w-full h-full object-cover"
+        style={{ opacity: videoReady ? 0.55 : 0, transition: 'opacity 1s ease' }}
+      />
+      {/* Overlay base oscuro para legibilidad */}
+      <div className="absolute inset-0 bg-black/55" />
+      {/* Glow morado que crece con el progreso */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background: `radial-gradient(ellipse at 50% 40%, rgba(112,0,255,${progress * 0.3}) 0%, transparent 65%)`,
+        }}
+      />
+      {/* Gradiente inferior para que el texto siempre sea legible */}
+      <div className="absolute bottom-0 left-0 right-0 h-64 bg-gradient-to-t from-black/80 to-transparent" />
     </div>
   );
 };
-
-// --- MAIN APP COMPONENT ---
 export default function App() {
   const [lang, setLang] = useState<'en' | 'es'>('en');
   const [selectedService, setSelectedService] = useState<Service | null>(null);
@@ -790,7 +661,7 @@ export default function App() {
   };
 
   return (
-    <div className="bg-[#000000] text-white font-sans selection:bg-[#7000FF] selection:text-white min-h-screen relative">
+    <div className="text-white font-sans selection:bg-[#7000FF] selection:text-white min-h-screen relative">
 
       {/* ============================================================
           NAVBAR
@@ -883,17 +754,56 @@ export default function App() {
       </AnimatePresence>
 
       {/* ============================================================
-          HERO — SCROLL-DRIVEN VIDEO (reemplaza el hero + bg video)
+          VIDEO FIXED — corre por toda la página, controlado por scroll
       ============================================================ */}
-      <div className="pt-16 md:pt-20">
-        <ScrollVideoHero t={t.hero} onCtaClick={() => setIsContactOpen(true)} />
-      </div>
+      <ScrollVideoBackground />
 
-      {/* El resto de la página continúa con z-10 sobre el fondo negro */}
-      <div className="relative z-10 bg-[#000000]">
+      {/* ============================================================
+          HERO SECTION
+      ============================================================ */}
+      <section className="relative h-screen flex flex-col justify-center items-center px-6 overflow-hidden pt-28 md:pt-24">
+        <div className="absolute inset-0 z-0 pointer-events-none">
+          <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-[#7000FF]/10 rounded-full blur-[150px]"></div>
+          <div className="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-[#7000FF]/5 rounded-full blur-[150px]"></div>
+        </div>
+        <div className="z-10 text-center relative w-full px-4">
+          <motion.span initial={{ opacity: 0 }} animate={{ opacity: 0.5 }} transition={{ delay: 0.2 }} className="text-[12px] tracking-[0.5em] uppercase mb-6 block">
+            {t.hero.evolution}
+          </motion.span>
+          <motion.h1 initial={{ opacity: 0, y: 100 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }} className="text-4xl md:text-6xl lg:text-7xl font-bold leading-tight tracking-tighter max-w-5xl mx-auto">
+            {t.hero.crafting} <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-b from-white to-[#7000FF]">{t.hero.intelligence}</span>
+          </motion.h1>
+          <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 0.7, y: 0 }} transition={{ delay: 0.8, duration: 1 }} className="mt-8 text-sm md:text-xl max-w-2xl mx-auto font-light leading-relaxed tracking-wide">
+            {t.hero.description}
+          </motion.p>
+          <motion.button
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0, scale: [1, 1.05, 1] }}
+            transition={{ opacity: { delay: 1.2, duration: 1 }, y: { delay: 1.2, duration: 1 }, scale: { repeat: Infinity, duration: 2, ease: "easeInOut" } }}
+            onClick={() => setIsContactOpen(true)}
+            className="mt-10 bg-[#7000FF] text-white px-10 py-5 rounded-full text-[11px] font-bold uppercase tracking-[0.3em] shadow-[0_0_30px_rgba(112,0,255,0.3)] hover:shadow-[0_0_50px_rgba(112,0,255,0.5)] transition-all duration-300"
+          >
+            {t.hero.cta}
+          </motion.button>
+          <motion.div initial={{ width: 0 }} animate={{ width: '100%' }} transition={{ delay: 1, duration: 1.5 }} className="h-[1px] bg-gradient-to-r from-transparent via-[#7000FF] to-transparent mt-12 max-w-4xl mx-auto" />
+        </div>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1, y: [0, 15, 0] }}
+          transition={{ opacity: { delay: 1.5, duration: 1 }, y: { repeat: Infinity, duration: 2, ease: "easeInOut" } }}
+          className="absolute bottom-12 flex flex-col items-center gap-2"
+        >
+          <span className="text-[9px] uppercase tracking-[0.3em] opacity-40">{t.hero.scroll}</span>
+          <div className="w-[1px] h-12 bg-gradient-to-b from-[#7000FF] to-transparent"></div>
+        </motion.div>
+      </section>
+
+      {/* El resto de la página — sin bg sólido para que el video fixed se vea */}
+      <div className="relative z-10" style={{ background: 'transparent' }}>
 
         {/* --- THE ARSENAL SECTION --- */}
-        <section id="work" className="py-32 border-b border-white/5 overflow-hidden">
+        <section id="work" className="py-32 border-b border-white/5 overflow-hidden" style={{ background: 'rgba(0,0,0,0.65)' }}>
            <div className="px-8 max-w-[1400px] mx-auto mb-20">
                <Reveal>
                    <div className="flex flex-col text-center items-center">
@@ -934,7 +844,7 @@ export default function App() {
           </Reveal>
           <div className="grid md:grid-cols-3 gap-4">
             {t.services.items.map((service) => (
-              <motion.div key={service.id} whileHover={{ backgroundColor: "rgba(112, 0, 255, 0.03)" }} onClick={() => setSelectedService(service)} className="group p-10 border border-white/5 bg-[#080808] rounded-[2rem] cursor-pointer transition-all duration-500 hover:border-[#7000FF]/30 hover:shadow-[0_0_30px_rgba(112,0,255,0.05)]">
+              <motion.div key={service.id} whileHover={{ backgroundColor: "rgba(112, 0, 255, 0.08)" }} onClick={() => setSelectedService(service)} className="group p-10 border border-white/5 bg-black/40 rounded-[2rem] cursor-pointer transition-all duration-500 hover:border-[#7000FF]/30 hover:shadow-[0_0_30px_rgba(112,0,255,0.05)] backdrop-blur-sm">
                 <div className="text-[#7000FF] font-mono mb-12 text-sm">{service.id}</div>
                 <h4 className="text-2xl font-bold mb-6 tracking-tight group-hover:text-[#7000FF] transition-colors">{service.title}</h4>
                 <p className="text-white/40 font-light leading-relaxed mb-10 text-sm md:text-base">{service.desc}</p>
@@ -1023,7 +933,7 @@ export default function App() {
         </section>
 
         {/* --- FOOTER --- */}
-        <footer className="border-t border-white/5 p-12 flex flex-col md:flex-row justify-between items-center gap-8 bg-black">
+        <footer className="border-t border-white/5 p-12 flex flex-col md:flex-row justify-between items-center gap-8" style={{ background: 'rgba(0,0,0,0.8)' }}>
           <div className="text-[10px] tracking-[0.5em] font-bold opacity-30">ZERONNE © 2026</div>
           <div className="flex gap-8 text-[9px] tracking-widest uppercase opacity-40">
             <a href="https://instagram.com/zeronne.ai" target="_blank" rel="noopener noreferrer" className="hover:text-[#7000FF] transition-colors">Instagram</a>
