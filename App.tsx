@@ -135,6 +135,7 @@ export default function App() {
 
   const totalSize = RING_RADIUS * 2 + BUBBLE + 60;
   const activeService = SERVICES.find((s) => s.id === active) ?? null;
+  const invScale = 1 / scale;
 
   return (
     <div
@@ -146,10 +147,20 @@ export default function App() {
         alignItems: 'center',
         justifyContent: 'center',
         fontFamily: "'Nunito', 'Inter', sans-serif",
-        padding: '32px 16px',
+        padding: '24px 16px',
         gap: 0,
       }}
     >
+      {/* ── Tagline above ring ── */}
+      <div style={{ textAlign: 'center', marginBottom: 20, maxWidth: 320, padding: '0 8px' }}>
+        <p style={{ margin: 0, fontSize: 13, fontWeight: 700, color: '#2D2926', lineHeight: 1.5, letterSpacing: '0.01em' }}>
+          Best time to adapt AI is now.
+        </p>
+        <p style={{ margin: '4px 0 0', fontSize: 12, fontWeight: 400, color: '#9E9389', lineHeight: 1.55 }}>
+          We make it simple to use and easy to understand.
+        </p>
+      </div>
+
       {/* ── Ring Container ── */}
       <div
         style={{
@@ -159,6 +170,8 @@ export default function App() {
           transform: `scale(${scale})`,
           transformOrigin: 'top center',
           flexShrink: 0,
+          /* pull up the layout gap left by scale so button sits close below */
+          marginBottom: scale < 1 ? -(totalSize * (1 - scale)) : 0,
         }}
       >
         {/* Faint orbit path */}
@@ -265,58 +278,38 @@ export default function App() {
             style={{ width: '78%', height: 'auto', objectFit: 'contain', display: 'block' }}
           />
         </motion.a>
-      </div>
 
-      {/* ── Description Card ── */}
-      <div
-        style={{
-          marginTop: scale < 1 ? totalSize * (1 - scale) * 0.5 + 24 : 36,
-          width: '100%',
-          maxWidth: 400,
-          minHeight: 110,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
+        {/* ── Popup overlay — inside ring, moves with it ── */}
         <AnimatePresence mode="wait">
           {activeService ? (
             <motion.div
               key={activeService.id}
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 8 }}
-              transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+              initial={{ opacity: 0, scale: 0.88 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.88 }}
+              transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
               style={{
-                width: '100%',
-                padding: '24px 28px',
-                background: activeService.bg,
-                borderRadius: 20,
-                border: `1px solid ${activeService.border}`,
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                /* invScale cancels the parent's scale so text renders at natural size */
+                transform: `translate(-50%, -50%) scale(${invScale})`,
+                transformOrigin: '50% 50%',
+                width: CENTER + 56,
+                zIndex: 25,
+                background: 'rgba(255,255,255,0.97)',
+                borderRadius: 18,
+                border: `1.5px solid ${activeService.border}`,
+                padding: '18px 16px',
                 textAlign: 'center',
+                boxShadow: `0 8px 40px ${activeService.accent}35`,
+                pointerEvents: 'none',
               }}
             >
-              <p
-                style={{
-                  fontSize: 11,
-                  fontWeight: 800,
-                  color: activeService.accent,
-                  letterSpacing: '0.14em',
-                  textTransform: 'uppercase',
-                  marginBottom: 10,
-                }}
-              >
+              <p style={{ fontSize: 10, fontWeight: 800, color: activeService.accent, letterSpacing: '0.13em', textTransform: 'uppercase', margin: '0 0 7px' }}>
                 {activeService.name}
               </p>
-              <p
-                style={{
-                  fontSize: 14,
-                  color: '#7A7268',
-                  lineHeight: 1.75,
-                  fontWeight: 400,
-                  margin: 0,
-                }}
-              >
+              <p style={{ fontSize: 11.5, color: '#7A7268', lineHeight: 1.65, fontWeight: 400, margin: 0 }}>
                 {activeService.description}
               </p>
             </motion.div>
@@ -324,16 +317,23 @@ export default function App() {
             <motion.p
               key="hint"
               initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
+              animate={{ opacity: 0.55 }}
               exit={{ opacity: 0 }}
               style={{
-                fontSize: 11,
+                position: 'absolute',
+                bottom: '11%',
+                left: '50%',
+                transform: `translateX(-50%) scale(${invScale})`,
+                transformOrigin: '50% 50%',
+                fontSize: 10,
                 color: '#C8BFB4',
                 letterSpacing: '0.16em',
                 textTransform: 'uppercase',
-                textAlign: 'center',
                 fontWeight: 600,
                 margin: 0,
+                whiteSpace: 'nowrap',
+                pointerEvents: 'none',
+                zIndex: 5,
               }}
             >
               Tap a service to explore
@@ -343,7 +343,7 @@ export default function App() {
       </div>
 
       {/* ── GET STARTED — Magnetic Button ── */}
-      <div style={{ marginTop: 36 }}>
+      <div style={{ marginTop: 20 }}>
         <MagneticButton>
           <motion.a
             href="mailto:zeronne.ai@gmail.com?subject=Let%27s%20Get%20Started&body=Hi%20Primo%20AI%20Studio%2C%0A%0AI%27d%20love%20to%20learn%20more%20about%20your%20services."
