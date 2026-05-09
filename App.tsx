@@ -1,5 +1,52 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence, useMotionValue, useSpring } from 'framer-motion';
+
+// ── Magnetic Button ──────────────────────────────────────────────────────────
+const SPRING_CONFIG = { damping: 100, stiffness: 400 };
+
+function MagneticButton({
+  children,
+  distance = 0.55,
+}: {
+  children: React.ReactNode;
+  distance?: number;
+}) {
+  const [hovered, setHovered] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const sx = useSpring(x, SPRING_CONFIG);
+  const sy = useSpring(y, SPRING_CONFIG);
+
+  useEffect(() => {
+    const onMove = (e: MouseEvent) => {
+      if (!ref.current) return;
+      const rect = ref.current.getBoundingClientRect();
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
+      if (hovered) {
+        x.set((e.clientX - cx) * distance);
+        y.set((e.clientY - cy) * distance);
+      } else {
+        x.set(0);
+        y.set(0);
+      }
+    };
+    document.addEventListener('mousemove', onMove);
+    return () => document.removeEventListener('mousemove', onMove);
+  }, [hovered, distance, x, y]);
+
+  return (
+    <motion.div
+      ref={ref}
+      style={{ x: sx, y: sy, display: 'inline-block' }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => { setHovered(false); x.set(0); y.set(0); }}
+    >
+      {children}
+    </motion.div>
+  );
+}
 
 const LOGO_URL =
   'https://res.cloudinary.com/dsprn0ew4/image/upload/v1778360725/ChatGPT_Image_May_9_2026_03_04_56_PM_hdfdcd.png';
@@ -186,8 +233,11 @@ export default function App() {
           })}
         </motion.div>
 
-        {/* Center logo */}
-        <div
+        {/* Center logo — links to Instagram */}
+        <motion.a
+          href="https://www.instagram.com/the.cocreativehub"
+          target="_blank"
+          rel="noopener noreferrer"
           style={{
             position: 'absolute',
             top: '50%',
@@ -197,25 +247,24 @@ export default function App() {
             height: CENTER,
             borderRadius: '50%',
             background: '#FFFFFF',
-            boxShadow:
-              '0 0 0 1px #EAE4DC, 0 8px 40px rgba(201,169,122,0.12)',
+            boxShadow: '0 0 0 1px #EAE4DC, 0 8px 40px rgba(201,169,122,0.12)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             zIndex: 10,
+            cursor: 'pointer',
+            textDecoration: 'none',
           }}
+          whileHover={{ boxShadow: '0 0 0 2px #C9A97A, 0 12px 48px rgba(201,169,122,0.22)' }}
+          transition={{ duration: 0.25 }}
+          title="Follow us on Instagram"
         >
           <img
             src={LOGO_URL}
             alt="Primo AI Studio"
-            style={{
-              width: '78%',
-              height: 'auto',
-              objectFit: 'contain',
-              display: 'block',
-            }}
+            style={{ width: '78%', height: 'auto', objectFit: 'contain', display: 'block' }}
           />
-        </div>
+        </motion.a>
       </div>
 
       {/* ── Description Card ── */}
@@ -291,6 +340,45 @@ export default function App() {
             </motion.p>
           )}
         </AnimatePresence>
+      </div>
+
+      {/* ── GET STARTED — Magnetic Button ── */}
+      <div style={{ marginTop: 36 }}>
+        <MagneticButton>
+          <motion.a
+            href="mailto:zeronne.ai@gmail.com?subject=Let%27s%20Get%20Started&body=Hi%20Primo%20AI%20Studio%2C%0A%0AI%27d%20love%20to%20learn%20more%20about%20your%20services."
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 10,
+              padding: '16px 44px',
+              borderRadius: 999,
+              background: '#C9A97A',
+              color: '#FFFFFF',
+              fontSize: 13,
+              fontWeight: 800,
+              letterSpacing: '0.18em',
+              textTransform: 'uppercase',
+              textDecoration: 'none',
+              boxShadow: '0 4px 24px rgba(201,169,122,0.30)',
+              cursor: 'pointer',
+              userSelect: 'none',
+            }}
+            whileHover={{
+              background: '#B8956A',
+              boxShadow: '0 8px 36px rgba(201,169,122,0.45)',
+            }}
+            whileTap={{ scale: 0.97 }}
+            transition={{ duration: 0.2 }}
+          >
+            Get Started
+            {/* Arrow icon */}
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style={{ marginLeft: 2 }}>
+              <path d="M1 7h12M8 2l5 5-5 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </motion.a>
+        </MagneticButton>
       </div>
     </div>
   );
