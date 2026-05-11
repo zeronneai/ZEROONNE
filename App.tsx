@@ -217,10 +217,10 @@ export default function App() {
     >
       {/* ── Tagline ── */}
       <div style={{ textAlign: 'center', marginBottom: 20, maxWidth: 320, padding: '0 8px' }}>
-        <p style={{ margin: 0, fontSize: 13, fontWeight: 700, color: '#1a1a2e', lineHeight: 1.5, letterSpacing: '0.01em' }}>
+        <p style={{ margin: 0, fontSize: 28, fontWeight: 600, color: '#1a1a2e', lineHeight: 1.25, letterSpacing: '-0.02em' }}>
           Best time to adapt AI is now.
         </p>
-        <p style={{ margin: '4px 0 0', fontSize: 12, fontWeight: 400, color: '#6e6a8a', lineHeight: 1.55 }}>
+        <p style={{ margin: '6px 0 0', fontSize: 16, fontWeight: 400, color: '#6b6490', lineHeight: 1.55 }}>
           We make it simple to use and easy to understand.
         </p>
       </div>
