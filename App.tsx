@@ -58,9 +58,9 @@ const SERVICES = [
     name: 'AI Integration',
     description:
       'Plug AI directly into your existing stack. Automate key decisions, eliminate bottlenecks, and unlock new efficiencies — without rebuilding from scratch.',
-    accent: '#C9A97A',
-    bg: '#FDF8F2',
-    border: '#EDE0CC',
+    accent: '#1a3a5c',
+    bg: '#b8cce4',
+    border: '#7a9dc4',
   },
   {
     id: 2,
@@ -68,9 +68,9 @@ const SERVICES = [
     name: 'AI Content Marketing',
     description:
       'Scale content creation with intelligent automation. Consistent, high-quality output across every channel — in a fraction of the time.',
-    accent: '#8AA88D',
-    bg: '#F3F7F3',
-    border: '#CCDECE',
+    accent: '#1a2a40',
+    bg: '#b4c4d8',
+    border: '#7090b8',
   },
   {
     id: 3,
@@ -78,9 +78,9 @@ const SERVICES = [
     name: 'AI Video Production',
     description:
       'Premium video ads crafted by AI. Fast deployment, high conversion rates, and zero agency delays. Your brand, always on.',
-    accent: '#A88D8D',
-    bg: '#F7F3F3',
-    border: '#DECECE',
+    accent: '#2a4020',
+    bg: '#c4d4b8',
+    border: '#8aaa70',
   },
   {
     id: 4,
@@ -88,9 +88,9 @@ const SERVICES = [
     name: 'Brand Identity',
     description:
       'AI-powered visual identity that stands apart. Naming, positioning, and design systems engineered for modern markets and lasting recall.',
-    accent: '#8D8DAA',
-    bg: '#F3F3F8',
-    border: '#CECEDE',
+    accent: '#3d2060',
+    bg: '#d4c8e8',
+    border: '#a890d4',
   },
   {
     id: 5,
@@ -98,9 +98,9 @@ const SERVICES = [
     name: 'Web Platforms',
     description:
       'High-performance landing pages and web platforms deployed in days. Conversion-optimized, visually premium, and built to scale.',
-    accent: '#7A9AAF',
-    bg: '#F2F5F8',
-    border: '#C8D8E4',
+    accent: '#3d3570',
+    bg: '#c8c4e8',
+    border: '#9990d4',
   },
   {
     id: 6,
@@ -108,9 +108,9 @@ const SERVICES = [
     name: 'AI Automation',
     description:
       'Eliminate repetitive work forever. Custom AI workflows handle your operations, nurturing, and reporting so you can focus on growth.',
-    accent: '#A89F7A',
-    bg: '#F8F6F0',
-    border: '#E0D8C0',
+    accent: '#1e4d3a',
+    bg: '#b8d4c8',
+    border: '#7aaa94',
   },
 ];
 
@@ -141,7 +141,7 @@ export default function App() {
     <div
       style={{
         minHeight: '100vh',
-        background: '#FFFFFF',
+        background: '#f8f7ff',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -153,10 +153,10 @@ export default function App() {
     >
       {/* ── Tagline above ring ── */}
       <div style={{ textAlign: 'center', marginBottom: 20, maxWidth: 320, padding: '0 8px' }}>
-        <p style={{ margin: 0, fontSize: 13, fontWeight: 700, color: '#2D2926', lineHeight: 1.5, letterSpacing: '0.01em' }}>
+        <p style={{ margin: 0, fontSize: 13, fontWeight: 700, color: '#1a1a2e', lineHeight: 1.5, letterSpacing: '0.01em' }}>
           Best time to adapt AI is now.
         </p>
-        <p style={{ margin: '4px 0 0', fontSize: 12, fontWeight: 400, color: '#9E9389', lineHeight: 1.55 }}>
+        <p style={{ margin: '4px 0 0', fontSize: 12, fontWeight: 400, color: '#6e6a8a', lineHeight: 1.55 }}>
           We make it simple to use and easy to understand.
         </p>
       </div>
@@ -184,7 +184,7 @@ export default function App() {
             height: (RING_RADIUS + BUBBLE / 2) * 2,
             transform: 'translate(-50%, -50%)',
             borderRadius: '50%',
-            border: '1.5px dashed #EAE4DC',
+            border: '1.5px dashed rgba(153,144,212,0.4)',
             pointerEvents: 'none',
           }}
         />
@@ -259,8 +259,8 @@ export default function App() {
             width: CENTER,
             height: CENTER,
             borderRadius: '50%',
-            background: '#FFFFFF',
-            boxShadow: '0 0 0 1px #EAE4DC, 0 8px 40px rgba(201,169,122,0.12)',
+            background: '#1a1a2e',
+            boxShadow: '0 0 0 2px #3d3570, 0 8px 40px rgba(61,53,112,0.25)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -268,7 +268,7 @@ export default function App() {
             cursor: 'pointer',
             textDecoration: 'none',
           }}
-          whileHover={{ boxShadow: '0 0 0 2px #C9A97A, 0 12px 48px rgba(201,169,122,0.22)' }}
+          whileHover={{ boxShadow: '0 0 0 3px #9990d4, 0 12px 48px rgba(153,144,212,0.30)' }}
           transition={{ duration: 0.25 }}
           title="Follow us on Instagram"
         >
@@ -354,20 +354,20 @@ export default function App() {
               gap: 10,
               padding: '16px 44px',
               borderRadius: 999,
-              background: '#C9A97A',
-              color: '#FFFFFF',
+              background: '#3d3570',
+              color: '#f0eeff',
               fontSize: 13,
               fontWeight: 800,
               letterSpacing: '0.18em',
               textTransform: 'uppercase',
               textDecoration: 'none',
-              boxShadow: '0 4px 24px rgba(201,169,122,0.30)',
+              boxShadow: '0 4px 24px rgba(61,53,112,0.35)',
               cursor: 'pointer',
               userSelect: 'none',
             }}
             whileHover={{
-              background: '#B8956A',
-              boxShadow: '0 8px 36px rgba(201,169,122,0.45)',
+              background: '#2a2050',
+              boxShadow: '0 8px 36px rgba(61,53,112,0.50)',
             }}
             whileTap={{ scale: 0.97 }}
             transition={{ duration: 0.2 }}
