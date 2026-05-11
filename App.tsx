@@ -48,6 +48,7 @@ function MagneticButton({
   );
 }
 
+// ── Data ─────────────────────────────────────────────────────────────────────
 const LOGO_URL =
   'https://res.cloudinary.com/dsprn0ew4/image/upload/v1778360725/ChatGPT_Image_May_9_2026_03_04_56_PM_hdfdcd.png';
 
@@ -117,10 +118,22 @@ const SERVICES = [
 const RING_RADIUS = 175;
 const BUBBLE = 82;
 const CENTER = 165;
+const POPUP_W = 224;
+const POPUP_H = 148; // approx height for clamping
 
+// ── Popup state type ──────────────────────────────────────────────────────────
+interface PopupState {
+  id: number;
+  top: number;
+  left: number;
+  origin: string;
+}
+
+// ── App ───────────────────────────────────────────────────────────────────────
 export default function App() {
   const [active, setActive] = useState<number | null>(null);
   const [scale, setScale] = useState(1);
+  const [popup, setPopup] = useState<PopupState | null>(null);
 
   useEffect(() => {
     const resize = () => {
@@ -137,6 +150,57 @@ export default function App() {
   const activeService = SERVICES.find((s) => s.id === active) ?? null;
   const invScale = 1 / scale;
 
+  // ── Dynamic popup positioning ─────────────────────────────────────────────
+  const handleBubbleClick = (
+    e: React.MouseEvent<HTMLButtonElement>,
+    svc: (typeof SERVICES)[0],
+  ) => {
+    if (active === svc.id) {
+      setActive(null);
+      setPopup(null);
+      return;
+    }
+
+    const btn = e.currentTarget.getBoundingClientRect();
+    const btnCx = btn.left + btn.width / 2;
+    const btnCy = btn.top + btn.height / 2;
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+
+    let top: number;
+    let left: number;
+    let origin: string;
+
+    if (btnCy < vh * 0.3) {
+      // Node in top band → popup appears below
+      top = btn.bottom + 12;
+      left = btnCx - POPUP_W / 2;
+      origin = 'top center';
+    } else if (btnCy > vh * 0.7) {
+      // Node in bottom band → popup appears above
+      top = btn.top - POPUP_H - 12;
+      left = btnCx - POPUP_W / 2;
+      origin = 'bottom center';
+    } else if (btnCx < vw / 2) {
+      // Node in left half → popup appears to the right
+      top = btnCy - POPUP_H / 2;
+      left = btn.right + 12;
+      origin = 'left center';
+    } else {
+      // Node in right half → popup appears to the left
+      top = btnCy - POPUP_H / 2;
+      left = btn.left - POPUP_W - 12;
+      origin = 'right center';
+    }
+
+    // Clamp within viewport
+    left = Math.max(8, Math.min(left, vw - POPUP_W - 8));
+    top = Math.max(8, Math.min(top, vh - POPUP_H - 8));
+
+    setActive(svc.id);
+    setPopup({ id: svc.id, top, left, origin });
+  };
+
   return (
     <div
       style={{
@@ -151,7 +215,7 @@ export default function App() {
         gap: 0,
       }}
     >
-      {/* ── Tagline above ring ── */}
+      {/* ── Tagline ── */}
       <div style={{ textAlign: 'center', marginBottom: 20, maxWidth: 320, padding: '0 8px' }}>
         <p style={{ margin: 0, fontSize: 13, fontWeight: 700, color: '#1a1a2e', lineHeight: 1.5, letterSpacing: '0.01em' }}>
           Best time to adapt AI is now.
@@ -170,11 +234,10 @@ export default function App() {
           transform: `scale(${scale})`,
           transformOrigin: 'top center',
           flexShrink: 0,
-          /* pull up the layout gap left by scale so button sits close below */
           marginBottom: scale < 1 ? -(totalSize * (1 - scale)) : 0,
         }}
       >
-        {/* Faint orbit path */}
+        {/* Orbit path */}
         <div
           style={{
             position: 'absolute',
@@ -195,8 +258,8 @@ export default function App() {
           animate={{ rotate: 360 }}
           transition={{ duration: 48, repeat: Infinity, ease: 'linear' }}
         >
-          {SERVICES.map((svc, i) => {
-            const angle = (360 / SERVICES.length) * i;
+          {SERVICES.map((svc) => {
+            const angle = (360 / SERVICES.length) * SERVICES.indexOf(svc);
             const rad = (Math.PI / 180) * angle;
             const cx = Math.cos(rad) * RING_RADIUS;
             const cy = Math.sin(rad) * RING_RADIUS;
@@ -205,7 +268,7 @@ export default function App() {
             return (
               <motion.button
                 key={svc.id}
-                onClick={() => setActive(isActive ? null : svc.id)}
+                onClick={(e) => handleBubbleClick(e, svc)}
                 style={{
                   position: 'absolute',
                   top: `calc(50% - ${BUBBLE / 2}px + ${cy}px)`,
@@ -234,7 +297,6 @@ export default function App() {
                   transition: 'background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease',
                   outline: 'none',
                 }}
-                /* counter-rotate so text stays upright */
                 animate={{ rotate: -360 }}
                 transition={{ duration: 48, repeat: Infinity, ease: 'linear' }}
                 whileHover={{ scale: 1.06, boxShadow: '0 8px 24px rgba(80,60,140,0.30)' }}
@@ -246,7 +308,7 @@ export default function App() {
           })}
         </motion.div>
 
-        {/* Center logo — links to Instagram */}
+        {/* Center logo — Instagram link */}
         <motion.a
           href="https://www.instagram.com/the.cocreativehub"
           target="_blank"
@@ -279,45 +341,13 @@ export default function App() {
           />
         </motion.a>
 
-        {/* ── Popup overlay — inside ring, moves with it ── */}
-        <AnimatePresence mode="wait">
-          {activeService ? (
-            <motion.div
-              key={activeService.id}
-              initial={{ opacity: 0, scale: 0.88 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.88 }}
-              transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-              style={{
-                position: 'absolute',
-                top: '50%',
-                left: '50%',
-                /* invScale cancels the parent's scale so text renders at natural size */
-                transform: `translate(-50%, -50%) scale(${invScale})`,
-                transformOrigin: '50% 50%',
-                width: CENTER + 56,
-                zIndex: 25,
-                background: 'rgba(255,255,255,0.97)',
-                borderRadius: 18,
-                border: `1.5px solid ${activeService.border}`,
-                padding: '18px 16px',
-                textAlign: 'center',
-                boxShadow: `0 8px 40px ${activeService.accent}35`,
-                pointerEvents: 'none',
-              }}
-            >
-              <p style={{ fontSize: 10, fontWeight: 800, color: activeService.accent, letterSpacing: '0.13em', textTransform: 'uppercase', margin: '0 0 7px' }}>
-                {activeService.name}
-              </p>
-              <p style={{ fontSize: 11.5, color: '#7A7268', lineHeight: 1.65, fontWeight: 400, margin: 0 }}>
-                {activeService.description}
-              </p>
-            </motion.div>
-          ) : (
+        {/* Hint — only shown when no service is active */}
+        <AnimatePresence>
+          {!active && (
             <motion.p
               key="hint"
               initial={{ opacity: 0 }}
-              animate={{ opacity: 0.55 }}
+              animate={{ opacity: 0.5 }}
               exit={{ opacity: 0 }}
               style={{
                 position: 'absolute',
@@ -326,7 +356,7 @@ export default function App() {
                 transform: `translateX(-50%) scale(${invScale})`,
                 transformOrigin: '50% 50%',
                 fontSize: 10,
-                color: '#C8BFB4',
+                color: '#9990d4',
                 letterSpacing: '0.16em',
                 textTransform: 'uppercase',
                 fontWeight: 600,
@@ -365,21 +395,64 @@ export default function App() {
               cursor: 'pointer',
               userSelect: 'none',
             }}
-            whileHover={{
-              background: '#2a2050',
-              boxShadow: '0 8px 36px rgba(61,53,112,0.50)',
-            }}
+            whileHover={{ background: '#2a2050', boxShadow: '0 8px 36px rgba(61,53,112,0.50)' }}
             whileTap={{ scale: 0.97 }}
             transition={{ duration: 0.2 }}
           >
             Get Started
-            {/* Arrow icon */}
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style={{ marginLeft: 2 }}>
-              <path d="M1 7h12M8 2l5 5-5 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M1 7h12M8 2l5 5-5 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </motion.a>
         </MagneticButton>
       </div>
+
+      {/* ── Dynamic popup — fixed, near clicked node ── */}
+      <AnimatePresence mode="wait">
+        {popup && activeService && (
+          <motion.div
+            key={popup.id}
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            transition={{ duration: 0.18, ease: 'easeOut' }}
+            style={{
+              position: 'fixed',
+              top: popup.top,
+              left: popup.left,
+              width: POPUP_W,
+              transformOrigin: popup.origin,
+              zIndex: 200,
+              background: '#ffffff',
+              borderRadius: 14,
+              border: `1.5px solid ${activeService.border}`,
+              padding: '16px 15px',
+              boxShadow: '0 8px 32px rgba(30,20,80,0.16), 0 2px 8px rgba(30,20,80,0.10)',
+              pointerEvents: 'none',
+            }}
+          >
+            <p style={{
+              fontSize: 10,
+              fontWeight: 800,
+              color: activeService.accent,
+              letterSpacing: '0.13em',
+              textTransform: 'uppercase',
+              margin: '0 0 7px',
+            }}>
+              {activeService.name}
+            </p>
+            <p style={{
+              fontSize: 12,
+              color: '#3d3a5c',
+              lineHeight: 1.65,
+              fontWeight: 400,
+              margin: 0,
+            }}>
+              {activeService.description}
+            </p>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
