@@ -152,8 +152,9 @@ export default function App() {
   const isMobile = windowWidth <= 768;
 
   // ── Responsive sizes ────────────────────────────────────────────────────────
+  // Mobile uses 65vw to match the flex max-height/max-width constraint
   const containerSize = isMobile
-    ? Math.min(0.72 * windowWidth, 320)
+    ? Math.min(0.65 * windowWidth, 300)
     : D_TOTAL;
 
   const bubbleSize = isMobile
@@ -174,7 +175,6 @@ export default function App() {
 
   // Desktop-only scale (safety net for narrow desktop windows)
   const desktopScale = isMobile ? 1 : Math.min(1, (windowWidth - 32) / D_TOTAL);
-  const invScale = isMobile ? 1 : 1 / desktopScale;
 
   const activeService = SERVICES.find((s) => s.id === active) ?? null;
 
@@ -194,7 +194,6 @@ export default function App() {
     const vh = window.innerHeight;
 
     if (isMobile) {
-      // Center in viewport with overlay
       const pw = Math.min(vw * 0.8, 300);
       setPopup({
         id: svc.id,
@@ -207,9 +206,7 @@ export default function App() {
     } else {
       const btnCx = btn.left + btn.width / 2;
       const btnCy = btn.top + btn.height / 2;
-      let top: number;
-      let left: number;
-      let origin: string;
+      let top: number, left: number, origin: string;
 
       if (btnCy < vh * 0.3) {
         top = btn.bottom + 12; left = btnCx - POPUP_W_DESKTOP / 2; origin = 'top center';
@@ -232,26 +229,31 @@ export default function App() {
 
   const closePopup = () => { setActive(null); setPopup(null); };
 
+  // ── Layout ────────────────────────────────────────────────────────────────
   return (
     <div
       style={{
-        minHeight: '100vh',
+        // Mobile: fill viewport exactly, no scroll
+        ...(isMobile
+          ? { height: '100svh', padding: '16px 20px 24px', justifyContent: 'space-between' }
+          : { minHeight: '100vh', padding: '24px 16px', justifyContent: 'center', gap: 0 }
+        ),
         background: '#f8f7ff',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'center',
         fontFamily: "'Nunito', 'Inter', sans-serif",
-        padding: isMobile ? '16px 12px' : '24px 16px',
-        gap: 0,
+        boxSizing: 'border-box',
       }}
     >
-      {/* ── Tagline ── */}
+      {/* ══ Block 1: Heading — flex-shrink: 0 ══ */}
       <div style={{
+        flexShrink: 0,
         textAlign: 'center',
-        marginBottom: isMobile ? 12 : 20,
+        marginTop: 0,
+        marginBottom: isMobile ? 0 : 20,
         maxWidth: isMobile ? '90vw' : 420,
-        padding: '0 8px',
+        padding: '0 4px',
       }}>
         <p style={{
           margin: 0,
@@ -264,172 +266,178 @@ export default function App() {
           Best time to adapt AI is now.
         </p>
         <p style={{
-          margin: isMobile ? '4px 0 0' : '6px 0 0',
-          fontSize: isMobile ? 14 : 16,
+          margin: '4px 0 0',
+          fontSize: isMobile ? 13 : 16,
           fontWeight: 400,
           color: '#6b6490',
-          lineHeight: 1.55,
+          lineHeight: 1.5,
         }}>
           We make it simple to use and easy to understand.
         </p>
       </div>
 
-      {/* ── Ring Container ── */}
-      <div
-        style={{
-          position: 'relative',
-          width: containerSize,
-          height: containerSize,
-          flexShrink: 0,
-          ...(!isMobile && desktopScale < 1 ? {
-            transform: `scale(${desktopScale})`,
-            transformOrigin: 'top center',
-            marginBottom: -(D_TOTAL * (1 - desktopScale)),
-          } : {}),
-        }}
-      >
-        {/* Orbit path */}
+      {/* ══ Block 2: Orbit — flex:1 on mobile, centered ══ */}
+      <div style={{
+        ...(isMobile ? {
+          flex: 1,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          maxHeight: '65vw',
+          maxWidth: '65vw',
+          alignSelf: 'center',
+          margin: 'auto 0',
+        } : {}),
+      }}>
         <div
           style={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            width: (ringRadius + bubbleSize / 2) * 2,
-            height: (ringRadius + bubbleSize / 2) * 2,
-            transform: 'translate(-50%, -50%)',
-            borderRadius: '50%',
-            border: '1.5px dashed rgba(153,144,212,0.4)',
-            pointerEvents: 'none',
+            position: 'relative',
+            width: containerSize,
+            height: containerSize,
+            flexShrink: 0,
+            ...(!isMobile && desktopScale < 1 ? {
+              transform: `scale(${desktopScale})`,
+              transformOrigin: 'top center',
+              marginBottom: -(D_TOTAL * (1 - desktopScale)),
+            } : {}),
           }}
-        />
-
-        {/* Spinning ring */}
-        <motion.div
-          style={{ position: 'absolute', inset: 0 }}
-          animate={{ rotate: 360 }}
-          transition={{ duration: 48, repeat: Infinity, ease: 'linear' }}
         >
-          {SERVICES.map((svc) => {
-            const angle = (360 / SERVICES.length) * SERVICES.indexOf(svc);
-            const rad = (Math.PI / 180) * angle;
-            const cx = Math.cos(rad) * ringRadius;
-            const cy = Math.sin(rad) * ringRadius;
-            const isActive = active === svc.id;
-
-            return (
-              <motion.button
-                key={svc.id}
-                onClick={(e) => handleBubbleClick(e, svc)}
-                style={{
-                  position: 'absolute',
-                  top: `calc(50% - ${bubbleSize / 2}px + ${cy}px)`,
-                  left: `calc(50% - ${bubbleSize / 2}px + ${cx}px)`,
-                  width: bubbleSize,
-                  height: bubbleSize,
-                  borderRadius: '50%',
-                  background: isActive ? svc.accent : svc.bg,
-                  border: `1.5px solid ${isActive ? svc.accent : svc.border}`,
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: `${bubbleFontSize}px`,
-                  fontWeight: isActive ? 800 : 700,
-                  color: isActive ? '#FFFFFF' : svc.accent,
-                  letterSpacing: '0.04em',
-                  textAlign: 'center',
-                  textTransform: 'uppercase',
-                  lineHeight: 1.35,
-                  padding: '8px',
-                  whiteSpace: 'pre-line',
-                  boxShadow: isActive
-                    ? '0 8px 24px rgba(80,60,140,0.30)'
-                    : '0 4px 16px rgba(80,60,140,0.15), 0 1px 4px rgba(80,60,140,0.10)',
-                  transition: 'background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease',
-                  outline: 'none',
-                }}
-                animate={{ rotate: -360 }}
-                transition={{ duration: 48, repeat: Infinity, ease: 'linear' }}
-                whileHover={{ scale: 1.06, boxShadow: '0 8px 24px rgba(80,60,140,0.30)' }}
-                whileTap={{ scale: 0.96 }}
-              >
-                {svc.label}
-              </motion.button>
-            );
-          })}
-        </motion.div>
-
-        {/* Center logo — Instagram link */}
-        <motion.a
-          href="https://www.instagram.com/the.cocreativehub"
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            width: centerSize,
-            height: centerSize,
-            borderRadius: '50%',
-            background: '#1a1a2e',
-            boxShadow: '0 0 0 2px #3d3570, 0 8px 32px rgba(20,10,60,0.25), 0 2px 8px rgba(20,10,60,0.15)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 10,
-            cursor: 'pointer',
-            textDecoration: 'none',
-          }}
-          whileHover={{ boxShadow: '0 0 0 3px #9990d4, 0 8px 32px rgba(20,10,60,0.35), 0 2px 8px rgba(20,10,60,0.20)' }}
-          transition={{ duration: 0.25 }}
-          title="Follow us on Instagram"
-        >
-          <img
-            src={LOGO_URL}
-            alt="Primo AI Studio"
+          {/* Orbit path */}
+          <div
             style={{
-              width: isMobile ? `clamp(55px, 14vw, 72px)` : '78%',
-              height: 'auto',
-              objectFit: 'contain',
-              display: 'block',
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              width: (ringRadius + bubbleSize / 2) * 2,
+              height: (ringRadius + bubbleSize / 2) * 2,
+              transform: 'translate(-50%, -50%)',
+              borderRadius: '50%',
+              border: '1.5px dashed rgba(153,144,212,0.4)',
+              pointerEvents: 'none',
             }}
           />
-        </motion.a>
 
-        {/* Hint */}
-        <AnimatePresence>
-          {!active && (
-            <motion.p
-              key="hint"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 0.5 }}
-              exit={{ opacity: 0 }}
+          {/* Spinning ring */}
+          <motion.div
+            style={{ position: 'absolute', inset: 0 }}
+            animate={{ rotate: 360 }}
+            transition={{ duration: 48, repeat: Infinity, ease: 'linear' }}
+          >
+            {SERVICES.map((svc) => {
+              const angle = (360 / SERVICES.length) * SERVICES.indexOf(svc);
+              const rad = (Math.PI / 180) * angle;
+              const cx = Math.cos(rad) * ringRadius;
+              const cy = Math.sin(rad) * ringRadius;
+              const isActive = active === svc.id;
+
+              return (
+                <motion.button
+                  key={svc.id}
+                  onClick={(e) => handleBubbleClick(e, svc)}
+                  style={{
+                    position: 'absolute',
+                    top: `calc(50% - ${bubbleSize / 2}px + ${cy}px)`,
+                    left: `calc(50% - ${bubbleSize / 2}px + ${cx}px)`,
+                    width: bubbleSize,
+                    height: bubbleSize,
+                    borderRadius: '50%',
+                    background: isActive ? svc.accent : svc.bg,
+                    border: `1.5px solid ${isActive ? svc.accent : svc.border}`,
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: `${bubbleFontSize}px`,
+                    fontWeight: isActive ? 800 : 700,
+                    color: isActive ? '#FFFFFF' : svc.accent,
+                    letterSpacing: '0.04em',
+                    textAlign: 'center',
+                    textTransform: 'uppercase',
+                    lineHeight: 1.35,
+                    padding: '8px',
+                    whiteSpace: 'pre-line',
+                    boxShadow: isActive
+                      ? '0 8px 24px rgba(80,60,140,0.30)'
+                      : '0 4px 16px rgba(80,60,140,0.15), 0 1px 4px rgba(80,60,140,0.10)',
+                    transition: 'background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease',
+                    outline: 'none',
+                  }}
+                  animate={{ rotate: -360 }}
+                  transition={{ duration: 48, repeat: Infinity, ease: 'linear' }}
+                  whileHover={{ scale: 1.06, boxShadow: '0 8px 24px rgba(80,60,140,0.30)' }}
+                  whileTap={{ scale: 0.96 }}
+                >
+                  {svc.label}
+                </motion.button>
+              );
+            })}
+          </motion.div>
+
+          {/* Center logo — Instagram link */}
+          <motion.a
+            href="https://www.instagram.com/the.cocreativehub"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              width: centerSize,
+              height: centerSize,
+              borderRadius: '50%',
+              background: '#1a1a2e',
+              boxShadow: '0 0 0 2px #3d3570, 0 8px 32px rgba(20,10,60,0.25), 0 2px 8px rgba(20,10,60,0.15)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              zIndex: 10,
+              cursor: 'pointer',
+              textDecoration: 'none',
+            }}
+            whileHover={{ boxShadow: '0 0 0 3px #9990d4, 0 8px 32px rgba(20,10,60,0.35), 0 2px 8px rgba(20,10,60,0.20)' }}
+            transition={{ duration: 0.25 }}
+            title="Follow us on Instagram"
+          >
+            <img
+              src={LOGO_URL}
+              alt="Primo AI Studio"
               style={{
-                position: 'absolute',
-                bottom: isMobile ? '8%' : '11%',
-                left: '50%',
-                transform: `translateX(-50%) scale(${invScale})`,
-                transformOrigin: '50% 50%',
-                fontSize: isMobile ? 9 : 10,
-                color: '#9990d4',
-                letterSpacing: '0.16em',
-                textTransform: 'uppercase',
-                fontWeight: 600,
-                margin: 0,
-                whiteSpace: 'nowrap',
-                pointerEvents: 'none',
-                zIndex: 5,
+                width: isMobile ? `clamp(50px, 13vw, 70px)` : '78%',
+                height: 'auto',
+                objectFit: 'contain',
+                display: 'block',
               }}
-            >
-              Tap a service to explore
-            </motion.p>
-          )}
-        </AnimatePresence>
+            />
+          </motion.a>
+        </div>
       </div>
 
-      {/* ── GET STARTED ── */}
-      <div style={{ marginTop: isMobile ? 14 : 20 }}>
+      {/* ══ Block 3: Hint + Button — flex-shrink: 0 ══ */}
+      <div style={{
+        flexShrink: 0,
+        textAlign: 'center',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        gap: 0,
+      }}>
+        {/* Hint — static, outside orbit, hidden when service is active */}
+        <p style={{
+          margin: '0 0 12px',
+          fontSize: 11,
+          fontWeight: 600,
+          letterSpacing: '0.12em',
+          textTransform: 'uppercase',
+          color: 'rgba(153, 144, 212, 0.45)',
+          textAlign: 'center',
+          visibility: active ? 'hidden' : 'visible',
+          lineHeight: 1,
+        }}>
+          Tap a service to explore
+        </p>
+
+        {/* GET STARTED */}
         <MagneticButton>
           <motion.a
             href="mailto:zeronne.ai@gmail.com?subject=Let%27s%20Get%20Started&body=Hi%20Primo%20AI%20Studio%2C%0A%0AI%27d%20love%20to%20learn%20more%20about%20your%20services."
@@ -542,6 +550,7 @@ export default function App() {
                   fontWeight: 700,
                   letterSpacing: '0.08em',
                   cursor: 'pointer',
+                  fontFamily: 'inherit',
                 }}
               >
                 Cerrar
