@@ -229,15 +229,15 @@ export default function App() {
                   padding: '10px',
                   whiteSpace: 'pre-line',
                   boxShadow: isActive
-                    ? `0 6px 24px ${svc.accent}50`
-                    : '0 2px 12px rgba(0,0,0,0.05)',
-                  transition: 'background 0.3s, color 0.3s, box-shadow 0.3s',
+                    ? '0 8px 24px rgba(80,60,140,0.30)'
+                    : '0 4px 16px rgba(80,60,140,0.15), 0 1px 4px rgba(80,60,140,0.10)',
+                  transition: 'background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease',
                   outline: 'none',
                 }}
                 /* counter-rotate so text stays upright */
                 animate={{ rotate: -360 }}
                 transition={{ duration: 48, repeat: Infinity, ease: 'linear' }}
-                whileHover={{ scale: 1.12 }}
+                whileHover={{ scale: 1.06, boxShadow: '0 8px 24px rgba(80,60,140,0.30)' }}
                 whileTap={{ scale: 0.96 }}
               >
                 {svc.label}
@@ -260,7 +260,7 @@ export default function App() {
             height: CENTER,
             borderRadius: '50%',
             background: '#1a1a2e',
-            boxShadow: '0 0 0 2px #3d3570, 0 8px 40px rgba(61,53,112,0.25)',
+            boxShadow: '0 0 0 2px #3d3570, 0 8px 32px rgba(20,10,60,0.25), 0 2px 8px rgba(20,10,60,0.15)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -268,7 +268,7 @@ export default function App() {
             cursor: 'pointer',
             textDecoration: 'none',
           }}
-          whileHover={{ boxShadow: '0 0 0 3px #9990d4, 0 12px 48px rgba(153,144,212,0.30)' }}
+          whileHover={{ boxShadow: '0 0 0 3px #9990d4, 0 8px 32px rgba(20,10,60,0.35), 0 2px 8px rgba(20,10,60,0.20)' }}
           transition={{ duration: 0.25 }}
           title="Follow us on Instagram"
         >
