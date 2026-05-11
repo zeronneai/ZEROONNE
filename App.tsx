@@ -115,42 +115,70 @@ const SERVICES = [
   },
 ];
 
-const RING_RADIUS = 175;
-const BUBBLE = 82;
-const CENTER = 165;
-const POPUP_W = 224;
-const POPUP_H = 148; // approx height for clamping
+// Desktop constants
+const D_RING_RADIUS = 175;
+const D_BUBBLE = 82;
+const D_CENTER = 165;
+const D_TOTAL = D_RING_RADIUS * 2 + D_BUBBLE + 60;
+const D_BUBBLE_FONT = 9.5;
 
-// ── Popup state type ──────────────────────────────────────────────────────────
+const POPUP_W_DESKTOP = 224;
+const POPUP_H_APPROX = 148;
+
 interface PopupState {
   id: number;
   top: number;
   left: number;
   origin: string;
+  mobile: boolean;
+  width: number;
 }
 
 // ── App ───────────────────────────────────────────────────────────────────────
 export default function App() {
   const [active, setActive] = useState<number | null>(null);
-  const [scale, setScale] = useState(1);
   const [popup, setPopup] = useState<PopupState | null>(null);
+  const [windowWidth, setWindowWidth] = useState(
+    typeof window !== 'undefined' ? window.innerWidth : 1200,
+  );
 
   useEffect(() => {
-    const resize = () => {
-      const vw = window.innerWidth;
-      const totalSize = RING_RADIUS * 2 + BUBBLE + 60;
-      setScale(Math.min(1, (vw - 32) / totalSize));
-    };
-    resize();
-    window.addEventListener('resize', resize);
-    return () => window.removeEventListener('resize', resize);
+    const update = () => setWindowWidth(window.innerWidth);
+    update();
+    window.addEventListener('resize', update);
+    return () => window.removeEventListener('resize', update);
   }, []);
 
-  const totalSize = RING_RADIUS * 2 + BUBBLE + 60;
-  const activeService = SERVICES.find((s) => s.id === active) ?? null;
-  const invScale = 1 / scale;
+  const isMobile = windowWidth <= 768;
 
-  // ── Dynamic popup positioning ─────────────────────────────────────────────
+  // ── Responsive sizes ────────────────────────────────────────────────────────
+  const containerSize = isMobile
+    ? Math.min(0.72 * windowWidth, 320)
+    : D_TOTAL;
+
+  const bubbleSize = isMobile
+    ? Math.max(52, Math.min(0.13 * windowWidth, 72))
+    : D_BUBBLE;
+
+  const centerSize = isMobile
+    ? Math.max(70, Math.min(0.18 * windowWidth, 95))
+    : D_CENTER;
+
+  const ringRadius = isMobile
+    ? containerSize / 2 - bubbleSize / 2 - 6
+    : D_RING_RADIUS;
+
+  const bubbleFontSize = isMobile
+    ? Math.max(7, Math.min(0.018 * windowWidth, 10))
+    : D_BUBBLE_FONT;
+
+  // Desktop-only scale (safety net for narrow desktop windows)
+  const desktopScale = isMobile ? 1 : Math.min(1, (windowWidth - 32) / D_TOTAL);
+  const invScale = isMobile ? 1 : 1 / desktopScale;
+
+  const activeService = SERVICES.find((s) => s.id === active) ?? null;
+
+  // ── Popup positioning ────────────────────────────────────────────────────────
   const handleBubbleClick = (
     e: React.MouseEvent<HTMLButtonElement>,
     svc: (typeof SERVICES)[0],
@@ -162,44 +190,47 @@ export default function App() {
     }
 
     const btn = e.currentTarget.getBoundingClientRect();
-    const btnCx = btn.left + btn.width / 2;
-    const btnCy = btn.top + btn.height / 2;
     const vw = window.innerWidth;
     const vh = window.innerHeight;
 
-    let top: number;
-    let left: number;
-    let origin: string;
-
-    if (btnCy < vh * 0.3) {
-      // Node in top band → popup appears below
-      top = btn.bottom + 12;
-      left = btnCx - POPUP_W / 2;
-      origin = 'top center';
-    } else if (btnCy > vh * 0.7) {
-      // Node in bottom band → popup appears above
-      top = btn.top - POPUP_H - 12;
-      left = btnCx - POPUP_W / 2;
-      origin = 'bottom center';
-    } else if (btnCx < vw / 2) {
-      // Node in left half → popup appears to the right
-      top = btnCy - POPUP_H / 2;
-      left = btn.right + 12;
-      origin = 'left center';
+    if (isMobile) {
+      // Center in viewport with overlay
+      const pw = Math.min(vw * 0.8, 300);
+      setPopup({
+        id: svc.id,
+        top: (vh - POPUP_H_APPROX) / 2,
+        left: (vw - pw) / 2,
+        origin: 'center',
+        mobile: true,
+        width: pw,
+      });
     } else {
-      // Node in right half → popup appears to the left
-      top = btnCy - POPUP_H / 2;
-      left = btn.left - POPUP_W - 12;
-      origin = 'right center';
+      const btnCx = btn.left + btn.width / 2;
+      const btnCy = btn.top + btn.height / 2;
+      let top: number;
+      let left: number;
+      let origin: string;
+
+      if (btnCy < vh * 0.3) {
+        top = btn.bottom + 12; left = btnCx - POPUP_W_DESKTOP / 2; origin = 'top center';
+      } else if (btnCy > vh * 0.7) {
+        top = btn.top - POPUP_H_APPROX - 12; left = btnCx - POPUP_W_DESKTOP / 2; origin = 'bottom center';
+      } else if (btnCx < vw / 2) {
+        top = btnCy - POPUP_H_APPROX / 2; left = btn.right + 12; origin = 'left center';
+      } else {
+        top = btnCy - POPUP_H_APPROX / 2; left = btn.left - POPUP_W_DESKTOP - 12; origin = 'right center';
+      }
+
+      left = Math.max(8, Math.min(left, vw - POPUP_W_DESKTOP - 8));
+      top = Math.max(8, Math.min(top, vh - POPUP_H_APPROX - 8));
+
+      setPopup({ id: svc.id, top, left, origin, mobile: false, width: POPUP_W_DESKTOP });
     }
 
-    // Clamp within viewport
-    left = Math.max(8, Math.min(left, vw - POPUP_W - 8));
-    top = Math.max(8, Math.min(top, vh - POPUP_H - 8));
-
     setActive(svc.id);
-    setPopup({ id: svc.id, top, left, origin });
   };
+
+  const closePopup = () => { setActive(null); setPopup(null); };
 
   return (
     <div
@@ -211,16 +242,34 @@ export default function App() {
         alignItems: 'center',
         justifyContent: 'center',
         fontFamily: "'Nunito', 'Inter', sans-serif",
-        padding: '24px 16px',
+        padding: isMobile ? '16px 12px' : '24px 16px',
         gap: 0,
       }}
     >
       {/* ── Tagline ── */}
-      <div style={{ textAlign: 'center', marginBottom: 20, maxWidth: 320, padding: '0 8px' }}>
-        <p style={{ margin: 0, fontSize: 28, fontWeight: 600, color: '#1a1a2e', lineHeight: 1.25, letterSpacing: '-0.02em' }}>
+      <div style={{
+        textAlign: 'center',
+        marginBottom: isMobile ? 12 : 20,
+        maxWidth: isMobile ? '90vw' : 420,
+        padding: '0 8px',
+      }}>
+        <p style={{
+          margin: 0,
+          fontSize: isMobile ? 'clamp(18px, 5vw, 24px)' : 28,
+          fontWeight: 600,
+          color: '#1a1a2e',
+          lineHeight: 1.25,
+          letterSpacing: '-0.02em',
+        }}>
           Best time to adapt AI is now.
         </p>
-        <p style={{ margin: '6px 0 0', fontSize: 16, fontWeight: 400, color: '#6b6490', lineHeight: 1.55 }}>
+        <p style={{
+          margin: isMobile ? '4px 0 0' : '6px 0 0',
+          fontSize: isMobile ? 14 : 16,
+          fontWeight: 400,
+          color: '#6b6490',
+          lineHeight: 1.55,
+        }}>
           We make it simple to use and easy to understand.
         </p>
       </div>
@@ -229,12 +278,14 @@ export default function App() {
       <div
         style={{
           position: 'relative',
-          width: totalSize,
-          height: totalSize,
-          transform: `scale(${scale})`,
-          transformOrigin: 'top center',
+          width: containerSize,
+          height: containerSize,
           flexShrink: 0,
-          marginBottom: scale < 1 ? -(totalSize * (1 - scale)) : 0,
+          ...(!isMobile && desktopScale < 1 ? {
+            transform: `scale(${desktopScale})`,
+            transformOrigin: 'top center',
+            marginBottom: -(D_TOTAL * (1 - desktopScale)),
+          } : {}),
         }}
       >
         {/* Orbit path */}
@@ -243,8 +294,8 @@ export default function App() {
             position: 'absolute',
             top: '50%',
             left: '50%',
-            width: (RING_RADIUS + BUBBLE / 2) * 2,
-            height: (RING_RADIUS + BUBBLE / 2) * 2,
+            width: (ringRadius + bubbleSize / 2) * 2,
+            height: (ringRadius + bubbleSize / 2) * 2,
             transform: 'translate(-50%, -50%)',
             borderRadius: '50%',
             border: '1.5px dashed rgba(153,144,212,0.4)',
@@ -261,8 +312,8 @@ export default function App() {
           {SERVICES.map((svc) => {
             const angle = (360 / SERVICES.length) * SERVICES.indexOf(svc);
             const rad = (Math.PI / 180) * angle;
-            const cx = Math.cos(rad) * RING_RADIUS;
-            const cy = Math.sin(rad) * RING_RADIUS;
+            const cx = Math.cos(rad) * ringRadius;
+            const cy = Math.sin(rad) * ringRadius;
             const isActive = active === svc.id;
 
             return (
@@ -271,10 +322,10 @@ export default function App() {
                 onClick={(e) => handleBubbleClick(e, svc)}
                 style={{
                   position: 'absolute',
-                  top: `calc(50% - ${BUBBLE / 2}px + ${cy}px)`,
-                  left: `calc(50% - ${BUBBLE / 2}px + ${cx}px)`,
-                  width: BUBBLE,
-                  height: BUBBLE,
+                  top: `calc(50% - ${bubbleSize / 2}px + ${cy}px)`,
+                  left: `calc(50% - ${bubbleSize / 2}px + ${cx}px)`,
+                  width: bubbleSize,
+                  height: bubbleSize,
                   borderRadius: '50%',
                   background: isActive ? svc.accent : svc.bg,
                   border: `1.5px solid ${isActive ? svc.accent : svc.border}`,
@@ -282,14 +333,14 @@ export default function App() {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  fontSize: '9.5px',
+                  fontSize: `${bubbleFontSize}px`,
                   fontWeight: isActive ? 800 : 700,
                   color: isActive ? '#FFFFFF' : svc.accent,
                   letterSpacing: '0.04em',
                   textAlign: 'center',
                   textTransform: 'uppercase',
                   lineHeight: 1.35,
-                  padding: '10px',
+                  padding: '8px',
                   whiteSpace: 'pre-line',
                   boxShadow: isActive
                     ? '0 8px 24px rgba(80,60,140,0.30)'
@@ -318,8 +369,8 @@ export default function App() {
             top: '50%',
             left: '50%',
             transform: 'translate(-50%, -50%)',
-            width: CENTER,
-            height: CENTER,
+            width: centerSize,
+            height: centerSize,
             borderRadius: '50%',
             background: '#1a1a2e',
             boxShadow: '0 0 0 2px #3d3570, 0 8px 32px rgba(20,10,60,0.25), 0 2px 8px rgba(20,10,60,0.15)',
@@ -337,11 +388,16 @@ export default function App() {
           <img
             src={LOGO_URL}
             alt="Primo AI Studio"
-            style={{ width: '78%', height: 'auto', objectFit: 'contain', display: 'block' }}
+            style={{
+              width: isMobile ? `clamp(55px, 14vw, 72px)` : '78%',
+              height: 'auto',
+              objectFit: 'contain',
+              display: 'block',
+            }}
           />
         </motion.a>
 
-        {/* Hint — only shown when no service is active */}
+        {/* Hint */}
         <AnimatePresence>
           {!active && (
             <motion.p
@@ -351,11 +407,11 @@ export default function App() {
               exit={{ opacity: 0 }}
               style={{
                 position: 'absolute',
-                bottom: '11%',
+                bottom: isMobile ? '8%' : '11%',
                 left: '50%',
                 transform: `translateX(-50%) scale(${invScale})`,
                 transformOrigin: '50% 50%',
-                fontSize: 10,
+                fontSize: isMobile ? 9 : 10,
                 color: '#9990d4',
                 letterSpacing: '0.16em',
                 textTransform: 'uppercase',
@@ -372,8 +428,8 @@ export default function App() {
         </AnimatePresence>
       </div>
 
-      {/* ── GET STARTED — Magnetic Button ── */}
-      <div style={{ marginTop: 20 }}>
+      {/* ── GET STARTED ── */}
+      <div style={{ marginTop: isMobile ? 14 : 20 }}>
         <MagneticButton>
           <motion.a
             href="mailto:zeronne.ai@gmail.com?subject=Let%27s%20Get%20Started&body=Hi%20Primo%20AI%20Studio%2C%0A%0AI%27d%20love%20to%20learn%20more%20about%20your%20services."
@@ -381,8 +437,8 @@ export default function App() {
               display: 'inline-flex',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: 10,
-              padding: '16px 44px',
+              gap: 8,
+              padding: isMobile ? '11px 28px' : '16px 44px',
               borderRadius: 999,
               background: '#3d3570',
               color: '#f0eeff',
@@ -400,14 +456,34 @@ export default function App() {
             transition={{ duration: 0.2 }}
           >
             Get Started
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style={{ marginLeft: 2 }}>
+            <svg width="13" height="13" viewBox="0 0 14 14" fill="none" style={{ marginLeft: 2 }}>
               <path d="M1 7h12M8 2l5 5-5 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </motion.a>
         </MagneticButton>
       </div>
 
-      {/* ── Dynamic popup — fixed, near clicked node ── */}
+      {/* ── Mobile overlay ── */}
+      <AnimatePresence>
+        {popup?.mobile && (
+          <motion.div
+            key="overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
+            onClick={closePopup}
+            style={{
+              position: 'fixed',
+              inset: 0,
+              background: 'rgba(14, 8, 48, 0.50)',
+              zIndex: 199,
+            }}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* ── Dynamic popup ── */}
       <AnimatePresence mode="wait">
         {popup && activeService && (
           <motion.div
@@ -420,7 +496,7 @@ export default function App() {
               position: 'fixed',
               top: popup.top,
               left: popup.left,
-              width: POPUP_W,
+              width: popup.width,
               transformOrigin: popup.origin,
               zIndex: 200,
               background: '#ffffff',
@@ -428,7 +504,7 @@ export default function App() {
               border: `1.5px solid ${activeService.border}`,
               padding: '16px 15px',
               boxShadow: '0 8px 32px rgba(30,20,80,0.16), 0 2px 8px rgba(30,20,80,0.10)',
-              pointerEvents: 'none',
+              pointerEvents: popup.mobile ? 'auto' : 'none',
             }}
           >
             <p style={{
@@ -450,6 +526,27 @@ export default function App() {
             }}>
               {activeService.description}
             </p>
+            {popup.mobile && (
+              <button
+                onClick={closePopup}
+                style={{
+                  marginTop: 12,
+                  display: 'block',
+                  width: '100%',
+                  padding: '8px',
+                  borderRadius: 8,
+                  border: `1px solid ${activeService.border}`,
+                  background: activeService.bg,
+                  color: activeService.accent,
+                  fontSize: 11,
+                  fontWeight: 700,
+                  letterSpacing: '0.08em',
+                  cursor: 'pointer',
+                }}
+              >
+                Cerrar
+              </button>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
