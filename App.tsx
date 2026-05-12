@@ -25,10 +25,15 @@ const BREATHE_CSS = `
   0%, 100% { transform: scale(1);    box-shadow: 0 0 0px 0px rgba(139,190,110,0.4); }
   50%       { transform: scale(1.06); box-shadow: 0 0 18px 6px rgba(139,190,110,0.35); }
 }
+@keyframes breathe-navy {
+  0%, 100% { transform: scale(1);    box-shadow: 0 0 0px 0px rgba(26,58,74,0.35); }
+  50%       { transform: scale(1.06); box-shadow: 0 0 18px 6px rgba(26,58,74,0.25); }
+}
 .bbl { display:flex; align-items:center; justify-content:center; width:100%; height:100%; border-radius:50%; transition: transform 0.2s ease, box-shadow 0.2s ease; }
 .bbl-orange { animation: breathe-orange 3s ease-in-out infinite; }
 .bbl-yellow { animation: breathe-yellow 3s ease-in-out infinite; }
 .bbl-green  { animation: breathe-green  3s ease-in-out infinite; }
+.bbl-navy   { animation: breathe-navy   3s ease-in-out infinite; }
 .bbl:hover        { animation-play-state: paused !important; transform: scale(1.1) !important; }
 .bbl-active       { animation-play-state: paused !important; transform: scale(1.1) !important; }
 `;
@@ -92,6 +97,7 @@ const SERVICES = [
     description:
       'Plug AI directly into your existing stack. Automate key decisions, eliminate bottlenecks, and unlock new efficiencies — without rebuilding from scratch.',
     nodeBg: C.green,
+    nodeText: C.navy,
     colorKey: 'green',
     breatheDelay: '1s',
   },
@@ -101,8 +107,9 @@ const SERVICES = [
     name: 'AI Content Marketing',
     description:
       'Scale content creation with intelligent automation. Consistent, high-quality output across every channel — in a fraction of the time.',
-    nodeBg: C.green,
-    colorKey: 'green',
+    nodeBg: C.orange,
+    nodeText: C.cream,
+    colorKey: 'orange',
     breatheDelay: '2.5s',
   },
   {
@@ -111,8 +118,9 @@ const SERVICES = [
     name: 'AI Video Production',
     description:
       'Premium video ads crafted by AI. Fast deployment, high conversion rates, and zero agency delays. Your brand, always on.',
-    nodeBg: C.yellow,
-    colorKey: 'yellow',
+    nodeBg: C.navy,
+    nodeText: C.cream,
+    colorKey: 'navy',
     breatheDelay: '2s',
   },
   {
@@ -121,8 +129,9 @@ const SERVICES = [
     name: 'Brand Identity',
     description:
       'AI-powered visual identity that stands apart. Naming, positioning, and design systems engineered for modern markets and lasting recall.',
-    nodeBg: C.orange,
-    colorKey: 'orange',
+    nodeBg: C.yellow,
+    nodeText: C.navy,
+    colorKey: 'yellow',
     breatheDelay: '1.5s',
   },
   {
@@ -132,6 +141,7 @@ const SERVICES = [
     description:
       'High-performance landing pages and web platforms deployed in days. Conversion-optimized, visually premium, and built to scale.',
     nodeBg: C.orange,
+    nodeText: C.cream,
     colorKey: 'orange',
     breatheDelay: '0s',
   },
@@ -141,8 +151,9 @@ const SERVICES = [
     name: 'AI Automation',
     description:
       'Eliminate repetitive work forever. Custom AI workflows handle your operations, nurturing, and reporting so you can focus on growth.',
-    nodeBg: C.yellow,
-    colorKey: 'yellow',
+    nodeBg: C.navy,
+    nodeText: C.cream,
+    colorKey: 'navy',
     breatheDelay: '0.5s',
   },
 ];
@@ -270,7 +281,7 @@ export default function App() {
             ? { height: '100svh', padding: '16px 20px 24px', justifyContent: 'space-between' }
             : { minHeight: '100vh', padding: '24px 16px', justifyContent: 'center', gap: 0 }
           ),
-          background: C.navy,
+          background: C.cream,
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
@@ -291,7 +302,7 @@ export default function App() {
             margin: 0,
             fontSize: isMobile ? 'clamp(18px, 5vw, 24px)' : 28,
             fontWeight: 700,
-            color: C.cream,
+            color: C.navy,
             lineHeight: 1.25,
             letterSpacing: '-0.02em',
           }}>
@@ -301,7 +312,7 @@ export default function App() {
             margin: '4px 0 0',
             fontSize: isMobile ? 13 : 16,
             fontWeight: 400,
-            color: `rgba(234, 226, 183, 0.6)`,
+            color: `rgba(26, 58, 74, 0.6)`,
             lineHeight: 1.5,
           }}>
             We make it simple to use and easy to understand.
@@ -344,7 +355,7 @@ export default function App() {
                 height: (ringRadius + bubbleSize / 2) * 2,
                 transform: 'translate(-50%, -50%)',
                 borderRadius: '50%',
-                border: `1.5px dashed rgba(234, 226, 183, 0.25)`,
+                border: `1.5px dashed rgba(26, 58, 74, 0.2)`,
                 pointerEvents: 'none',
               }}
             />
@@ -391,7 +402,7 @@ export default function App() {
                         background: svc.nodeBg,
                         fontSize: `${bubbleFontSize}px`,
                         fontWeight: 600,
-                        color: C.navy,
+                        color: svc.nodeText,
                         letterSpacing: '0.04em',
                         textAlign: 'center',
                         textTransform: 'uppercase',
@@ -399,7 +410,7 @@ export default function App() {
                         whiteSpace: 'pre-line',
                         animationDelay: svc.breatheDelay,
                         ...(isActive ? {
-                          boxShadow: `0 0 0 3px ${C.cream}, 0 8px 28px rgba(0,0,0,0.30)`,
+                          boxShadow: `0 0 0 3px ${C.navy}, 0 8px 28px rgba(0,0,0,0.25)`,
                         } : {}),
                       }}
                     >
@@ -465,7 +476,7 @@ export default function App() {
             fontWeight: 600,
             letterSpacing: '0.12em',
             textTransform: 'uppercase',
-            color: `rgba(234, 226, 183, 0.4)`,
+            color: `rgba(26, 58, 74, 0.4)`,
             textAlign: 'center',
             visibility: active ? 'hidden' : 'visible',
             lineHeight: 1,
@@ -496,9 +507,9 @@ export default function App() {
                 border: 'none',
               }}
               whileHover={{
-                background: C.yellow,
-                color: C.navy,
-                boxShadow: '0 8px 36px rgba(245,184,0,0.50)',
+                background: C.navy,
+                color: C.cream,
+                boxShadow: '0 8px 36px rgba(26,58,74,0.40)',
               }}
               whileTap={{ scale: 0.97 }}
               transition={{ duration: 0.2 }}
@@ -547,7 +558,7 @@ export default function App() {
                 width: popup.width,
                 transformOrigin: popup.origin,
                 zIndex: 200,
-                background: C.cream,
+                background: C.navy,
                 borderRadius: 14,
                 border: 'none',
                 padding: '16px 15px',
@@ -558,7 +569,7 @@ export default function App() {
               <p style={{
                 fontSize: 10,
                 fontWeight: 800,
-                color: C.navy,
+                color: C.cream,
                 letterSpacing: '0.13em',
                 textTransform: 'uppercase',
                 margin: '0 0 7px',
@@ -567,7 +578,7 @@ export default function App() {
               </p>
               <p style={{
                 fontSize: 12,
-                color: `rgba(26, 58, 74, 0.75)`,
+                color: `rgba(234, 226, 183, 0.8)`,
                 lineHeight: 1.65,
                 fontWeight: 400,
                 margin: 0,
