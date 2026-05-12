@@ -1,7 +1,39 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useMotionValue, useSpring } from 'framer-motion';
 
-// ── Magnetic Button ──────────────────────────────────────────────────────────
+// ── Color tokens ──────────────────────────────────────────────────────────────
+const C = {
+  navy:   '#1a3a4a',
+  orange: '#f26419',
+  yellow: '#f5b800',
+  green:  '#8bbe6e',
+  cream:  '#eae2b7',
+};
+
+// ── CSS keyframes + breathing utility classes ─────────────────────────────────
+// Inner span handles scale+glow; outer motion.button handles rotation (no conflict)
+const BREATHE_CSS = `
+@keyframes breathe-orange {
+  0%, 100% { transform: scale(1);    box-shadow: 0 0 0px 0px rgba(242,100,25,0.4); }
+  50%       { transform: scale(1.06); box-shadow: 0 0 18px 6px rgba(242,100,25,0.35); }
+}
+@keyframes breathe-yellow {
+  0%, 100% { transform: scale(1);    box-shadow: 0 0 0px 0px rgba(245,184,0,0.4); }
+  50%       { transform: scale(1.06); box-shadow: 0 0 18px 6px rgba(245,184,0,0.35); }
+}
+@keyframes breathe-green {
+  0%, 100% { transform: scale(1);    box-shadow: 0 0 0px 0px rgba(139,190,110,0.4); }
+  50%       { transform: scale(1.06); box-shadow: 0 0 18px 6px rgba(139,190,110,0.35); }
+}
+.bbl { display:flex; align-items:center; justify-content:center; width:100%; height:100%; border-radius:50%; transition: transform 0.2s ease, box-shadow 0.2s ease; }
+.bbl-orange { animation: breathe-orange 3s ease-in-out infinite; }
+.bbl-yellow { animation: breathe-yellow 3s ease-in-out infinite; }
+.bbl-green  { animation: breathe-green  3s ease-in-out infinite; }
+.bbl:hover        { animation-play-state: paused !important; transform: scale(1.1) !important; }
+.bbl-active       { animation-play-state: paused !important; transform: scale(1.1) !important; }
+`;
+
+// ── Magnetic Button ───────────────────────────────────────────────────────────
 const SPRING_CONFIG = { damping: 100, stiffness: 400 };
 
 function MagneticButton({
@@ -48,7 +80,7 @@ function MagneticButton({
   );
 }
 
-// ── Data ─────────────────────────────────────────────────────────────────────
+// ── Data ──────────────────────────────────────────────────────────────────────
 const LOGO_URL =
   'https://res.cloudinary.com/dsprn0ew4/image/upload/v1778360725/ChatGPT_Image_May_9_2026_03_04_56_PM_hdfdcd.png';
 
@@ -59,9 +91,9 @@ const SERVICES = [
     name: 'AI Integration',
     description:
       'Plug AI directly into your existing stack. Automate key decisions, eliminate bottlenecks, and unlock new efficiencies — without rebuilding from scratch.',
-    accent: '#1a3a5c',
-    bg: '#b8cce4',
-    border: '#7a9dc4',
+    nodeBg: C.green,
+    colorKey: 'green',
+    breatheDelay: '1s',
   },
   {
     id: 2,
@@ -69,9 +101,9 @@ const SERVICES = [
     name: 'AI Content Marketing',
     description:
       'Scale content creation with intelligent automation. Consistent, high-quality output across every channel — in a fraction of the time.',
-    accent: '#1a2a40',
-    bg: '#b4c4d8',
-    border: '#7090b8',
+    nodeBg: C.green,
+    colorKey: 'green',
+    breatheDelay: '2.5s',
   },
   {
     id: 3,
@@ -79,9 +111,9 @@ const SERVICES = [
     name: 'AI Video Production',
     description:
       'Premium video ads crafted by AI. Fast deployment, high conversion rates, and zero agency delays. Your brand, always on.',
-    accent: '#2a4020',
-    bg: '#c4d4b8',
-    border: '#8aaa70',
+    nodeBg: C.yellow,
+    colorKey: 'yellow',
+    breatheDelay: '2s',
   },
   {
     id: 4,
@@ -89,9 +121,9 @@ const SERVICES = [
     name: 'Brand Identity',
     description:
       'AI-powered visual identity that stands apart. Naming, positioning, and design systems engineered for modern markets and lasting recall.',
-    accent: '#3d2060',
-    bg: '#d4c8e8',
-    border: '#a890d4',
+    nodeBg: C.orange,
+    colorKey: 'orange',
+    breatheDelay: '1.5s',
   },
   {
     id: 5,
@@ -99,9 +131,9 @@ const SERVICES = [
     name: 'Web Platforms',
     description:
       'High-performance landing pages and web platforms deployed in days. Conversion-optimized, visually premium, and built to scale.',
-    accent: '#3d3570',
-    bg: '#c8c4e8',
-    border: '#9990d4',
+    nodeBg: C.orange,
+    colorKey: 'orange',
+    breatheDelay: '0s',
   },
   {
     id: 6,
@@ -109,9 +141,9 @@ const SERVICES = [
     name: 'AI Automation',
     description:
       'Eliminate repetitive work forever. Custom AI workflows handle your operations, nurturing, and reporting so you can focus on growth.',
-    accent: '#1e4d3a',
-    bg: '#b8d4c8',
-    border: '#7aaa94',
+    nodeBg: C.yellow,
+    colorKey: 'yellow',
+    breatheDelay: '0.5s',
   },
 ];
 
@@ -151,8 +183,6 @@ export default function App() {
 
   const isMobile = windowWidth <= 768;
 
-  // ── Responsive sizes ────────────────────────────────────────────────────────
-  // Mobile uses 65vw to match the flex max-height/max-width constraint
   const containerSize = isMobile
     ? Math.min(0.65 * windowWidth, 300)
     : D_TOTAL;
@@ -173,12 +203,11 @@ export default function App() {
     ? Math.max(7, Math.min(0.018 * windowWidth, 10))
     : D_BUBBLE_FONT;
 
-  // Desktop-only scale (safety net for narrow desktop windows)
   const desktopScale = isMobile ? 1 : Math.min(1, (windowWidth - 32) / D_TOTAL);
 
   const activeService = SERVICES.find((s) => s.id === active) ?? null;
 
-  // ── Popup positioning ────────────────────────────────────────────────────────
+  // ── Popup positioning ─────────────────────────────────────────────────────
   const handleBubbleClick = (
     e: React.MouseEvent<HTMLButtonElement>,
     svc: (typeof SERVICES)[0],
@@ -219,7 +248,7 @@ export default function App() {
       }
 
       left = Math.max(8, Math.min(left, vw - POPUP_W_DESKTOP - 8));
-      top = Math.max(8, Math.min(top, vh - POPUP_H_APPROX - 8));
+      top  = Math.max(8, Math.min(top,  vh - POPUP_H_APPROX - 8));
 
       setPopup({ id: svc.id, top, left, origin, mobile: false, width: POPUP_W_DESKTOP });
     }
@@ -229,336 +258,348 @@ export default function App() {
 
   const closePopup = () => { setActive(null); setPopup(null); };
 
-  // ── Layout ────────────────────────────────────────────────────────────────
+  // ── Layout ─────────────────────────────────────────────────────────────────
   return (
-    <div
-      style={{
-        // Mobile: fill viewport exactly, no scroll
-        ...(isMobile
-          ? { height: '100svh', padding: '16px 20px 24px', justifyContent: 'space-between' }
-          : { minHeight: '100vh', padding: '24px 16px', justifyContent: 'center', gap: 0 }
-        ),
-        background: '#f8f7ff',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        fontFamily: "'Nunito', 'Inter', sans-serif",
-        boxSizing: 'border-box',
-      }}
-    >
-      {/* ══ Block 1: Heading — flex-shrink: 0 ══ */}
-      <div style={{
-        flexShrink: 0,
-        textAlign: 'center',
-        marginTop: 0,
-        marginBottom: isMobile ? 0 : 20,
-        maxWidth: isMobile ? '90vw' : 420,
-        padding: '0 4px',
-      }}>
-        <p style={{
-          margin: 0,
-          fontSize: isMobile ? 'clamp(18px, 5vw, 24px)' : 28,
-          fontWeight: 600,
-          color: '#1a1a2e',
-          lineHeight: 1.25,
-          letterSpacing: '-0.02em',
-        }}>
-          Best time to adapt AI is now.
-        </p>
-        <p style={{
-          margin: '4px 0 0',
-          fontSize: isMobile ? 13 : 16,
-          fontWeight: 400,
-          color: '#6b6490',
-          lineHeight: 1.5,
-        }}>
-          We make it simple to use and easy to understand.
-        </p>
-      </div>
+    <>
+      {/* Inject breathing keyframes once */}
+      <style>{BREATHE_CSS}</style>
 
-      {/* ══ Block 2: Orbit — flex:1 on mobile, centered ══ */}
-      <div style={{
-        ...(isMobile ? {
-          flex: 1,
+      <div
+        style={{
+          ...(isMobile
+            ? { height: '100svh', padding: '16px 20px 24px', justifyContent: 'space-between' }
+            : { minHeight: '100vh', padding: '24px 16px', justifyContent: 'center', gap: 0 }
+          ),
+          background: C.navy,
           display: 'flex',
+          flexDirection: 'column',
           alignItems: 'center',
-          justifyContent: 'center',
-          maxHeight: '65vw',
-          maxWidth: '65vw',
-          alignSelf: 'center',
-          margin: 'auto 0',
-        } : {}),
-      }}>
-        <div
-          style={{
-            position: 'relative',
-            width: containerSize,
-            height: containerSize,
-            flexShrink: 0,
-            ...(!isMobile && desktopScale < 1 ? {
-              transform: `scale(${desktopScale})`,
-              transformOrigin: 'top center',
-              marginBottom: -(D_TOTAL * (1 - desktopScale)),
-            } : {}),
-          }}
-        >
-          {/* Orbit path */}
+          fontFamily: "'Nunito', 'Inter', sans-serif",
+          boxSizing: 'border-box',
+        }}
+      >
+        {/* ══ Block 1: Heading ══ */}
+        <div style={{
+          flexShrink: 0,
+          textAlign: 'center',
+          marginTop: 0,
+          marginBottom: isMobile ? 0 : 20,
+          maxWidth: isMobile ? '90vw' : 420,
+          padding: '0 4px',
+        }}>
+          <p style={{
+            margin: 0,
+            fontSize: isMobile ? 'clamp(18px, 5vw, 24px)' : 28,
+            fontWeight: 700,
+            color: C.cream,
+            lineHeight: 1.25,
+            letterSpacing: '-0.02em',
+          }}>
+            Best time to adapt AI is now.
+          </p>
+          <p style={{
+            margin: '4px 0 0',
+            fontSize: isMobile ? 13 : 16,
+            fontWeight: 400,
+            color: `rgba(234, 226, 183, 0.6)`,
+            lineHeight: 1.5,
+          }}>
+            We make it simple to use and easy to understand.
+          </p>
+        </div>
+
+        {/* ══ Block 2: Orbit ══ */}
+        <div style={{
+          ...(isMobile ? {
+            flex: 1,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            maxHeight: '65vw',
+            maxWidth: '65vw',
+            alignSelf: 'center',
+            margin: 'auto 0',
+          } : {}),
+        }}>
           <div
             style={{
-              position: 'absolute',
-              top: '50%',
-              left: '50%',
-              width: (ringRadius + bubbleSize / 2) * 2,
-              height: (ringRadius + bubbleSize / 2) * 2,
-              transform: 'translate(-50%, -50%)',
-              borderRadius: '50%',
-              border: '1.5px dashed rgba(153,144,212,0.4)',
-              pointerEvents: 'none',
+              position: 'relative',
+              width: containerSize,
+              height: containerSize,
+              flexShrink: 0,
+              ...(!isMobile && desktopScale < 1 ? {
+                transform: `scale(${desktopScale})`,
+                transformOrigin: 'top center',
+                marginBottom: -(D_TOTAL * (1 - desktopScale)),
+              } : {}),
             }}
-          />
-
-          {/* Spinning ring */}
-          <motion.div
-            style={{ position: 'absolute', inset: 0 }}
-            animate={{ rotate: 360 }}
-            transition={{ duration: 48, repeat: Infinity, ease: 'linear' }}
           >
-            {SERVICES.map((svc) => {
-              const angle = (360 / SERVICES.length) * SERVICES.indexOf(svc);
-              const rad = (Math.PI / 180) * angle;
-              const cx = Math.cos(rad) * ringRadius;
-              const cy = Math.sin(rad) * ringRadius;
-              const isActive = active === svc.id;
-
-              return (
-                <motion.button
-                  key={svc.id}
-                  onClick={(e) => handleBubbleClick(e, svc)}
-                  style={{
-                    position: 'absolute',
-                    top: `calc(50% - ${bubbleSize / 2}px + ${cy}px)`,
-                    left: `calc(50% - ${bubbleSize / 2}px + ${cx}px)`,
-                    width: bubbleSize,
-                    height: bubbleSize,
-                    borderRadius: '50%',
-                    background: isActive ? svc.accent : svc.bg,
-                    border: `1.5px solid ${isActive ? svc.accent : svc.border}`,
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: `${bubbleFontSize}px`,
-                    fontWeight: isActive ? 800 : 700,
-                    color: isActive ? '#FFFFFF' : svc.accent,
-                    letterSpacing: '0.04em',
-                    textAlign: 'center',
-                    textTransform: 'uppercase',
-                    lineHeight: 1.35,
-                    padding: '8px',
-                    whiteSpace: 'pre-line',
-                    boxShadow: isActive
-                      ? '0 8px 24px rgba(80,60,140,0.30)'
-                      : '0 4px 16px rgba(80,60,140,0.15), 0 1px 4px rgba(80,60,140,0.10)',
-                    transition: 'background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease',
-                    outline: 'none',
-                  }}
-                  animate={{ rotate: -360 }}
-                  transition={{ duration: 48, repeat: Infinity, ease: 'linear' }}
-                  whileHover={{ scale: 1.06, boxShadow: '0 8px 24px rgba(80,60,140,0.30)' }}
-                  whileTap={{ scale: 0.96 }}
-                >
-                  {svc.label}
-                </motion.button>
-              );
-            })}
-          </motion.div>
-
-          {/* Center logo — Instagram link */}
-          <motion.a
-            href="https://www.instagram.com/the.cocreativehub"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              position: 'absolute',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              width: centerSize,
-              height: centerSize,
-              borderRadius: '50%',
-              background: '#1a1a2e',
-              boxShadow: '0 0 0 2px #3d3570, 0 8px 32px rgba(20,10,60,0.25), 0 2px 8px rgba(20,10,60,0.15)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              zIndex: 10,
-              cursor: 'pointer',
-              textDecoration: 'none',
-            }}
-            whileHover={{ boxShadow: '0 0 0 3px #9990d4, 0 8px 32px rgba(20,10,60,0.35), 0 2px 8px rgba(20,10,60,0.20)' }}
-            transition={{ duration: 0.25 }}
-            title="Follow us on Instagram"
-          >
-            <img
-              src={LOGO_URL}
-              alt="Primo AI Studio"
+            {/* Orbit path */}
+            <div
               style={{
-                width: isMobile ? `clamp(50px, 13vw, 70px)` : '78%',
-                height: 'auto',
-                objectFit: 'contain',
-                display: 'block',
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                width: (ringRadius + bubbleSize / 2) * 2,
+                height: (ringRadius + bubbleSize / 2) * 2,
+                transform: 'translate(-50%, -50%)',
+                borderRadius: '50%',
+                border: `1.5px dashed rgba(234, 226, 183, 0.25)`,
+                pointerEvents: 'none',
               }}
             />
-          </motion.a>
-        </div>
-      </div>
 
-      {/* ══ Block 3: Hint + Button — flex-shrink: 0 ══ */}
-      <div style={{
-        flexShrink: 0,
-        textAlign: 'center',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        gap: 0,
-      }}>
-        {/* Hint — static, outside orbit, hidden when service is active */}
-        <p style={{
-          margin: '0 0 12px',
-          fontSize: 11,
-          fontWeight: 600,
-          letterSpacing: '0.12em',
-          textTransform: 'uppercase',
-          color: 'rgba(153, 144, 212, 0.45)',
-          textAlign: 'center',
-          visibility: active ? 'hidden' : 'visible',
-          lineHeight: 1,
-        }}>
-          Tap a service to explore
-        </p>
+            {/* Spinning ring */}
+            <motion.div
+              style={{ position: 'absolute', inset: 0 }}
+              animate={{ rotate: 360 }}
+              transition={{ duration: 48, repeat: Infinity, ease: 'linear' }}
+            >
+              {SERVICES.map((svc) => {
+                const angle = (360 / SERVICES.length) * SERVICES.indexOf(svc);
+                const rad = (Math.PI / 180) * angle;
+                const cx = Math.cos(rad) * ringRadius;
+                const cy = Math.sin(rad) * ringRadius;
+                const isActive = active === svc.id;
 
-        {/* GET STARTED */}
-        <MagneticButton>
-          <motion.a
-            href="mailto:zeronne.ai@gmail.com?subject=Let%27s%20Get%20Started&body=Hi%20Primo%20AI%20Studio%2C%0A%0AI%27d%20love%20to%20learn%20more%20about%20your%20services."
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 8,
-              padding: isMobile ? '11px 28px' : '16px 44px',
-              borderRadius: 999,
-              background: '#3d3570',
-              color: '#f0eeff',
-              fontSize: 13,
-              fontWeight: 800,
-              letterSpacing: '0.18em',
-              textTransform: 'uppercase',
-              textDecoration: 'none',
-              boxShadow: '0 4px 24px rgba(61,53,112,0.35)',
-              cursor: 'pointer',
-              userSelect: 'none',
-            }}
-            whileHover={{ background: '#2a2050', boxShadow: '0 8px 36px rgba(61,53,112,0.50)' }}
-            whileTap={{ scale: 0.97 }}
-            transition={{ duration: 0.2 }}
-          >
-            Get Started
-            <svg width="13" height="13" viewBox="0 0 14 14" fill="none" style={{ marginLeft: 2 }}>
-              <path d="M1 7h12M8 2l5 5-5 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </motion.a>
-        </MagneticButton>
-      </div>
+                return (
+                  // Outer button: only handles position + counter-rotation + click
+                  <motion.button
+                    key={svc.id}
+                    onClick={(e) => handleBubbleClick(e, svc)}
+                    style={{
+                      position: 'absolute',
+                      top: `calc(50% - ${bubbleSize / 2}px + ${cy}px)`,
+                      left: `calc(50% - ${bubbleSize / 2}px + ${cx}px)`,
+                      width: bubbleSize,
+                      height: bubbleSize,
+                      borderRadius: '50%',
+                      background: 'transparent',
+                      border: 'none',
+                      cursor: 'pointer',
+                      padding: 0,
+                      outline: 'none',
+                    }}
+                    animate={{ rotate: -360 }}
+                    transition={{ duration: 48, repeat: Infinity, ease: 'linear' }}
+                    whileTap={{ scale: 0.94 }}
+                  >
+                    {/* Inner span: visual + breathing animation (independent transform layer) */}
+                    <span
+                      className={`bbl bbl-${svc.colorKey}${isActive ? ' bbl-active' : ''}`}
+                      style={{
+                        background: svc.nodeBg,
+                        fontSize: `${bubbleFontSize}px`,
+                        fontWeight: 600,
+                        color: C.navy,
+                        letterSpacing: '0.04em',
+                        textAlign: 'center',
+                        textTransform: 'uppercase',
+                        lineHeight: 1.35,
+                        whiteSpace: 'pre-line',
+                        animationDelay: svc.breatheDelay,
+                        ...(isActive ? {
+                          boxShadow: `0 0 0 3px ${C.cream}, 0 8px 28px rgba(0,0,0,0.30)`,
+                        } : {}),
+                      }}
+                    >
+                      {svc.label}
+                    </span>
+                  </motion.button>
+                );
+              })}
+            </motion.div>
 
-      {/* ── Mobile overlay ── */}
-      <AnimatePresence>
-        {popup?.mobile && (
-          <motion.div
-            key="overlay"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.15 }}
-            onClick={closePopup}
-            style={{
-              position: 'fixed',
-              inset: 0,
-              background: 'rgba(14, 8, 48, 0.50)',
-              zIndex: 199,
-            }}
-          />
-        )}
-      </AnimatePresence>
-
-      {/* ── Dynamic popup ── */}
-      <AnimatePresence mode="wait">
-        {popup && activeService && (
-          <motion.div
-            key={popup.id}
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
-            transition={{ duration: 0.18, ease: 'easeOut' }}
-            style={{
-              position: 'fixed',
-              top: popup.top,
-              left: popup.left,
-              width: popup.width,
-              transformOrigin: popup.origin,
-              zIndex: 200,
-              background: '#ffffff',
-              borderRadius: 14,
-              border: `1.5px solid ${activeService.border}`,
-              padding: '16px 15px',
-              boxShadow: '0 8px 32px rgba(30,20,80,0.16), 0 2px 8px rgba(30,20,80,0.10)',
-              pointerEvents: popup.mobile ? 'auto' : 'none',
-            }}
-          >
-            <p style={{
-              fontSize: 10,
-              fontWeight: 800,
-              color: activeService.accent,
-              letterSpacing: '0.13em',
-              textTransform: 'uppercase',
-              margin: '0 0 7px',
-            }}>
-              {activeService.name}
-            </p>
-            <p style={{
-              fontSize: 12,
-              color: '#3d3a5c',
-              lineHeight: 1.65,
-              fontWeight: 400,
-              margin: 0,
-            }}>
-              {activeService.description}
-            </p>
-            {popup.mobile && (
-              <button
-                onClick={closePopup}
+            {/* Center logo */}
+            <motion.a
+              href="https://www.instagram.com/the.cocreativehub"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                width: centerSize,
+                height: centerSize,
+                borderRadius: '50%',
+                background: C.navy,
+                boxShadow: `0 0 0 2px ${C.cream}, 0 8px 32px rgba(0,0,0,0.35), 0 2px 8px rgba(0,0,0,0.20)`,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                zIndex: 10,
+                cursor: 'pointer',
+                textDecoration: 'none',
+              }}
+              whileHover={{ boxShadow: `0 0 0 3px ${C.cream}, 0 12px 40px rgba(0,0,0,0.45), 0 2px 8px rgba(0,0,0,0.25)` }}
+              transition={{ duration: 0.25 }}
+              title="Follow us on Instagram"
+            >
+              <img
+                src={LOGO_URL}
+                alt="Primo AI Studio"
                 style={{
-                  marginTop: 12,
+                  width: isMobile ? 'clamp(50px, 13vw, 70px)' : '78%',
+                  height: 'auto',
+                  objectFit: 'contain',
                   display: 'block',
-                  width: '100%',
-                  padding: '8px',
-                  borderRadius: 8,
-                  border: `1px solid ${activeService.border}`,
-                  background: activeService.bg,
-                  color: activeService.accent,
-                  fontSize: 11,
-                  fontWeight: 700,
-                  letterSpacing: '0.08em',
-                  cursor: 'pointer',
-                  fontFamily: 'inherit',
                 }}
-              >
-                Cerrar
-              </button>
-            )}
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
+              />
+            </motion.a>
+          </div>
+        </div>
+
+        {/* ══ Block 3: Hint + Button ══ */}
+        <div style={{
+          flexShrink: 0,
+          textAlign: 'center',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: 0,
+        }}>
+          <p style={{
+            margin: '0 0 12px',
+            fontSize: 11,
+            fontWeight: 600,
+            letterSpacing: '0.12em',
+            textTransform: 'uppercase',
+            color: `rgba(234, 226, 183, 0.4)`,
+            textAlign: 'center',
+            visibility: active ? 'hidden' : 'visible',
+            lineHeight: 1,
+          }}>
+            Tap a service to explore
+          </p>
+
+          <MagneticButton>
+            <motion.a
+              href="mailto:zeronne.ai@gmail.com?subject=Let%27s%20Get%20Started&body=Hi%20Primo%20AI%20Studio%2C%0A%0AI%27d%20love%20to%20learn%20more%20about%20your%20services."
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 8,
+                padding: isMobile ? '11px 28px' : '16px 44px',
+                borderRadius: 999,
+                background: C.orange,
+                color: C.cream,
+                fontSize: 13,
+                fontWeight: 800,
+                letterSpacing: '0.18em',
+                textTransform: 'uppercase',
+                textDecoration: 'none',
+                boxShadow: '0 4px 24px rgba(242,100,25,0.40)',
+                cursor: 'pointer',
+                userSelect: 'none',
+                border: 'none',
+              }}
+              whileHover={{
+                background: C.yellow,
+                color: C.navy,
+                boxShadow: '0 8px 36px rgba(245,184,0,0.50)',
+              }}
+              whileTap={{ scale: 0.97 }}
+              transition={{ duration: 0.2 }}
+            >
+              Get Started
+              <svg width="13" height="13" viewBox="0 0 14 14" fill="none" style={{ marginLeft: 2 }}>
+                <path d="M1 7h12M8 2l5 5-5 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </motion.a>
+          </MagneticButton>
+        </div>
+
+        {/* ── Mobile overlay ── */}
+        <AnimatePresence>
+          {popup?.mobile && (
+            <motion.div
+              key="overlay"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.15 }}
+              onClick={closePopup}
+              style={{
+                position: 'fixed',
+                inset: 0,
+                background: 'rgba(0, 0, 0, 0.60)',
+                zIndex: 199,
+              }}
+            />
+          )}
+        </AnimatePresence>
+
+        {/* ── Dynamic popup ── */}
+        <AnimatePresence mode="wait">
+          {popup && activeService && (
+            <motion.div
+              key={popup.id}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              transition={{ duration: 0.18, ease: 'easeOut' }}
+              style={{
+                position: 'fixed',
+                top: popup.top,
+                left: popup.left,
+                width: popup.width,
+                transformOrigin: popup.origin,
+                zIndex: 200,
+                background: C.cream,
+                borderRadius: 14,
+                border: 'none',
+                padding: '16px 15px',
+                boxShadow: '0 8px 32px rgba(0,0,0,0.35)',
+                pointerEvents: popup.mobile ? 'auto' : 'none',
+              }}
+            >
+              <p style={{
+                fontSize: 10,
+                fontWeight: 800,
+                color: C.navy,
+                letterSpacing: '0.13em',
+                textTransform: 'uppercase',
+                margin: '0 0 7px',
+              }}>
+                {activeService.name}
+              </p>
+              <p style={{
+                fontSize: 12,
+                color: `rgba(26, 58, 74, 0.75)`,
+                lineHeight: 1.65,
+                fontWeight: 400,
+                margin: 0,
+              }}>
+                {activeService.description}
+              </p>
+              {popup.mobile && (
+                <button
+                  onClick={closePopup}
+                  style={{
+                    marginTop: 12,
+                    display: 'block',
+                    width: '100%',
+                    padding: '8px',
+                    borderRadius: 8,
+                    border: 'none',
+                    background: C.navy,
+                    color: C.cream,
+                    fontSize: 11,
+                    fontWeight: 700,
+                    letterSpacing: '0.08em',
+                    cursor: 'pointer',
+                    fontFamily: 'inherit',
+                  }}
+                >
+                  Cerrar
+                </button>
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </>
   );
 }
