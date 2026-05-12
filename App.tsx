@@ -192,6 +192,22 @@ export default function App() {
     return () => window.removeEventListener('resize', update);
   }, []);
 
+  // Close popup when clicking outside any node or popup
+  useEffect(() => {
+    const handleOutsideClick = (e: MouseEvent) => {
+      const target = e.target as Element;
+      if (
+        !target.closest('.service-node') &&
+        !target.closest('.service-popup')
+      ) {
+        setActive(null);
+        setPopup(null);
+      }
+    };
+    document.addEventListener('click', handleOutsideClick);
+    return () => document.removeEventListener('click', handleOutsideClick);
+  }, []);
+
   const isMobile = windowWidth <= 768;
 
   const containerSize = isMobile
@@ -223,6 +239,8 @@ export default function App() {
     e: React.MouseEvent<HTMLButtonElement>,
     svc: (typeof SERVICES)[0],
   ) => {
+    e.stopPropagation();
+
     if (active === svc.id) {
       setActive(null);
       setPopup(null);
@@ -377,6 +395,7 @@ export default function App() {
                   // Outer button: only handles position + counter-rotation + click
                   <motion.button
                     key={svc.id}
+                    className="service-node"
                     onClick={(e) => handleBubbleClick(e, svc)}
                     style={{
                       position: 'absolute',
@@ -547,6 +566,7 @@ export default function App() {
           {popup && activeService && (
             <motion.div
               key={popup.id}
+              className="service-popup"
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
@@ -562,10 +582,35 @@ export default function App() {
                 borderRadius: 14,
                 border: 'none',
                 padding: '16px 15px',
+                paddingTop: 14,
                 boxShadow: '0 8px 32px rgba(0,0,0,0.35)',
-                pointerEvents: popup.mobile ? 'auto' : 'none',
+                pointerEvents: 'auto',
               }}
             >
+              {/* × close button — always shown */}
+              <button
+                onClick={(e) => { e.stopPropagation(); closePopup(); }}
+                style={{
+                  position: 'absolute',
+                  top: 10,
+                  right: 12,
+                  background: 'transparent',
+                  border: 'none',
+                  color: C.cream,
+                  opacity: 0.6,
+                  fontSize: 18,
+                  lineHeight: 1,
+                  cursor: 'pointer',
+                  padding: '2px 4px',
+                  fontFamily: 'inherit',
+                  transition: 'opacity 0.15s',
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.opacity = '1')}
+                onMouseLeave={(e) => (e.currentTarget.style.opacity = '0.6')}
+                aria-label="Close"
+              >
+                ×
+              </button>
               <p style={{
                 fontSize: 10,
                 fontWeight: 800,
@@ -573,6 +618,7 @@ export default function App() {
                 letterSpacing: '0.13em',
                 textTransform: 'uppercase',
                 margin: '0 0 7px',
+                paddingRight: 20,
               }}>
                 {activeService.name}
               </p>
@@ -587,7 +633,7 @@ export default function App() {
               </p>
               {popup.mobile && (
                 <button
-                  onClick={closePopup}
+                  onClick={(e) => { e.stopPropagation(); closePopup(); }}
                   style={{
                     marginTop: 12,
                     display: 'block',
@@ -595,7 +641,7 @@ export default function App() {
                     padding: '8px',
                     borderRadius: 8,
                     border: 'none',
-                    background: C.navy,
+                    background: `rgba(234, 226, 183, 0.12)`,
                     color: C.cream,
                     fontSize: 11,
                     fontWeight: 700,
