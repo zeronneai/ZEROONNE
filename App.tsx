@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useMotionValue, useSpring } from 'framer-motion';
-import OnboardingModal from './OnboardingModal';
+import OnboardingModal, { ModalEntry } from './OnboardingModal';
 
 // ── Color tokens ──────────────────────────────────────────────────────────────
 const C = {
@@ -231,23 +231,10 @@ const D_CENTER = 165;
 const D_TOTAL = D_RING_RADIUS * 2 + D_BUBBLE + 60;
 const D_BUBBLE_FONT = 9.5;
 
-const POPUP_W_DESKTOP = 224;
-const POPUP_H_APPROX = 148;
-
-interface PopupState {
-  id: number;
-  top: number;
-  left: number;
-  origin: string;
-  mobile: boolean;
-  width: number;
-}
-
 // ── App ───────────────────────────────────────────────────────────────────────
 export default function App() {
   const [active, setActive] = useState<number | null>(null);
-  const [popup, setPopup] = useState<PopupState | null>(null);
-  const [modalOpen, setModalOpen] = useState(false);
+  const [modalEntry, setModalEntry] = useState<ModalEntry | null>(null);
   const [windowWidth, setWindowWidth] = useState(
     typeof window !== 'undefined' ? window.innerWidth : 1200,
   );
@@ -259,23 +246,23 @@ export default function App() {
     return () => window.removeEventListener('resize', update);
   }, []);
 
-  // Close popup when clicking outside any node or popup
+  // Clear active bubble when clicking outside (modal handles its own close)
   useEffect(() => {
-    const handleOutsideClick = (e: MouseEvent) => {
+    const handler = (e: MouseEvent) => {
+      if (modalEntry) return;
       const target = e.target as Element;
-      if (
-        !target.closest('.service-node') &&
-        !target.closest('.service-popup')
-      ) {
-        setActive(null);
-        setPopup(null);
-      }
+      if (!target.closest('.service-node')) setActive(null);
     };
-    document.addEventListener('click', handleOutsideClick);
-    return () => document.removeEventListener('click', handleOutsideClick);
-  }, []);
+    document.addEventListener('click', handler);
+    return () => document.removeEventListener('click', handler);
+  }, [modalEntry]);
 
   const isMobile = windowWidth <= 768;
+
+  const handleModalClose = () => {
+    setModalEntry(null);
+    setActive(null);
+  };
 
   const containerSize = isMobile
     ? Math.min(0.65 * windowWidth, 300)
@@ -299,60 +286,20 @@ export default function App() {
 
   const desktopScale = isMobile ? 1 : Math.min(1, (windowWidth - 32) / D_TOTAL);
 
-  const activeService = SERVICES.find((s) => s.id === active) ?? null;
-
-  // ── Popup positioning ─────────────────────────────────────────────────────
+  // ── Bubble click → opens modal in Flujo A ────────────────────────────────
   const handleBubbleClick = (
     e: React.MouseEvent<HTMLButtonElement>,
     svc: (typeof SERVICES)[0],
   ) => {
     e.stopPropagation();
-
     if (active === svc.id) {
       setActive(null);
-      setPopup(null);
+      setModalEntry(null);
       return;
     }
-
-    const btn = e.currentTarget.getBoundingClientRect();
-    const vw = window.innerWidth;
-    const vh = window.innerHeight;
-
-    if (isMobile) {
-      const pw = Math.min(vw * 0.8, 300);
-      setPopup({
-        id: svc.id,
-        top: (vh - POPUP_H_APPROX) / 2,
-        left: (vw - pw) / 2,
-        origin: 'center',
-        mobile: true,
-        width: pw,
-      });
-    } else {
-      const btnCx = btn.left + btn.width / 2;
-      const btnCy = btn.top + btn.height / 2;
-      let top: number, left: number, origin: string;
-
-      if (btnCy < vh * 0.3) {
-        top = btn.bottom + 12; left = btnCx - POPUP_W_DESKTOP / 2; origin = 'top center';
-      } else if (btnCy > vh * 0.7) {
-        top = btn.top - POPUP_H_APPROX - 12; left = btnCx - POPUP_W_DESKTOP / 2; origin = 'bottom center';
-      } else if (btnCx < vw / 2) {
-        top = btnCy - POPUP_H_APPROX / 2; left = btn.right + 12; origin = 'left center';
-      } else {
-        top = btnCy - POPUP_H_APPROX / 2; left = btn.left - POPUP_W_DESKTOP - 12; origin = 'right center';
-      }
-
-      left = Math.max(8, Math.min(left, vw - POPUP_W_DESKTOP - 8));
-      top  = Math.max(8, Math.min(top,  vh - POPUP_H_APPROX - 8));
-
-      setPopup({ id: svc.id, top, left, origin, mobile: false, width: POPUP_W_DESKTOP });
-    }
-
     setActive(svc.id);
+    setModalEntry({ source: 'bubble', service: svc.name });
   };
-
-  const closePopup = () => { setActive(null); setPopup(null); };
 
   // ── Layout ─────────────────────────────────────────────────────────────────
   return (
@@ -574,7 +521,7 @@ export default function App() {
 
           <MagneticButton>
             <motion.button
-              onClick={() => setModalOpen(true)}
+              onClick={() => setModalEntry({ source: 'getstarted' })}
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
@@ -610,125 +557,10 @@ export default function App() {
           </MagneticButton>
         </div>
 
-        {/* ── Mobile overlay ── */}
-        <AnimatePresence>
-          {popup?.mobile && (
-            <motion.div
-              key="overlay"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.15 }}
-              onClick={closePopup}
-              style={{
-                position: 'fixed',
-                inset: 0,
-                background: 'rgba(0, 0, 0, 0.60)',
-                zIndex: 199,
-              }}
-            />
-          )}
-        </AnimatePresence>
-
-        {/* ── Dynamic popup ── */}
-        <AnimatePresence mode="wait">
-          {popup && activeService && (
-            <motion.div
-              key={popup.id}
-              className="service-popup"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              transition={{ duration: 0.18, ease: 'easeOut' }}
-              style={{
-                position: 'fixed',
-                top: popup.top,
-                left: popup.left,
-                width: popup.width,
-                transformOrigin: popup.origin,
-                zIndex: 200,
-                background: C.navy,
-                borderRadius: 14,
-                border: 'none',
-                padding: '16px 15px',
-                paddingTop: 14,
-                boxShadow: '0 8px 32px rgba(0,0,0,0.35)',
-                pointerEvents: 'auto',
-              }}
-            >
-              {/* × close button — always shown */}
-              <button
-                onClick={(e) => { e.stopPropagation(); closePopup(); }}
-                style={{
-                  position: 'absolute',
-                  top: 10,
-                  right: 12,
-                  background: 'transparent',
-                  border: 'none',
-                  color: C.cream,
-                  opacity: 0.6,
-                  fontSize: 18,
-                  lineHeight: 1,
-                  cursor: 'pointer',
-                  padding: '2px 4px',
-                  fontFamily: 'inherit',
-                  transition: 'opacity 0.15s',
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.opacity = '1')}
-                onMouseLeave={(e) => (e.currentTarget.style.opacity = '0.6')}
-                aria-label="Close"
-              >
-                ×
-              </button>
-              <p style={{
-                fontSize: 10,
-                fontWeight: 800,
-                color: C.cream,
-                letterSpacing: '0.13em',
-                textTransform: 'uppercase',
-                margin: '0 0 7px',
-                paddingRight: 20,
-              }}>
-                {activeService.name}
-              </p>
-              <p style={{
-                fontSize: 12,
-                color: `rgba(234, 226, 183, 0.8)`,
-                lineHeight: 1.65,
-                fontWeight: 400,
-                margin: 0,
-              }}>
-                {activeService.description}
-              </p>
-              {popup.mobile && (
-                <button
-                  onClick={(e) => { e.stopPropagation(); closePopup(); }}
-                  style={{
-                    marginTop: 12,
-                    display: 'block',
-                    width: '100%',
-                    padding: '8px',
-                    borderRadius: 8,
-                    border: 'none',
-                    background: `rgba(234, 226, 183, 0.12)`,
-                    color: C.cream,
-                    fontSize: 11,
-                    fontWeight: 700,
-                    letterSpacing: '0.08em',
-                    cursor: 'pointer',
-                    fontFamily: 'inherit',
-                  }}
-                >
-                  Cerrar
-                </button>
-              )}
-            </motion.div>
-          )}
-        </AnimatePresence>
       </div>
 
       {/* ── Onboarding modal ── */}
-      <OnboardingModal isOpen={modalOpen} onClose={() => setModalOpen(false)} />
+      <OnboardingModal entry={modalEntry} onClose={handleModalClose} />
     </>
   );
 }
