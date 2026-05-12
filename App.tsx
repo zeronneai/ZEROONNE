@@ -10,32 +10,103 @@ const C = {
   cream:  '#eae2b7',
 };
 
-// ── CSS keyframes + breathing utility classes ─────────────────────────────────
-// Inner span handles scale+glow; outer motion.button handles rotation (no conflict)
+// ── CSS keyframes — floating bubble animations ────────────────────────────────
+// Inner span handles float transform; outer motion.button handles rotation (no conflict)
 const BREATHE_CSS = `
-@keyframes breathe-orange {
-  0%, 100% { transform: scale(1);    box-shadow: 0 0 0px 0px rgba(242,100,25,0.4); }
-  50%       { transform: scale(1.06); box-shadow: 0 0 18px 6px rgba(242,100,25,0.35); }
+@keyframes float-1 {
+  0%   { transform: translate(0px,   0px)  scale(1); }
+  25%  { transform: translate(6px,  -8px)  scale(1.03); }
+  50%  { transform: translate(-4px, -14px) scale(1); }
+  75%  { transform: translate(-8px, -6px)  scale(0.97); }
+  100% { transform: translate(0px,   0px)  scale(1); }
 }
-@keyframes breathe-yellow {
-  0%, 100% { transform: scale(1);    box-shadow: 0 0 0px 0px rgba(245,184,0,0.4); }
-  50%       { transform: scale(1.06); box-shadow: 0 0 18px 6px rgba(245,184,0,0.35); }
+@keyframes float-2 {
+  0%   { transform: translate(0px,   0px)  scale(1); }
+  25%  { transform: translate(-7px, -10px) scale(0.97); }
+  50%  { transform: translate(5px,  -16px) scale(1.03); }
+  75%  { transform: translate(9px,  -5px)  scale(1); }
+  100% { transform: translate(0px,   0px)  scale(1); }
 }
-@keyframes breathe-green {
-  0%, 100% { transform: scale(1);    box-shadow: 0 0 0px 0px rgba(139,190,110,0.4); }
-  50%       { transform: scale(1.06); box-shadow: 0 0 18px 6px rgba(139,190,110,0.35); }
+@keyframes float-3 {
+  0%   { transform: translate(0px,   0px)  scale(1); }
+  20%  { transform: translate(8px,  -6px)  scale(1.02); }
+  50%  { transform: translate(3px,  -12px) scale(0.98); }
+  80%  { transform: translate(-6px, -8px)  scale(1.02); }
+  100% { transform: translate(0px,   0px)  scale(1); }
 }
-@keyframes breathe-navy {
-  0%, 100% { transform: scale(1);    box-shadow: 0 0 0px 0px rgba(26,58,74,0.35); }
-  50%       { transform: scale(1.06); box-shadow: 0 0 18px 6px rgba(26,58,74,0.25); }
+@keyframes float-4 {
+  0%   { transform: translate(0px,   0px)  scale(1); }
+  30%  { transform: translate(-9px, -7px)  scale(1.03); }
+  60%  { transform: translate(-5px, -15px) scale(0.97); }
+  80%  { transform: translate(4px,  -10px) scale(1); }
+  100% { transform: translate(0px,   0px)  scale(1); }
 }
-.bbl { display:flex; align-items:center; justify-content:center; width:100%; height:100%; border-radius:50%; transition: transform 0.2s ease, box-shadow 0.2s ease; }
-.bbl-orange { animation: breathe-orange 3s ease-in-out infinite; }
-.bbl-yellow { animation: breathe-yellow 3s ease-in-out infinite; }
-.bbl-green  { animation: breathe-green  3s ease-in-out infinite; }
-.bbl-navy   { animation: breathe-navy   3s ease-in-out infinite; }
-.bbl:hover        { animation-play-state: paused !important; transform: scale(1.1) !important; }
-.bbl-active       { animation-play-state: paused !important; transform: scale(1.1) !important; }
+@keyframes float-5 {
+  0%   { transform: translate(0px,   0px)  scale(1); }
+  25%  { transform: translate(7px,  -11px) scale(0.98); }
+  55%  { transform: translate(-3px, -17px) scale(1.03); }
+  75%  { transform: translate(-8px, -7px)  scale(1); }
+  100% { transform: translate(0px,   0px)  scale(1); }
+}
+@keyframes float-6 {
+  0%   { transform: translate(0px,   0px)  scale(1); }
+  35%  { transform: translate(-6px, -9px)  scale(1.02); }
+  65%  { transform: translate(7px,  -13px) scale(0.98); }
+  85%  { transform: translate(4px,  -5px)  scale(1.01); }
+  100% { transform: translate(0px,   0px)  scale(1); }
+}
+@media (max-width: 768px) {
+  @keyframes float-1 {
+    0%   { transform: translate(0px,  0px) scale(1); }
+    25%  { transform: translate(3px, -4px) scale(1.03); }
+    50%  { transform: translate(-2px,-7px) scale(1); }
+    75%  { transform: translate(-4px,-3px) scale(0.97); }
+    100% { transform: translate(0px,  0px) scale(1); }
+  }
+  @keyframes float-2 {
+    0%   { transform: translate(0px,  0px) scale(1); }
+    25%  { transform: translate(-4px,-5px) scale(0.97); }
+    50%  { transform: translate(3px, -8px) scale(1.03); }
+    75%  { transform: translate(5px, -3px) scale(1); }
+    100% { transform: translate(0px,  0px) scale(1); }
+  }
+  @keyframes float-3 {
+    0%   { transform: translate(0px,  0px) scale(1); }
+    20%  { transform: translate(4px, -3px) scale(1.02); }
+    50%  { transform: translate(2px, -6px) scale(0.98); }
+    80%  { transform: translate(-3px,-4px) scale(1.02); }
+    100% { transform: translate(0px,  0px) scale(1); }
+  }
+  @keyframes float-4 {
+    0%   { transform: translate(0px,  0px) scale(1); }
+    30%  { transform: translate(-5px,-4px) scale(1.03); }
+    60%  { transform: translate(-3px,-8px) scale(0.97); }
+    80%  { transform: translate(2px, -5px) scale(1); }
+    100% { transform: translate(0px,  0px) scale(1); }
+  }
+  @keyframes float-5 {
+    0%   { transform: translate(0px,  0px) scale(1); }
+    25%  { transform: translate(4px, -6px) scale(0.98); }
+    55%  { transform: translate(-2px,-9px) scale(1.03); }
+    75%  { transform: translate(-4px,-4px) scale(1); }
+    100% { transform: translate(0px,  0px) scale(1); }
+  }
+  @keyframes float-6 {
+    0%   { transform: translate(0px,  0px) scale(1); }
+    35%  { transform: translate(-3px,-5px) scale(1.02); }
+    65%  { transform: translate(4px, -7px) scale(0.98); }
+    85%  { transform: translate(2px, -3px) scale(1.01); }
+    100% { transform: translate(0px,  0px) scale(1); }
+  }
+}
+.bbl { display:flex; align-items:center; justify-content:center; width:100%; height:100%; border-radius:50%; transition: transform 0.2s ease; }
+.bbl-f1 { animation: float-1 4.2s ease-in-out infinite; }
+.bbl-f2 { animation: float-2 3.8s ease-in-out infinite; }
+.bbl-f3 { animation: float-3 4.6s ease-in-out infinite; }
+.bbl-f4 { animation: float-4 3.5s ease-in-out infinite; }
+.bbl-f5 { animation: float-5 4.9s ease-in-out infinite; }
+.bbl-f6 { animation: float-6 4.1s ease-in-out infinite; }
+.bbl:hover, .bbl-active { animation-play-state: paused !important; transform: translate(0,0) scale(1.1) !important; }
 `;
 
 // ── Magnetic Button ───────────────────────────────────────────────────────────
@@ -98,8 +169,7 @@ const SERVICES = [
       'Plug AI directly into your existing stack. Automate key decisions, eliminate bottlenecks, and unlock new efficiencies — without rebuilding from scratch.',
     nodeBg: C.green,
     nodeText: C.navy,
-    colorKey: 'green',
-    breatheDelay: '1s',
+    floatIndex: 3,
   },
   {
     id: 2,
@@ -109,8 +179,7 @@ const SERVICES = [
       'Scale content creation with intelligent automation. Consistent, high-quality output across every channel — in a fraction of the time.',
     nodeBg: C.orange,
     nodeText: C.cream,
-    colorKey: 'orange',
-    breatheDelay: '2.5s',
+    floatIndex: 6,
   },
   {
     id: 3,
@@ -120,8 +189,7 @@ const SERVICES = [
       'Premium video ads crafted by AI. Fast deployment, high conversion rates, and zero agency delays. Your brand, always on.',
     nodeBg: C.navy,
     nodeText: C.cream,
-    colorKey: 'navy',
-    breatheDelay: '2s',
+    floatIndex: 5,
   },
   {
     id: 4,
@@ -131,8 +199,7 @@ const SERVICES = [
       'AI-powered visual identity that stands apart. Naming, positioning, and design systems engineered for modern markets and lasting recall.',
     nodeBg: C.yellow,
     nodeText: C.navy,
-    colorKey: 'yellow',
-    breatheDelay: '1.5s',
+    floatIndex: 4,
   },
   {
     id: 5,
@@ -142,8 +209,7 @@ const SERVICES = [
       'High-performance landing pages and web platforms deployed in days. Conversion-optimized, visually premium, and built to scale.',
     nodeBg: C.orange,
     nodeText: C.cream,
-    colorKey: 'orange',
-    breatheDelay: '0s',
+    floatIndex: 1,
   },
   {
     id: 6,
@@ -153,8 +219,7 @@ const SERVICES = [
       'Eliminate repetitive work forever. Custom AI workflows handle your operations, nurturing, and reporting so you can focus on growth.',
     nodeBg: C.yellow,
     nodeText: C.navy,
-    colorKey: 'yellow',
-    breatheDelay: '0.5s',
+    floatIndex: 2,
   },
 ];
 
@@ -417,9 +482,9 @@ export default function App() {
                     transition={{ duration: 48, repeat: Infinity, ease: 'linear' }}
                     whileTap={{ scale: 0.94 }}
                   >
-                    {/* Inner span: visual + breathing animation (independent transform layer) */}
+                    {/* Inner span: visual + float animation (independent transform layer) */}
                     <span
-                      className={`bbl bbl-${svc.colorKey}${isActive ? ' bbl-active' : ''}`}
+                      className={`bbl bbl-f${svc.floatIndex}${isActive ? ' bbl-active' : ''}`}
                       style={{
                         background: svc.nodeBg,
                         fontSize: `${bubbleFontSize}px`,
@@ -430,7 +495,6 @@ export default function App() {
                         textTransform: 'uppercase',
                         lineHeight: 1.35,
                         whiteSpace: 'pre-line',
-                        animationDelay: svc.breatheDelay,
                         ...(isActive ? {
                           boxShadow: `0 0 0 3px ${C.navy}, 0 8px 28px rgba(0,0,0,0.25)`,
                         } : {}),
