@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useMotionValue, useSpring } from 'framer-motion';
+import OnboardingModal from './OnboardingModal';
 
 // ── Color tokens ──────────────────────────────────────────────────────────────
 const C = {
@@ -246,6 +247,7 @@ interface PopupState {
 export default function App() {
   const [active, setActive] = useState<number | null>(null);
   const [popup, setPopup] = useState<PopupState | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
   const [windowWidth, setWindowWidth] = useState(
     typeof window !== 'undefined' ? window.innerWidth : 1200,
   );
@@ -571,8 +573,8 @@ export default function App() {
           </p>
 
           <MagneticButton>
-            <motion.a
-              href="mailto:zeronne.ai@gmail.com?subject=Let%27s%20Get%20Started&body=Hi%20Primo%20AI%20Studio%2C%0A%0AI%27d%20love%20to%20learn%20more%20about%20your%20services."
+            <motion.button
+              onClick={() => setModalOpen(true)}
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
@@ -586,11 +588,11 @@ export default function App() {
                 fontWeight: 800,
                 letterSpacing: '0.18em',
                 textTransform: 'uppercase',
-                textDecoration: 'none',
                 boxShadow: '0 4px 24px rgba(242,100,25,0.40)',
                 cursor: 'pointer',
                 userSelect: 'none',
                 border: 'none',
+                fontFamily: "'Nunito', 'Inter', sans-serif",
               }}
               whileHover={{
                 background: C.navy,
@@ -604,7 +606,7 @@ export default function App() {
               <svg width="13" height="13" viewBox="0 0 14 14" fill="none" style={{ marginLeft: 2 }}>
                 <path d="M1 7h12M8 2l5 5-5 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
-            </motion.a>
+            </motion.button>
           </MagneticButton>
         </div>
 
@@ -724,6 +726,9 @@ export default function App() {
           )}
         </AnimatePresence>
       </div>
+
+      {/* ── Onboarding modal ── */}
+      <OnboardingModal isOpen={modalOpen} onClose={() => setModalOpen(false)} />
     </>
   );
 }
