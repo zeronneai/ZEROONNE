@@ -151,9 +151,9 @@ const SERVICES = [
     name: 'AI Automation',
     description:
       'Eliminate repetitive work forever. Custom AI workflows handle your operations, nurturing, and reporting so you can focus on growth.',
-    nodeBg: C.navy,
-    nodeText: C.cream,
-    colorKey: 'navy',
+    nodeBg: C.yellow,
+    nodeText: C.navy,
+    colorKey: 'yellow',
     breatheDelay: '0.5s',
   },
 ];
@@ -299,7 +299,10 @@ export default function App() {
             ? { height: '100svh', padding: '16px 20px 24px', justifyContent: 'space-between' }
             : { minHeight: '100vh', padding: '24px 16px', justifyContent: 'center', gap: 0 }
           ),
-          background: C.cream,
+          backgroundImage: `url('https://res.cloudinary.com/dsprn0ew4/image/upload/v1778608740/Background_image_for_website_or_202605121158_cfvxcq.jpg')`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center center',
+          backgroundRepeat: 'no-repeat',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
