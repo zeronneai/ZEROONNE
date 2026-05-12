@@ -313,7 +313,10 @@ export default function App() {
             ? { height: '100svh', padding: '16px 20px 24px', justifyContent: 'space-between' }
             : { minHeight: '100vh', padding: '24px 16px', justifyContent: 'center', gap: 0 }
           ),
-          backgroundImage: `url('https://res.cloudinary.com/dsprn0ew4/image/upload/v1778608740/Background_image_for_website_or_202605121158_cfvxcq.jpg')`,
+          backgroundImage: `url('${isMobile
+            ? 'https://res.cloudinary.com/dsprn0ew4/image/upload/v1778613216/Genera_esta_misma_imagen_pero_202605121305_zeudsg.jpg'
+            : 'https://res.cloudinary.com/dsprn0ew4/image/upload/v1778608740/Background_image_for_website_or_202605121158_cfvxcq.jpg'
+          }')`,
           backgroundSize: 'cover',
           backgroundPosition: 'center center',
           backgroundRepeat: 'no-repeat',
