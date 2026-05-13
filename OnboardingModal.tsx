@@ -91,6 +91,18 @@ const QUESTIONS = [
       'I refuse to let that happen — I need to move now',
     ],
   },
+  {
+    id: 8,
+    question: "What is your business's current monthly revenue?",
+    options: [
+      'Pre-revenue / just starting out',
+      'Under $5,000 / month',
+      '$5,000 – $20,000 / month',
+      '$20,000 – $50,000 / month',
+      '$50,000 – $150,000 / month',
+      '$150,000+ / month',
+    ],
+  },
 ];
 
 const MODAL_CSS = `
@@ -138,6 +150,7 @@ function buildEmail(
   answers: string[],
   entrySource: 'bubble' | 'getstarted',
   services: string[],
+  contact: { name: string; business: string; email: string; phone: string },
 ): string {
   const entryPoint =
     entrySource === 'bubble' ? 'Clicked on service bubble' : 'GET STARTED button';
@@ -151,6 +164,15 @@ function buildEmail(
     '',
     `ENTRY POINT: ${entryPoint}`,
     servicesLine,
+    '',
+    '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
+    'CONTACT INFORMATION',
+    '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
+    '',
+    `Full name:     ${contact.name || '—'}`,
+    `Business:      ${contact.business || '—'}`,
+    `Email:         ${contact.email || '—'}`,
+    `Phone:         ${contact.phone || '—'}`,
     '',
     '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
     'QUESTIONNAIRE RESULTS',
@@ -177,13 +199,16 @@ function buildEmail(
     'Q7 — Business in 12 months without AI:',
     answers[6] ?? '—',
     '',
+    'Q8 — Monthly revenue:',
+    answers[7] ?? '—',
+    '',
     '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
     'Follow up within 24 hours.',
     'Primo AI Studio',
   ].join('\n');
 }
 
-// ── Shared button style helper ────────────────────────────────────────────────
+// ── Shared button ─────────────────────────────────────────────────────────────
 function NextButton({
   label,
   disabled,
@@ -223,7 +248,7 @@ function NextButton({
   );
 }
 
-// ── Service card (multi-select step 0) ────────────────────────────────────────
+// ── Service card ──────────────────────────────────────────────────────────────
 function ServiceCard({
   name,
   selected,
@@ -269,7 +294,7 @@ function ServiceCard({
   );
 }
 
-// ── Option item (single-select questions) ─────────────────────────────────────
+// ── Option item ───────────────────────────────────────────────────────────────
 function OptionItem({
   text,
   selected,
@@ -333,7 +358,6 @@ function ServiceSelectionStep({
       transition={{ duration: 0.22, ease: 'easeOut' }}
       style={{ paddingBottom: 24 }}
     >
-      {/* "Let's find your fit" chip */}
       <span style={{
         display: 'inline-block',
         padding: '4px 12px',
@@ -404,7 +428,6 @@ function QuestionStep({
   onNext: () => void;
 }) {
   const q = QUESTIONS[stepIndex];
-  const isLast = stepIndex === QUESTIONS.length - 1;
 
   return (
     <motion.div
@@ -415,7 +438,6 @@ function QuestionStep({
       transition={{ duration: 0.22, ease: 'easeOut' }}
       style={{ paddingBottom: 24 }}
     >
-      {/* Service chip — only shown for Flujo A */}
       {chipLabel && (
         <span style={{
           display: 'inline-block',
@@ -434,7 +456,6 @@ function QuestionStep({
         </span>
       )}
 
-      {/* Step counter */}
       <p style={{
         margin: '0 0 12px',
         fontSize: 11,
@@ -446,7 +467,6 @@ function QuestionStep({
         {String(stepIndex + 1).padStart(2, '0')} / {String(QUESTIONS.length).padStart(2, '0')}
       </p>
 
-      {/* Question text */}
       <p className="primo-q-text" style={{
         fontFamily: 'Georgia, serif',
         fontSize: 20,
@@ -458,7 +478,6 @@ function QuestionStep({
         {q.question}
       </p>
 
-      {/* Options */}
       {q.options.map((opt) => (
         <OptionItem
           key={opt}
@@ -469,9 +488,140 @@ function QuestionStep({
       ))}
 
       <NextButton
-        label={isLast ? "Let's get started! →" : 'Next →'}
+        label="Next →"
         disabled={!selected}
         onClick={onNext}
+      />
+    </motion.div>
+  );
+}
+
+// ── Contact step ──────────────────────────────────────────────────────────────
+function ContactStep({ onSubmit }: { onSubmit: () => void }) {
+  const [name, setName] = useState('');
+  const [business, setBusiness] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [focused, setFocused] = useState<string | null>(null);
+  const [sending, setSending] = useState(false);
+
+  const isValidEmail = (v: string) => v.includes('@') && v.split('@')[1]?.includes('.');
+  const isValid = name.trim() !== '' && business.trim() !== '' && isValidEmail(email);
+
+  const handleSubmit = () => {
+    if (!isValid || sending) return;
+    const newErrors: Record<string, string> = {};
+    if (!name.trim()) newErrors.name = 'Full name is required.';
+    if (!business.trim()) newErrors.business = 'Business name is required.';
+    if (!isValidEmail(email)) newErrors.email = 'Please enter a valid email address.';
+    if (Object.keys(newErrors).length > 0) { setErrors(newErrors); return; }
+    setSending(true);
+    onSubmit();
+  };
+
+  const fieldStyle = (field: string): React.CSSProperties => ({
+    display: 'block',
+    width: '100%',
+    background: '#ffffff',
+    border: errors[field]
+      ? '1.5px solid #e05555'
+      : focused === field
+        ? '2px solid #f26419'
+        : '1.5px solid rgba(26,58,74,0.15)',
+    borderRadius: 12,
+    padding: '14px 18px',
+    fontFamily: 'Arial, sans-serif',
+    fontSize: 14,
+    color: '#1a3a4a',
+    marginBottom: errors[field] ? 4 : 12,
+    outline: 'none',
+    boxSizing: 'border-box',
+    transition: 'border-color 0.15s ease',
+  });
+
+  const errorMsg = (field: string) =>
+    errors[field] ? (
+      <p style={{ fontSize: 11, color: '#e05555', marginTop: -8, marginBottom: 10, fontFamily: 'Arial, sans-serif' }}>
+        {errors[field]}
+      </p>
+    ) : null;
+
+  return (
+    <motion.div
+      key="contact"
+      initial={{ x: 30, opacity: 0 }}
+      animate={{ x: 0, opacity: 1 }}
+      exit={{ x: -30, opacity: 0 }}
+      transition={{ duration: 0.22, ease: 'easeOut' }}
+      style={{ paddingBottom: 24 }}
+    >
+      <p className="primo-q-text" style={{
+        fontFamily: 'Georgia, serif',
+        fontSize: 22,
+        fontWeight: 700,
+        color: '#1a3a4a',
+        margin: '0 0 6px',
+      }}>
+        Almost there.
+      </p>
+      <p style={{
+        fontFamily: 'Arial, sans-serif',
+        fontSize: 13,
+        color: '#1a3a4a',
+        opacity: 0.5,
+        margin: '0 0 28px',
+      }}>
+        Who should we reach out to?
+      </p>
+
+      <input
+        type="text"
+        placeholder="Your full name"
+        value={name}
+        onChange={(e) => { setName(e.target.value); if (errors.name) setErrors({ ...errors, name: '' }); }}
+        onFocus={() => setFocused('name')}
+        onBlur={() => setFocused(null)}
+        style={fieldStyle('name')}
+      />
+      {errorMsg('name')}
+
+      <input
+        type="text"
+        placeholder="Your business name"
+        value={business}
+        onChange={(e) => { setBusiness(e.target.value); if (errors.business) setErrors({ ...errors, business: '' }); }}
+        onFocus={() => setFocused('business')}
+        onBlur={() => setFocused(null)}
+        style={fieldStyle('business')}
+      />
+      {errorMsg('business')}
+
+      <input
+        type="email"
+        placeholder="you@yourbusiness.com"
+        value={email}
+        onChange={(e) => { setEmail(e.target.value); if (errors.email) setErrors({ ...errors, email: '' }); }}
+        onFocus={() => setFocused('email')}
+        onBlur={() => setFocused(null)}
+        style={fieldStyle('email')}
+      />
+      {errorMsg('email')}
+
+      <input
+        type="tel"
+        placeholder="+1 (000) 000-0000"
+        value={phone}
+        onChange={(e) => setPhone(e.target.value)}
+        onFocus={() => setFocused('phone')}
+        onBlur={() => setFocused(null)}
+        style={fieldStyle('phone')}
+      />
+
+      <NextButton
+        label={sending ? 'Sending...' : "Let's get started! →"}
+        disabled={!isValid || sending}
+        onClick={handleSubmit}
       />
     </motion.div>
   );
@@ -533,7 +683,7 @@ function ThankYouScreen({ onClose }: { onClose: () => void }) {
 // ── Main component ────────────────────────────────────────────────────────────
 export interface ModalEntry {
   source: 'bubble' | 'getstarted';
-  service?: string; // only Flujo A
+  service?: string;
 }
 
 interface OnboardingModalProps {
@@ -541,25 +691,29 @@ interface OnboardingModalProps {
   onClose: () => void;
 }
 
+// step -1 = service selection (Flujo B)
+// step 0..QUESTIONS.length-1 = questions
+// step QUESTIONS.length = contact step
+// step QUESTIONS.length+1 = thank-you
+const CONTACT_STEP = QUESTIONS.length;
+const THANKYOU_STEP = QUESTIONS.length + 1;
+
 export default function OnboardingModal({ entry, onClose }: OnboardingModalProps) {
   const isOpen = entry !== null;
 
-  // step: -1 = service selection (Flujo B only), 0–6 = questions, 7 = thank-you
   const [step, setStep] = useState<number>(0);
-  const [answers, setAnswers] = useState<string[]>(Array(7).fill(''));
+  const [answers, setAnswers] = useState<string[]>(Array(QUESTIONS.length).fill(''));
   const [selected, setSelected] = useState('');
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
 
-  // Lock body scroll
   useEffect(() => {
     document.body.style.overflow = isOpen ? 'hidden' : '';
     return () => { document.body.style.overflow = ''; };
   }, [isOpen]);
 
-  // Reset state whenever modal opens with a new entry
   useEffect(() => {
     if (!entry) return;
-    setAnswers(Array(7).fill(''));
+    setAnswers(Array(QUESTIONS.length).fill(''));
     setSelected('');
     if (entry.source === 'getstarted') {
       setStep(-1);
@@ -570,9 +724,7 @@ export default function OnboardingModal({ entry, onClose }: OnboardingModalProps
     }
   }, [entry]);
 
-  const handleClose = () => {
-    onClose();
-  };
+  const handleClose = () => { onClose(); };
 
   const toggleService = (svc: string) => {
     setSelectedServices((prev) =>
@@ -582,37 +734,36 @@ export default function OnboardingModal({ entry, onClose }: OnboardingModalProps
 
   const handleNext = () => {
     if (step === -1) {
-      // Flujo B: service selection → first question
       if (selectedServices.length === 0) return;
       setStep(0);
       return;
     }
-
     if (!selected) return;
-
     const newAnswers = [...answers];
     newAnswers[step] = selected;
     setAnswers(newAnswers);
-
-    if (step === QUESTIONS.length - 1) {
-      // Last question: fire mailto
-      const subject = 'New Lead — Primo AI Studio Questionnaire';
-      const body = buildEmail(newAnswers, entry!.source, selectedServices);
-      window.location.href = `mailto:${LEAD_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    }
-
     setSelected('');
     setStep((s) => s + 1);
   };
 
-  const isThankYou = step === QUESTIONS.length;
+  const handleContactSubmit = () => {
+    setStep(THANKYOU_STEP);
+  };
+
+  const isThankYou = step === THANKYOU_STEP;
+  const isContact = step === CONTACT_STEP;
   const isServiceSelect = step === -1;
 
-  // Progress bar
-  const progressPct = isThankYou ? 100 : isServiceSelect ? 0 : ((step + 1) / QUESTIONS.length) * 100;
-  const progressLabel = isServiceSelect ? 'Intro' : `Step ${step + 1} of ${QUESTIONS.length}`;
+  const progressPct =
+    isThankYou || isContact ? 100
+    : isServiceSelect ? 0
+    : ((step + 1) / QUESTIONS.length) * 100;
 
-  // Chip for Flujo A persists through all question steps
+  const progressLabel =
+    isContact ? 'Almost done!'
+    : isServiceSelect ? 'Intro'
+    : `Step ${step + 1} of ${QUESTIONS.length}`;
+
   const chipLabel = entry?.source === 'bubble' ? entry.service : undefined;
 
   return (
@@ -680,6 +831,8 @@ export default function OnboardingModal({ entry, onClose }: OnboardingModalProps
                 <AnimatePresence mode="wait">
                   {isThankYou ? (
                     <ThankYouScreen onClose={handleClose} />
+                  ) : isContact ? (
+                    <ContactStep onSubmit={handleContactSubmit} />
                   ) : isServiceSelect ? (
                     <ServiceSelectionStep
                       selectedServices={selectedServices}
