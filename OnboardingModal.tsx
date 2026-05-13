@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 const APPS_SCRIPT_URL =
-  'https://script.google.com/macros/s/AKfycbza2GqiR5vHKzxnsxYc6RyCbp0X8PNOywtWgcVKxOkC22va-0I8c1e_Dg3H9TaMnBTI/exec';
+  'https://script.google.com/macros/s/AKfycbwBcw13L-Yn96Yg-AeIpUCRgHKUxQFXgZ9f1dxZX5KgYQzylO_-g16TBcIoeVGLtPls/exec';
 
 const LOGO_URL =
   'https://res.cloudinary.com/dsprn0ew4/image/upload/v1778360725/ChatGPT_Image_May_9_2026_03_04_56_PM_hdfdcd.png';
@@ -150,13 +150,16 @@ const MODAL_CSS = `
 function NextButton({
   label,
   disabled,
+  submitting,
   onClick,
 }: {
   label: string;
   disabled: boolean;
+  submitting?: boolean;
   onClick: () => void;
 }) {
   const [hovered, setHovered] = useState(false);
+  const opacity = submitting ? 0.6 : disabled ? 0.35 : 1;
   return (
     <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 8 }}>
       <button
@@ -176,7 +179,7 @@ function NextButton({
           letterSpacing: '0.1em',
           textTransform: 'uppercase',
           cursor: disabled ? 'not-allowed' : 'pointer',
-          opacity: disabled ? 0.35 : 1,
+          opacity,
           transition: 'background 0.2s ease, opacity 0.2s ease',
         }}
       >
@@ -435,29 +438,77 @@ function QuestionStep({
 }
 
 // ── Contact step ──────────────────────────────────────────────────────────────
-interface ContactInfo { name: string; business: string; email: string; phone: string; }
-
-function ContactStep({ onSubmit }: { onSubmit: (info: ContactInfo) => void }) {
+function ContactStep({
+  answers,
+  entrySource,
+  selectedService,
+  selectedServices,
+  onConfirm,
+}: {
+  answers: string[];
+  entrySource: 'bubble' | 'getstarted';
+  selectedService?: string;
+  selectedServices: string[];
+  onConfirm: () => void;
+}) {
   const [name, setName] = useState('');
   const [business, setBusiness] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [focused, setFocused] = useState<string | null>(null);
-  const [sending, setSending] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   const isValidEmail = (v: string) => v.includes('@') && v.split('@')[1]?.includes('.');
   const isValid = name.trim() !== '' && business.trim() !== '' && isValidEmail(email);
 
-  const handleSubmit = () => {
-    if (!isValid || sending) return;
+  const handleSubmit = async () => {
+    if (!isValid || submitting) return;
     const newErrors: Record<string, string> = {};
     if (!name.trim()) newErrors.name = 'Full name is required.';
     if (!business.trim()) newErrors.business = 'Business name is required.';
     if (!isValidEmail(email)) newErrors.email = 'Please enter a valid email address.';
     if (Object.keys(newErrors).length > 0) { setErrors(newErrors); return; }
-    setSending(true);
-    onSubmit({ name, business, email, phone });
+
+    setSubmitting(true);
+
+    const payload = {
+      timestamp: new Date().toISOString(),
+      name,
+      email,
+      phone: phone || '',
+      business,
+      entryPoint: entrySource === 'bubble'
+        ? 'Service bubble: ' + selectedService
+        : 'GET STARTED button',
+      services: entrySource === 'bubble'
+        ? selectedService
+        : selectedServices.join(', '),
+      q1: answers[0] || '',
+      q2: answers[1] || '',
+      q3: answers[2] || '',
+      q4: answers[3] || '',
+      q5: answers[4] || '',
+      q6: answers[5] || '',
+      q7: answers[6] || '',
+      q8_revenue: answers[7] || '',
+      source: 'primoaistudio.com',
+    };
+
+    try {
+      const params = new URLSearchParams();
+      params.append('data', JSON.stringify(payload));
+      await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        body: params,
+      });
+    } catch (err) {
+      console.log('Fetch error:', err);
+    }
+
+    setSubmitting(false);
+    onConfirm();
   };
 
   const fieldStyle = (field: string): React.CSSProperties => ({
@@ -559,8 +610,9 @@ function ContactStep({ onSubmit }: { onSubmit: (info: ContactInfo) => void }) {
       />
 
       <NextButton
-        label={sending ? 'Sending...' : "Let's get started! →"}
-        disabled={!isValid || sending}
+        label={submitting ? 'Sending...' : "Let's get started! →"}
+        disabled={!isValid || submitting}
+        submitting={submitting}
         onClick={handleSubmit}
       />
     </motion.div>
@@ -686,35 +738,7 @@ export default function OnboardingModal({ entry, onClose }: OnboardingModalProps
     setStep((s) => s + 1);
   };
 
-  const handleContactSubmit = (info: ContactInfo) => {
-    const payload = {
-      timestamp: new Date().toISOString(),
-      name: info.name,
-      email: info.email,
-      phone: info.phone || '',
-      business: info.business,
-      entryPoint: entry?.source === 'bubble' ? 'Clicked on service bubble' : 'GET STARTED button',
-      services: selectedServices.join(', '),
-      q1: answers[0] ?? '',
-      q2: answers[1] ?? '',
-      q3: answers[2] ?? '',
-      q4: answers[3] ?? '',
-      q5: answers[4] ?? '',
-      q6: answers[5] ?? '',
-      q7: answers[6] ?? '',
-      q8_revenue: answers[7] ?? '',
-      source: 'primoaistudio.com',
-    };
-
-    fetch(APPS_SCRIPT_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    }).catch(() => {});
-
-    setStep(THANKYOU_STEP);
-  };
+  const handleContactSubmit = () => { setStep(THANKYOU_STEP); };
 
   const isThankYou = step === THANKYOU_STEP;
   const isContact = step === CONTACT_STEP;
@@ -798,7 +822,13 @@ export default function OnboardingModal({ entry, onClose }: OnboardingModalProps
                   {isThankYou ? (
                     <ThankYouScreen onClose={handleClose} />
                   ) : isContact ? (
-                    <ContactStep onSubmit={handleContactSubmit} />
+                    <ContactStep
+                      answers={answers}
+                      entrySource={entry!.source}
+                      selectedService={entry?.service}
+                      selectedServices={selectedServices}
+                      onConfirm={handleContactSubmit}
+                    />
                   ) : isServiceSelect ? (
                     <ServiceSelectionStep
                       selectedServices={selectedServices}
