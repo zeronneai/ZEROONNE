@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // ── Constants ─────────────────────────────────────────────────────────────────
-const LEAD_EMAIL = 'zeronne.ai@gmail.com';
+const APPS_SCRIPT_URL =
+  'https://script.google.com/macros/s/AKfycbza2GqiR5vHKzxnsxYc6RyCbp0X8PNOywtWgcVKxOkC22va-0I8c1e_Dg3H9TaMnBTI/exec';
 
 const LOGO_URL =
   'https://res.cloudinary.com/dsprn0ew4/image/upload/v1778360725/ChatGPT_Image_May_9_2026_03_04_56_PM_hdfdcd.png';
@@ -144,69 +145,6 @@ const MODAL_CSS = `
     .primo-service-grid { grid-template-columns: 1fr; }
   }
 `;
-
-// ── Email builder ─────────────────────────────────────────────────────────────
-function buildEmail(
-  answers: string[],
-  entrySource: 'bubble' | 'getstarted',
-  services: string[],
-  contact: { name: string; business: string; email: string; phone: string },
-): string {
-  const entryPoint =
-    entrySource === 'bubble' ? 'Clicked on service bubble' : 'GET STARTED button';
-  const servicesLine =
-    entrySource === 'bubble'
-      ? `SERVICE OF INTEREST: ${services[0] ?? '—'}`
-      : `SERVICES OF INTEREST: ${services.join(', ') || '—'}`;
-
-  return [
-    'New lead completed the Primo AI Studio questionnaire.',
-    '',
-    `ENTRY POINT: ${entryPoint}`,
-    servicesLine,
-    '',
-    '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
-    'CONTACT INFORMATION',
-    '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
-    '',
-    `Full name:     ${contact.name || '—'}`,
-    `Business:      ${contact.business || '—'}`,
-    `Email:         ${contact.email || '—'}`,
-    `Phone:         ${contact.phone || '—'}`,
-    '',
-    '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
-    'QUESTIONNAIRE RESULTS',
-    '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
-    '',
-    'Q1 — Biggest time drain:',
-    answers[0] ?? '—',
-    '',
-    'Q2 — Monthly leads slipping through:',
-    answers[1] ?? '—',
-    '',
-    'Q3 — vs Competitors:',
-    answers[2] ?? '—',
-    '',
-    "Q4 — What they'd do with 15–20 hrs/week:",
-    answers[3] ?? '—',
-    '',
-    'Q5 — #1 barrier to AI adoption:',
-    answers[4] ?? '—',
-    '',
-    'Q6 — Cost of one missed lead:',
-    answers[5] ?? '—',
-    '',
-    'Q7 — Business in 12 months without AI:',
-    answers[6] ?? '—',
-    '',
-    'Q8 — Monthly revenue:',
-    answers[7] ?? '—',
-    '',
-    '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
-    'Follow up within 24 hours.',
-    'Primo AI Studio',
-  ].join('\n');
-}
 
 // ── Shared button ─────────────────────────────────────────────────────────────
 function NextButton({
@@ -497,7 +435,9 @@ function QuestionStep({
 }
 
 // ── Contact step ──────────────────────────────────────────────────────────────
-function ContactStep({ onSubmit }: { onSubmit: () => void }) {
+interface ContactInfo { name: string; business: string; email: string; phone: string; }
+
+function ContactStep({ onSubmit }: { onSubmit: (info: ContactInfo) => void }) {
   const [name, setName] = useState('');
   const [business, setBusiness] = useState('');
   const [email, setEmail] = useState('');
@@ -517,7 +457,7 @@ function ContactStep({ onSubmit }: { onSubmit: () => void }) {
     if (!isValidEmail(email)) newErrors.email = 'Please enter a valid email address.';
     if (Object.keys(newErrors).length > 0) { setErrors(newErrors); return; }
     setSending(true);
-    onSubmit();
+    onSubmit({ name, business, email, phone });
   };
 
   const fieldStyle = (field: string): React.CSSProperties => ({
@@ -746,7 +686,33 @@ export default function OnboardingModal({ entry, onClose }: OnboardingModalProps
     setStep((s) => s + 1);
   };
 
-  const handleContactSubmit = () => {
+  const handleContactSubmit = (info: ContactInfo) => {
+    const payload = {
+      timestamp: new Date().toISOString(),
+      name: info.name,
+      email: info.email,
+      phone: info.phone || '',
+      business: info.business,
+      entryPoint: entry?.source === 'bubble' ? 'Clicked on service bubble' : 'GET STARTED button',
+      services: selectedServices.join(', '),
+      q1: answers[0] ?? '',
+      q2: answers[1] ?? '',
+      q3: answers[2] ?? '',
+      q4: answers[3] ?? '',
+      q5: answers[4] ?? '',
+      q6: answers[5] ?? '',
+      q7: answers[6] ?? '',
+      q8_revenue: answers[7] ?? '',
+      source: 'primoaistudio.com',
+    };
+
+    fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    }).catch(() => {});
+
     setStep(THANKYOU_STEP);
   };
 
