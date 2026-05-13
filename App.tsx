@@ -110,6 +110,37 @@ const BREATHE_CSS = `
 .bbl:hover, .bbl-active { animation-play-state: paused !important; transform: translate(0,0) scale(1.1) !important; }
 `;
 
+// ── Popup CTA button ─────────────────────────────────────────────────────────
+function GetStartedCTA({ onClick }: { onClick: (e: React.MouseEvent<HTMLButtonElement>) => void }) {
+  const [hovered, setHovered] = useState(false);
+  return (
+    <button
+      onClick={onClick}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        display: 'block',
+        width: '100%',
+        marginTop: 12,
+        padding: '10px 20px',
+        borderRadius: 50,
+        border: 'none',
+        background: hovered ? '#1a3a4a' : '#f26419',
+        color: '#eae2b7',
+        fontFamily: 'Arial, sans-serif',
+        fontSize: 11,
+        fontWeight: 700,
+        letterSpacing: '0.1em',
+        textTransform: 'uppercase',
+        cursor: 'pointer',
+        transition: 'background 0.2s ease',
+      }}
+    >
+      Get Started →
+    </button>
+  );
+}
+
 // ── Magnetic Button ───────────────────────────────────────────────────────────
 const SPRING_CONFIG = { damping: 100, stiffness: 400 };
 
@@ -231,9 +262,22 @@ const D_CENTER = 165;
 const D_TOTAL = D_RING_RADIUS * 2 + D_BUBBLE + 60;
 const D_BUBBLE_FONT = 9.5;
 
+const POPUP_W_DESKTOP = 240;
+const POPUP_H_APPROX = 172; // taller now to fit the CTA button
+
+interface PopupState {
+  id: number;
+  top: number;
+  left: number;
+  origin: string;
+  mobile: boolean;
+  width: number;
+}
+
 // ── App ───────────────────────────────────────────────────────────────────────
 export default function App() {
   const [active, setActive] = useState<number | null>(null);
+  const [popup, setPopup] = useState<PopupState | null>(null);
   const [modalEntry, setModalEntry] = useState<ModalEntry | null>(null);
   const [windowWidth, setWindowWidth] = useState(
     typeof window !== 'undefined' ? window.innerWidth : 1200,
@@ -246,12 +290,15 @@ export default function App() {
     return () => window.removeEventListener('resize', update);
   }, []);
 
-  // Clear active bubble when clicking outside (modal handles its own close)
+  // Close popup when clicking outside any node or popup
   useEffect(() => {
     const handler = (e: MouseEvent) => {
-      if (modalEntry) return;
+      if (modalEntry) return; // modal is open, don't touch popup state
       const target = e.target as Element;
-      if (!target.closest('.service-node')) setActive(null);
+      if (!target.closest('.service-node') && !target.closest('.service-popup')) {
+        setActive(null);
+        setPopup(null);
+      }
     };
     document.addEventListener('click', handler);
     return () => document.removeEventListener('click', handler);
@@ -263,6 +310,8 @@ export default function App() {
     setModalEntry(null);
     setActive(null);
   };
+
+  const activeService = SERVICES.find((s) => s.id === active) ?? null;
 
   const containerSize = isMobile
     ? Math.min(0.65 * windowWidth, 300)
@@ -286,19 +335,61 @@ export default function App() {
 
   const desktopScale = isMobile ? 1 : Math.min(1, (windowWidth - 32) / D_TOTAL);
 
-  // ── Bubble click → opens modal in Flujo A ────────────────────────────────
+  // ── Bubble click → shows description popup ───────────────────────────────
   const handleBubbleClick = (
     e: React.MouseEvent<HTMLButtonElement>,
     svc: (typeof SERVICES)[0],
   ) => {
     e.stopPropagation();
+
     if (active === svc.id) {
       setActive(null);
-      setModalEntry(null);
+      setPopup(null);
       return;
     }
+
+    const btn = e.currentTarget.getBoundingClientRect();
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+
+    if (isMobile) {
+      const pw = Math.min(vw * 0.8, 300);
+      setPopup({
+        id: svc.id,
+        top: (vh - POPUP_H_APPROX) / 2,
+        left: (vw - pw) / 2,
+        origin: 'center',
+        mobile: true,
+        width: pw,
+      });
+    } else {
+      const btnCx = btn.left + btn.width / 2;
+      const btnCy = btn.top + btn.height / 2;
+      let top: number, left: number, origin: string;
+
+      if (btnCy < vh * 0.3) {
+        top = btn.bottom + 12; left = btnCx - POPUP_W_DESKTOP / 2; origin = 'top center';
+      } else if (btnCy > vh * 0.7) {
+        top = btn.top - POPUP_H_APPROX - 12; left = btnCx - POPUP_W_DESKTOP / 2; origin = 'bottom center';
+      } else if (btnCx < vw / 2) {
+        top = btnCy - POPUP_H_APPROX / 2; left = btn.right + 12; origin = 'left center';
+      } else {
+        top = btnCy - POPUP_H_APPROX / 2; left = btn.left - POPUP_W_DESKTOP - 12; origin = 'right center';
+      }
+
+      left = Math.max(8, Math.min(left, vw - POPUP_W_DESKTOP - 8));
+      top  = Math.max(8, Math.min(top,  vh - POPUP_H_APPROX - 8));
+      setPopup({ id: svc.id, top, left, origin, mobile: false, width: POPUP_W_DESKTOP });
+    }
+
     setActive(svc.id);
-    setModalEntry({ source: 'bubble', service: svc.name });
+  };
+
+  const closePopup = () => { setActive(null); setPopup(null); };
+
+  const openModalFromPopup = (serviceName: string) => {
+    closePopup();
+    setModalEntry({ source: 'bubble', service: serviceName });
   };
 
   // ── Layout ─────────────────────────────────────────────────────────────────
@@ -560,6 +651,85 @@ export default function App() {
           </MagneticButton>
         </div>
 
+        {/* ── Mobile overlay ── */}
+        <AnimatePresence>
+          {popup?.mobile && (
+            <motion.div
+              key="overlay"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.15 }}
+              onClick={closePopup}
+              style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.55)', zIndex: 199 }}
+            />
+          )}
+        </AnimatePresence>
+
+        {/* ── Service popup ── */}
+        <AnimatePresence mode="wait">
+          {popup && activeService && (
+            <motion.div
+              key={popup.id}
+              className="service-popup"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              transition={{ duration: 0.18, ease: 'easeOut' }}
+              style={{
+                position: 'fixed',
+                top: popup.top,
+                left: popup.left,
+                width: popup.width,
+                transformOrigin: popup.origin,
+                zIndex: 200,
+                background: C.navy,
+                borderRadius: 14,
+                border: 'none',
+                padding: '14px 15px 15px',
+                boxShadow: '0 8px 32px rgba(0,0,0,0.35)',
+                pointerEvents: 'auto',
+              }}
+            >
+              {/* × close */}
+              <button
+                onClick={(e) => { e.stopPropagation(); closePopup(); }}
+                style={{
+                  position: 'absolute', top: 10, right: 12,
+                  background: 'transparent', border: 'none',
+                  color: C.cream, opacity: 0.6, fontSize: 18, lineHeight: 1,
+                  cursor: 'pointer', padding: '2px 4px', fontFamily: 'inherit',
+                  transition: 'opacity 0.15s',
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.opacity = '1')}
+                onMouseLeave={(e) => (e.currentTarget.style.opacity = '0.6')}
+                aria-label="Close"
+              >×</button>
+
+              {/* Service name */}
+              <p style={{
+                fontSize: 10, fontWeight: 800, color: C.cream,
+                letterSpacing: '0.13em', textTransform: 'uppercase',
+                margin: '0 0 6px', paddingRight: 20,
+              }}>
+                {activeService.name}
+              </p>
+
+              {/* Description */}
+              <p style={{
+                fontSize: 12, color: 'rgba(234,226,183,0.8)',
+                lineHeight: 1.65, fontWeight: 400, margin: 0,
+              }}>
+                {activeService.description}
+              </p>
+
+              {/* Get Started CTA */}
+              <GetStartedCTA
+                onClick={(e) => { e.stopPropagation(); openModalFromPopup(activeService.name); }}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* ── Onboarding modal ── */}
