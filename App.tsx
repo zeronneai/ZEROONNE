@@ -127,10 +127,10 @@ function GetStartedCTA({ onClick }: { onClick: (e: React.MouseEvent<HTMLButtonEl
         border: 'none',
         background: hovered ? '#1a3a4a' : '#f26419',
         color: '#eae2b7',
-        fontFamily: 'Arial, sans-serif',
+        fontFamily: "'Mulish', -apple-system, sans-serif",
         fontSize: 11,
         fontWeight: 700,
-        letterSpacing: '0.1em',
+        letterSpacing: '0.12em',
         textTransform: 'uppercase',
         cursor: 'pointer',
         transition: 'background 0.2s ease',
@@ -189,8 +189,8 @@ function MagneticButton({
 }
 
 // ── Data ──────────────────────────────────────────────────────────────────────
-const LOGO_URL =
-  'https://res.cloudinary.com/dsprn0ew4/image/upload/v1778360725/ChatGPT_Image_May_9_2026_03_04_56_PM_hdfdcd.png';
+const CENTER_LOGO_URL =
+  'https://res.cloudinary.com/dsprn0ew4/image/upload/v1778787182/Logo__pr___icon___mo_____pr__and_202605141259_ydscgi.jpg';
 
 const SERVICES = [
   {
@@ -414,7 +414,7 @@ export default function App() {
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          fontFamily: "'Nunito', 'Inter', sans-serif",
+          fontFamily: "'Mulish', -apple-system, sans-serif",
           boxSizing: 'border-box',
         }}
       >
@@ -424,27 +424,32 @@ export default function App() {
           textAlign: 'center',
           marginTop: 0,
           marginBottom: isMobile ? 0 : 20,
-          maxWidth: isMobile ? '90vw' : 420,
-          padding: '0 4px',
+          maxWidth: 640,
+          padding: '0 16px',
         }}>
           <p style={{
-            margin: 0,
-            fontSize: isMobile ? 'clamp(18px, 5vw, 24px)' : 28,
-            fontWeight: 700,
+            margin: '0 0 14px',
+            fontFamily: "'Mulish', -apple-system, sans-serif",
+            fontSize: 'clamp(32px, 5.5vw, 54px)',
+            fontWeight: 800,
             color: C.navy,
-            lineHeight: 1.25,
-            letterSpacing: '-0.02em',
+            lineHeight: 1.05,
+            letterSpacing: '-0.03em',
           }}>
-            Best time to adapt AI is now.
+            AI, but make it{' '}
+            <span style={{ fontStyle: 'italic', color: C.orange }}>human.</span>
           </p>
           <p style={{
-            margin: '4px 0 0',
-            fontSize: isMobile ? 13 : 16,
+            margin: '0 auto',
+            fontFamily: "'Mulish', -apple-system, sans-serif",
+            fontSize: 'clamp(14px, 2vw, 17px)',
             fontWeight: 400,
-            color: `rgba(26, 58, 74, 0.6)`,
-            lineHeight: 1.5,
+            color: C.navy,
+            opacity: 0.65,
+            lineHeight: 1.55,
+            maxWidth: 580,
           }}>
-            We make it simple to use and easy to understand.
+            AI is everywhere. We cut through the noise — the right tools, the right setup, and a partner who genuinely wants you to win.
           </p>
         </div>
 
@@ -577,12 +582,13 @@ export default function App() {
               title="Follow us on Instagram"
             >
               <img
-                src={LOGO_URL}
+                src={CENTER_LOGO_URL}
                 alt="Primo AI Studio"
                 style={{
-                  width: isMobile ? 'clamp(50px, 13vw, 70px)' : '78%',
-                  height: 'auto',
+                  width: '75%',
+                  height: '75%',
                   objectFit: 'contain',
+                  borderRadius: '50%',
                   display: 'block',
                 }}
               />
@@ -633,7 +639,7 @@ export default function App() {
                 cursor: 'pointer',
                 userSelect: 'none',
                 border: 'none',
-                fontFamily: "'Nunito', 'Inter', sans-serif",
+                fontFamily: "'Mulish', -apple-system, sans-serif",
               }}
               whileHover={{
                 background: C.navy,
