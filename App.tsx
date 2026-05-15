@@ -322,9 +322,9 @@ export default function App() {
       <style>{BUBBLE_CSS}</style>
 
       <div style={{
-        ...(isMobile
-          ? { height: '100svh', padding: '16px 20px 24px', justifyContent: 'space-between' }
-          : { minHeight: '100vh', padding: '24px 16px', justifyContent: 'center', gap: 0 }),
+        height: '100svh', minHeight: '100svh',
+        padding: isMobile ? '16px 20px 24px' : '24px 16px',
+        justifyContent: 'space-between',
         backgroundImage: `url('${isMobile
           ? 'https://res.cloudinary.com/dsprn0ew4/image/upload/v1778613216/Genera_esta_misma_imagen_pero_202605121305_zeudsg.jpg'
           : 'https://res.cloudinary.com/dsprn0ew4/image/upload/v1778608740/Background_image_for_website_or_202605121158_cfvxcq.jpg'
@@ -335,17 +335,14 @@ export default function App() {
       }}>
 
         {/* ══ Block 1: Heading ══ */}
-        <div style={{ flexShrink: 0, textAlign: 'center', marginTop: 0, marginBottom: isMobile ? 0 : 20, maxWidth: 640, padding: '0 16px' }}>
-          <p style={{ margin: '0 0 14px', fontFamily: "'Mulish', -apple-system, sans-serif", fontSize: 'clamp(32px, 5.5vw, 54px)', fontWeight: 800, color: C.navy, lineHeight: 1.05, letterSpacing: '-0.03em' }}>
+        <div style={{ flexShrink: 0, textAlign: 'center', marginTop: 0, maxWidth: 640, padding: '0 16px', paddingBottom: 'clamp(12px, 2.5vh, 28px)' }}>
+          <p style={{ margin: 0, fontFamily: "'Mulish', -apple-system, sans-serif", fontSize: 'clamp(32px, 5.5vw, 54px)', fontWeight: 800, color: C.navy, lineHeight: 1.05, letterSpacing: '-0.03em' }}>
             The AI partner you can trust,{' '}<span style={{ fontStyle: 'italic', color: C.orange }}>like that family member you can always count on.</span>
-          </p>
-          <p style={{ margin: '0 auto', fontFamily: "'Mulish', -apple-system, sans-serif", fontSize: 'clamp(14px, 2vw, 17px)', fontWeight: 400, color: C.navy, opacity: 0.65, lineHeight: 1.55, maxWidth: 580 }}>
-            AI is everywhere. We cut through the noise — the right tools, the right setup, and a partner who genuinely wants you to win.
           </p>
         </div>
 
         {/* ══ Block 2: Orbit ══ */}
-        <div style={isMobile ? { flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', maxHeight: '65vw', maxWidth: '65vw', alignSelf: 'center', margin: 'auto 0' } : {}}>
+        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', minHeight: 0, overflow: 'visible', ...(isMobile ? { maxHeight: '65vw', maxWidth: '65vw', alignSelf: 'center' } : {}) }}>
           <div
             className="orbit-container"
             style={{
