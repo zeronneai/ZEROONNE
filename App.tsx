@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import { motion, AnimatePresence, useMotionValue, useSpring } from 'framer-motion';
 import OnboardingModal, { ModalEntry } from './OnboardingModal';
-import PrimoFunnel from './src/components/PrimoFunnel';
+const PrimoFunnel = lazy(() => import('./src/components/PrimoFunnel'));
 
 // ── Color tokens ──────────────────────────────────────────────────────────────
 const C = {
@@ -558,7 +558,9 @@ export default function App() {
       {/* ── Sales Funnel (unlocked on demand) ── */}
       <div ref={funnelRef}>
         {funnelUnlocked && (
-          <PrimoFunnel onOpenForm={(name) => setModalEntry({ source: 'bubble', service: name })} />
+          <Suspense fallback={null}>
+            <PrimoFunnel onOpenForm={(name) => setModalEntry({ source: 'bubble', service: name })} />
+          </Suspense>
         )}
       </div>
 
