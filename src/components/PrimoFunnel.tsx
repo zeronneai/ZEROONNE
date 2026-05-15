@@ -824,10 +824,10 @@ function Footer() {
       <div style={{ maxWidth: 1200, margin: '0 auto' }}>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(200px,1fr))', gap: 40, marginBottom: 48 }}>
           <div>
-            <div style={{ fontSize: 18, fontWeight: 900, color: C.cream, marginBottom: 12, fontFamily: "'Mulish',sans-serif" }}>Primo AI Studio</div>
-            <div style={{ fontSize: 13, fontWeight: 400, color: 'rgba(234,226,183,0.5)', lineHeight: 1.7, maxWidth: 240 }}>
-              AI-powered growth systems for modern businesses. Human strategy. Machine precision.
-            </div>
+            <div style={{ fontSize: 18, fontWeight: 900, color: C.cream, marginBottom: 8, fontFamily: "'Mulish',sans-serif" }}>Primo AI Studio</div>
+            <p style={{ margin: '4px 0 0', fontSize: 'clamp(11px,1.3vw,13px)', fontStyle: 'italic', fontWeight: 500, color: 'rgba(234,226,183,0.6)', lineHeight: 1.4, maxWidth: 260 }}>
+              The AI partner you can trust, like that family member you can always count on.
+            </p>
           </div>
           <div>
             <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.14em', textTransform: 'uppercase', color: C.orange, marginBottom: 16 }}>Services</div>
@@ -841,9 +841,9 @@ function Footer() {
             <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.14em', textTransform: 'uppercase', color: C.orange, marginBottom: 16 }}>Connect</div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
               {[
-                { label: 'Instagram', href: 'https://instagram.com/primoaistudio' },
+                { label: 'Instagram', href: 'https://www.instagram.com/primostudio.us' },
                 { label: 'LinkedIn',  href: '#' },
-                { label: 'hello@primoaistudio.com', href: 'mailto:hello@primoaistudio.com' },
+                { label: 'primostudio.us@gmail.com', href: 'mailto:primostudio.us@gmail.com' },
               ].map(link => (
                 <a key={link.label} href={link.href}
                   style={{ fontSize: 13, fontWeight: 500, color: 'rgba(234,226,183,0.55)', textDecoration: 'none', transition: 'color 0.15s' }}
@@ -855,10 +855,18 @@ function Footer() {
               ))}
             </div>
           </div>
+          <div>
+            <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.14em', textTransform: 'uppercase', color: C.orange, marginBottom: 16 }}>Hours</div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <div style={{ fontSize: 13, fontWeight: 500, color: 'rgba(234,226,183,0.55)' }}>🕗 Mon-Fri · 8:00 AM - 5:00 PM</div>
+              <div style={{ fontSize: 13, fontWeight: 500, color: 'rgba(234,226,183,0.55)' }}>Saturday · 10:00 AM - 5:00 PM</div>
+              <div style={{ fontSize: 13, fontWeight: 500, color: 'rgba(234,226,183,0.55)' }}>Sunday · Closed</div>
+            </div>
+          </div>
         </div>
         <div style={{ borderTop: '1px solid rgba(234,226,183,0.08)', paddingTop: 24, display: 'flex', flexWrap: 'wrap', gap: 12, justifyContent: 'space-between', alignItems: 'center' }}>
           <div style={{ fontSize: 12, fontWeight: 500, color: 'rgba(234,226,183,0.3)' }}>© 2025 Primo AI Studio. All rights reserved.</div>
-          <div style={{ fontSize: 12, fontWeight: 500, color: 'rgba(234,226,183,0.3)' }}>AI, but make it human.™</div>
+          <div style={{ fontSize: 12, fontWeight: 500, color: 'rgba(234,226,183,0.3)', fontStyle: 'italic' }}>The AI partner you can trust, like that family member you can always count on.™</div>
         </div>
       </div>
     </footer>
