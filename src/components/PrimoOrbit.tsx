@@ -225,8 +225,8 @@ export default function PrimoOrbit({ onStartForm, logoUrl }: PrimoOrbitProps) {
                 key={svc.id}
                 className="bubble-clickable"
                 onClick={(e) => handleBubbleClick(e, svc.id)}
-                whileHover={{ scale: 1.08 }}
-                whileTap={{ scale: 0.94 }}
+                whileHover={{ scale: 1.04 }}
+                whileTap={{ scale: 0.96 }}
                 style={{
                   position: 'absolute',
                   top: `calc(50% + ${dy}%)`,
