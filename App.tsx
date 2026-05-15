@@ -340,9 +340,9 @@ export default function App() {
 
         {/* ══ Block 1: Heading ══ */}
         <div style={{ flexShrink: 0, textAlign: 'center', marginTop: 0, maxWidth: 640, padding: '0 16px', paddingBottom: 'clamp(12px, 2.5vh, 28px)' }}>
-          <p style={{ margin: 0, fontFamily: "'Mulish', -apple-system, sans-serif", fontSize: 'clamp(32px, 5.5vw, 54px)', fontWeight: 800, color: C.navy, lineHeight: 1.05, letterSpacing: '-0.03em' }}>
+          <h1 style={{ margin: 0, fontFamily: "'Mulish', -apple-system, sans-serif", fontSize: 'clamp(32px, 5.5vw, 54px)', fontWeight: 800, color: C.navy, lineHeight: 1.05, letterSpacing: '-0.03em' }}>
             The AI partner you can trust,{' '}<span style={{ fontStyle: 'italic', color: C.orange }}>like that family member you can always count on.</span>
-          </p>
+          </h1>
         </div>
 
         {/* ══ Block 2: Orbit ══ */}
@@ -449,7 +449,7 @@ export default function App() {
               }}
               title="Follow us on Instagram"
             >
-              <img src={CENTER_LOGO_URL} alt="Primo AI Studio"
+              <img src={CENTER_LOGO_URL} alt="Primo AI Studio - #1 AI Agency in El Paso, Texas"
                 style={{ width: '100%', height: '100%', objectFit: 'contain', borderRadius: '50%', display: 'block' }} />
             </motion.a>
           </div>
