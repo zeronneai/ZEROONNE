@@ -11,106 +11,26 @@ const C = {
   cream:  '#eae2b7',
 };
 
-// ── CSS keyframes — floating bubble animations ────────────────────────────────
-// Inner span handles float transform; outer motion.button handles rotation (no conflict)
-const BREATHE_CSS = `
-@keyframes float-1 {
-  0%   { transform: translate(0px,   0px)  scale(1); }
-  25%  { transform: translate(6px,  -8px)  scale(1.03); }
-  50%  { transform: translate(-4px, -14px) scale(1); }
-  75%  { transform: translate(-8px, -6px)  scale(0.97); }
-  100% { transform: translate(0px,   0px)  scale(1); }
+// ── Float animation keyframes (Framer Motion) ─────────────────────────────────
+// When active===null these arrays loop; when active!==null we animate to {x:0,y:0}.
+const FLOAT_DATA: Record<number, { x: number[]; y: number[]; duration: number }> = {
+  1: { x: [0,  6, -4, -8,  0], y: [0,  -8, -14,  -6,  0], duration: 4.2 },
+  2: { x: [0, -7,  5,  9,  0], y: [0, -10, -16,  -5,  0], duration: 3.8 },
+  3: { x: [0,  8,  3, -6,  0], y: [0,  -6, -12,  -8,  0], duration: 4.6 },
+  4: { x: [0, -9, -5,  4,  0], y: [0,  -7, -15, -10,  0], duration: 3.5 },
+  5: { x: [0,  7, -3, -8,  0], y: [0, -11, -17,  -7,  0], duration: 4.9 },
+  6: { x: [0, -6,  7,  4,  0], y: [0,  -9, -13,  -5,  0], duration: 4.1 },
+};
+
+// ── Minimal CSS (visual circle shape only) ────────────────────────────────────
+const BUBBLE_CSS = `
+.bbl {
+  display: flex; align-items: center; justify-content: center;
+  width: 100%; height: 100%; border-radius: 50%;
 }
-@keyframes float-2 {
-  0%   { transform: translate(0px,   0px)  scale(1); }
-  25%  { transform: translate(-7px, -10px) scale(0.97); }
-  50%  { transform: translate(5px,  -16px) scale(1.03); }
-  75%  { transform: translate(9px,  -5px)  scale(1); }
-  100% { transform: translate(0px,   0px)  scale(1); }
-}
-@keyframes float-3 {
-  0%   { transform: translate(0px,   0px)  scale(1); }
-  20%  { transform: translate(8px,  -6px)  scale(1.02); }
-  50%  { transform: translate(3px,  -12px) scale(0.98); }
-  80%  { transform: translate(-6px, -8px)  scale(1.02); }
-  100% { transform: translate(0px,   0px)  scale(1); }
-}
-@keyframes float-4 {
-  0%   { transform: translate(0px,   0px)  scale(1); }
-  30%  { transform: translate(-9px, -7px)  scale(1.03); }
-  60%  { transform: translate(-5px, -15px) scale(0.97); }
-  80%  { transform: translate(4px,  -10px) scale(1); }
-  100% { transform: translate(0px,   0px)  scale(1); }
-}
-@keyframes float-5 {
-  0%   { transform: translate(0px,   0px)  scale(1); }
-  25%  { transform: translate(7px,  -11px) scale(0.98); }
-  55%  { transform: translate(-3px, -17px) scale(1.03); }
-  75%  { transform: translate(-8px, -7px)  scale(1); }
-  100% { transform: translate(0px,   0px)  scale(1); }
-}
-@keyframes float-6 {
-  0%   { transform: translate(0px,   0px)  scale(1); }
-  35%  { transform: translate(-6px, -9px)  scale(1.02); }
-  65%  { transform: translate(7px,  -13px) scale(0.98); }
-  85%  { transform: translate(4px,  -5px)  scale(1.01); }
-  100% { transform: translate(0px,   0px)  scale(1); }
-}
-@media (max-width: 768px) {
-  @keyframes float-1 {
-    0%   { transform: translate(0px,  0px) scale(1); }
-    25%  { transform: translate(3px, -4px) scale(1.03); }
-    50%  { transform: translate(-2px,-7px) scale(1); }
-    75%  { transform: translate(-4px,-3px) scale(0.97); }
-    100% { transform: translate(0px,  0px) scale(1); }
-  }
-  @keyframes float-2 {
-    0%   { transform: translate(0px,  0px) scale(1); }
-    25%  { transform: translate(-4px,-5px) scale(0.97); }
-    50%  { transform: translate(3px, -8px) scale(1.03); }
-    75%  { transform: translate(5px, -3px) scale(1); }
-    100% { transform: translate(0px,  0px) scale(1); }
-  }
-  @keyframes float-3 {
-    0%   { transform: translate(0px,  0px) scale(1); }
-    20%  { transform: translate(4px, -3px) scale(1.02); }
-    50%  { transform: translate(2px, -6px) scale(0.98); }
-    80%  { transform: translate(-3px,-4px) scale(1.02); }
-    100% { transform: translate(0px,  0px) scale(1); }
-  }
-  @keyframes float-4 {
-    0%   { transform: translate(0px,  0px) scale(1); }
-    30%  { transform: translate(-5px,-4px) scale(1.03); }
-    60%  { transform: translate(-3px,-8px) scale(0.97); }
-    80%  { transform: translate(2px, -5px) scale(1); }
-    100% { transform: translate(0px,  0px) scale(1); }
-  }
-  @keyframes float-5 {
-    0%   { transform: translate(0px,  0px) scale(1); }
-    25%  { transform: translate(4px, -6px) scale(0.98); }
-    55%  { transform: translate(-2px,-9px) scale(1.03); }
-    75%  { transform: translate(-4px,-4px) scale(1); }
-    100% { transform: translate(0px,  0px) scale(1); }
-  }
-  @keyframes float-6 {
-    0%   { transform: translate(0px,  0px) scale(1); }
-    35%  { transform: translate(-3px,-5px) scale(1.02); }
-    65%  { transform: translate(4px, -7px) scale(0.98); }
-    85%  { transform: translate(2px, -3px) scale(1.01); }
-    100% { transform: translate(0px,  0px) scale(1); }
-  }
-}
-.bbl { display:flex; align-items:center; justify-content:center; width:100%; height:100%; border-radius:50%; transition: transform 0.2s ease; }
-.bbl-f1 { animation: float-1 4.2s ease-in-out infinite; }
-.bbl-f2 { animation: float-2 3.8s ease-in-out infinite; }
-.bbl-f3 { animation: float-3 4.6s ease-in-out infinite; }
-.bbl-f4 { animation: float-4 3.5s ease-in-out infinite; }
-.bbl-f5 { animation: float-5 4.9s ease-in-out infinite; }
-.bbl-f6 { animation: float-6 4.1s ease-in-out infinite; }
-.bbl:hover, .bbl-active { animation-play-state: paused !important; transform: translate(0,0) scale(1.15) !important; transition: transform 0.3s ease, opacity 0.3s ease, filter 0.3s ease; }
 `;
 
-// ── Popup CTA button ─────────────────────────────────────────────────────────
+// ── Popup CTA button ──────────────────────────────────────────────────────────
 function GetStartedCTA({ onClick }: { onClick: (e: React.MouseEvent<HTMLButtonElement>) => void }) {
   const [hovered, setHovered] = useState(false);
   return (
@@ -125,8 +45,8 @@ function GetStartedCTA({ onClick }: { onClick: (e: React.MouseEvent<HTMLButtonEl
         padding: '10px 20px',
         borderRadius: 50,
         border: 'none',
-        background: hovered ? '#1a3a4a' : '#f26419',
-        color: '#eae2b7',
+        background: hovered ? C.navy : C.orange,
+        color: C.cream,
         fontFamily: "'Mulish', -apple-system, sans-serif",
         fontSize: 11,
         fontWeight: 700,
@@ -141,62 +61,22 @@ function GetStartedCTA({ onClick }: { onClick: (e: React.MouseEvent<HTMLButtonEl
   );
 }
 
-// ── Sub-bubble (key point) ────────────────────────────────────────────────────
-const SUB_BUBBLE_PALETTE = [
-  { bg: '#eae2b7', text: '#1a3a4a' },
-  { bg: '#1a3a4a', text: '#eae2b7' },
-  { bg: '#f26419', text: '#eae2b7' },
-];
-
-function SubBubble({
-  text, angle, distance, delay, color, textColor, mobile,
-}: {
-  text: string; angle: number; distance: number; delay: number;
-  color: string; textColor: string; mobile: boolean;
-}) {
-  const rad = (angle * Math.PI) / 180;
-  const x = Math.cos(rad) * distance;
-  const y = Math.sin(rad) * distance;
-  return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0, x: 0, y: 0 }}
-      animate={{ opacity: 1, scale: 1, x, y }}
-      exit={{ opacity: 0, scale: 0, x: 0, y: 0 }}
-      transition={{ duration: 0.4, delay, type: 'spring', stiffness: 200, damping: 18 }}
-      style={{
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        background: color,
-        color: textColor,
-        padding: mobile ? '6px 11px' : '8px 14px',
-        borderRadius: 20,
-        fontSize: mobile ? 10 : 11,
-        fontWeight: 700,
-        fontFamily: "'Mulish', -apple-system, sans-serif",
-        letterSpacing: '0.04em',
-        whiteSpace: 'nowrap',
-        boxShadow: '0 4px 16px rgba(0,0,0,0.18)',
-        transform: 'translate(-50%, -50%)',
-        pointerEvents: 'none',
-        zIndex: 50,
-      }}
-    >
-      {text}
-    </motion.div>
-  );
+// ── Complementary colors (avoid repeating the active node's color) ────────────
+function getComplementaryColors(activeColor: string) {
+  const all = [
+    { bg: C.navy,   text: C.cream },
+    { bg: C.orange, text: C.cream },
+    { bg: C.yellow, text: C.navy  },
+    { bg: C.green,  text: C.navy  },
+    { bg: C.cream,  text: C.navy  },
+  ];
+  return all.filter(c => c.bg !== activeColor).slice(0, 3);
 }
 
 // ── Magnetic Button ───────────────────────────────────────────────────────────
 const SPRING_CONFIG = { damping: 100, stiffness: 400 };
 
-function MagneticButton({
-  children,
-  distance = 0.55,
-}: {
-  children: React.ReactNode;
-  distance?: number;
-}) {
+function MagneticButton({ children, distance = 0.55 }: { children: React.ReactNode; distance?: number }) {
   const [hovered, setHovered] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const x = useMotionValue(0);
@@ -210,13 +90,8 @@ function MagneticButton({
       const rect = ref.current.getBoundingClientRect();
       const cx = rect.left + rect.width / 2;
       const cy = rect.top + rect.height / 2;
-      if (hovered) {
-        x.set((e.clientX - cx) * distance);
-        y.set((e.clientY - cy) * distance);
-      } else {
-        x.set(0);
-        y.set(0);
-      }
+      if (hovered) { x.set((e.clientX - cx) * distance); y.set((e.clientY - cy) * distance); }
+      else { x.set(0); y.set(0); }
     };
     document.addEventListener('mousemove', onMove);
     return () => document.removeEventListener('mousemove', onMove);
@@ -240,97 +115,63 @@ const CENTER_LOGO_URL =
 
 const SERVICES = [
   {
-    id: 1,
-    label: 'AI\nIntegration',
-    name: 'AI Integration',
-    description:
-      'Plug AI directly into your existing stack. Automate key decisions, eliminate bottlenecks, and unlock new efficiencies — without rebuilding from scratch.',
-    nodeBg: C.green,
-    nodeText: C.navy,
-    floatIndex: 3,
+    id: 1, label: 'AI\nIntegration', name: 'AI Integration',
+    description: 'Plug AI directly into your existing stack. Automate key decisions, eliminate bottlenecks, and unlock new efficiencies — without rebuilding from scratch.',
+    nodeBg: C.green, nodeText: C.navy, floatIndex: 3,
     keyPoints: ['Custom API connections', 'Workflow automation', 'Zero rebuild needed'],
   },
   {
-    id: 2,
-    label: 'Content\nMarketing',
-    name: 'AI Content Marketing',
-    description:
-      'Scale content creation with intelligent automation. Consistent, high-quality output across every channel — in a fraction of the time.',
-    nodeBg: C.orange,
-    nodeText: C.cream,
-    floatIndex: 6,
+    id: 2, label: 'Content\nMarketing', name: 'AI Content Marketing',
+    description: 'Scale content creation with intelligent automation. Consistent, high-quality output across every channel — in a fraction of the time.',
+    nodeBg: C.orange, nodeText: C.cream, floatIndex: 6,
     keyPoints: ['Multi-channel scaling', 'Brand-aligned voice', 'Daily output ready'],
   },
   {
-    id: 3,
-    label: 'AI Video\nAds',
-    name: 'AI Video Production',
-    description:
-      'Premium video ads crafted by AI. Fast deployment, high conversion rates, and zero agency delays. Your brand, always on.',
-    nodeBg: C.navy,
-    nodeText: C.cream,
-    floatIndex: 5,
+    id: 3, label: 'AI Video\nAds', name: 'AI Video Production',
+    description: 'Premium video ads crafted by AI. Fast deployment, high conversion rates, and zero agency delays. Your brand, always on.',
+    nodeBg: C.navy, nodeText: C.cream, floatIndex: 5,
     keyPoints: ['Premium quality', 'Days not weeks', 'High conversion'],
   },
   {
-    id: 4,
-    label: 'Brand\nIdentity',
-    name: 'Brand Identity',
-    description:
-      'AI-powered visual identity that stands apart. Naming, positioning, and design systems engineered for modern markets and lasting recall.',
-    nodeBg: C.yellow,
-    nodeText: C.navy,
-    floatIndex: 4,
+    id: 4, label: 'Brand\nIdentity', name: 'Brand Identity',
+    description: 'AI-powered visual identity that stands apart. Naming, positioning, and design systems engineered for modern markets and lasting recall.',
+    nodeBg: C.yellow, nodeText: C.navy, floatIndex: 4,
     keyPoints: ['Naming & positioning', 'Design systems', 'Built to last'],
   },
   {
-    id: 5,
-    label: 'Web\nPlatforms',
-    name: 'Web Platforms',
-    description:
-      'High-performance landing pages and web platforms deployed in days. Conversion-optimized, visually premium, and built to scale.',
-    nodeBg: C.orange,
-    nodeText: C.cream,
-    floatIndex: 1,
+    id: 5, label: 'Web\nPlatforms', name: 'Web Platforms',
+    description: 'High-performance landing pages and web platforms deployed in days. Conversion-optimized, visually premium, and built to scale.',
+    nodeBg: C.orange, nodeText: C.cream, floatIndex: 1,
     keyPoints: ['Conversion-optimized', 'Premium design', 'Built to scale'],
   },
   {
-    id: 6,
-    label: 'AI\nAutomation',
-    name: 'AI Automation',
-    description:
-      'Eliminate repetitive work forever. Custom AI workflows handle your operations, nurturing, and reporting so you can focus on growth.',
-    nodeBg: C.yellow,
-    nodeText: C.navy,
-    floatIndex: 2,
+    id: 6, label: 'AI\nAutomation', name: 'AI Automation',
+    description: 'Eliminate repetitive work forever. Custom AI workflows handle your operations, nurturing, and reporting so you can focus on growth.',
+    nodeBg: C.yellow, nodeText: C.navy, floatIndex: 2,
     keyPoints: ['Custom workflows', 'Operations on autopilot', 'Focus on growth'],
   },
 ];
 
-// Desktop constants
+// Desktop layout constants
 const D_RING_RADIUS = 175;
-const D_BUBBLE = 82;
-const D_CENTER = 165;
-const D_TOTAL = D_RING_RADIUS * 2 + D_BUBBLE + 60;
+const D_BUBBLE      = 82;
+const D_TOTAL       = D_RING_RADIUS * 2 + D_BUBBLE + 60;
 const D_BUBBLE_FONT = 9.5;
 
+// Popup sizing
 const POPUP_W_DESKTOP = 240;
-const POPUP_H_APPROX = 172; // taller now to fit the CTA button
+const POPUP_W_MOBILE  = 180;
+const POPUP_H_APPROX  = 180;
 
 interface PopupState {
-  id: number;
-  top: number;
-  left: number;
-  origin: string;
-  mobile: boolean;
-  width: number;
+  id: number; top: number; left: number; origin: string; width: number;
 }
 
 // ── App ───────────────────────────────────────────────────────────────────────
 export default function App() {
-  const [active, setActive] = useState<number | null>(null);
-  const [popup, setPopup] = useState<PopupState | null>(null);
-  const [modalEntry, setModalEntry] = useState<ModalEntry | null>(null);
+  const [active, setActive]           = useState<number | null>(null);
+  const [popup, setPopup]             = useState<PopupState | null>(null);
+  const [modalEntry, setModalEntry]   = useState<ModalEntry | null>(null);
   const [windowWidth, setWindowWidth] = useState(
     typeof window !== 'undefined' ? window.innerWidth : 1200,
   );
@@ -342,14 +183,12 @@ export default function App() {
     return () => window.removeEventListener('resize', update);
   }, []);
 
-  // Close popup when clicking outside any node or popup
   useEffect(() => {
     const handler = (e: MouseEvent) => {
-      if (modalEntry) return; // modal is open, don't touch popup state
-      const target = e.target as Element;
-      if (!target.closest('.service-node') && !target.closest('.service-popup')) {
-        setActive(null);
-        setPopup(null);
+      if (modalEntry) return;
+      const t = e.target as Element;
+      if (!t.closest('.service-node') && !t.closest('.service-popup')) {
+        setActive(null); setPopup(null);
       }
     };
     document.addEventListener('click', handler);
@@ -358,135 +197,86 @@ export default function App() {
 
   const isMobile = windowWidth <= 768;
 
-  const handleModalClose = () => {
-    setModalEntry(null);
-    setActive(null);
-  };
+  const handleModalClose = () => { setModalEntry(null); setActive(null); };
 
-  const activeService = SERVICES.find((s) => s.id === active) ?? null;
+  const activeService = SERVICES.find(s => s.id === active) ?? null;
 
-  const containerSize = isMobile
-    ? Math.min(0.65 * windowWidth, 300)
-    : D_TOTAL;
+  const containerSize  = isMobile ? Math.min(0.65 * windowWidth, 300) : D_TOTAL;
+  const bubbleSize     = isMobile ? Math.max(52, Math.min(0.13 * windowWidth, 72)) : D_BUBBLE;
+  const ringRadius     = isMobile ? containerSize / 2 - bubbleSize / 2 - 6 : D_RING_RADIUS;
+  const bubbleFontSize = isMobile ? Math.max(7, Math.min(0.018 * windowWidth, 10)) : D_BUBBLE_FONT;
+  const desktopScale   = isMobile ? 1 : Math.min(1, (windowWidth - 32) / D_TOTAL);
 
-  const bubbleSize = isMobile
-    ? Math.max(52, Math.min(0.13 * windowWidth, 72))
-    : D_BUBBLE;
+  // Sub-bubble radial distance from active node center
+  const subDist  = isMobile ? 75 : 95;
+  const popupW   = isMobile ? POPUP_W_MOBILE : POPUP_W_DESKTOP;
+  // Gap from button edge to popup, chosen to clear sub-bubbles
+  const POPUP_GAP = isMobile ? 80 : 105;
 
-  const centerSize = isMobile
-    ? Math.max(70, Math.min(0.18 * windowWidth, 95))
-    : D_CENTER;
-
-  const ringRadius = isMobile
-    ? containerSize / 2 - bubbleSize / 2 - 6
-    : D_RING_RADIUS;
-
-  const bubbleFontSize = isMobile
-    ? Math.max(7, Math.min(0.018 * windowWidth, 10))
-    : D_BUBBLE_FONT;
-
-  const desktopScale = isMobile ? 1 : Math.min(1, (windowWidth - 32) / D_TOTAL);
-
-  // ── Bubble click → shows description popup ───────────────────────────────
   const handleBubbleClick = (
     e: React.MouseEvent<HTMLButtonElement>,
     svc: (typeof SERVICES)[0],
   ) => {
     e.stopPropagation();
-
-    if (active === svc.id) {
-      setActive(null);
-      setPopup(null);
-      return;
-    }
+    if (active === svc.id) { setActive(null); setPopup(null); return; }
 
     const btn = e.currentTarget.getBoundingClientRect();
-    const vw = window.innerWidth;
-    const vh = window.innerHeight;
+    const vw = window.innerWidth, vh = window.innerHeight;
+    const btnCx = btn.left + btn.width / 2;
+    const btnCy = btn.top  + btn.height / 2;
 
-    if (isMobile) {
-      const pw = Math.min(vw * 0.8, 300);
-      setPopup({
-        id: svc.id,
-        top: (vh - POPUP_H_APPROX) / 2,
-        left: (vw - pw) / 2,
-        origin: 'center',
-        mobile: true,
-        width: pw,
-      });
+    let top: number, left: number, origin: string;
+    if (btnCy < vh * 0.3) {
+      top = btn.bottom + POPUP_GAP; left = btnCx - popupW / 2; origin = 'top center';
+    } else if (btnCy > vh * 0.7) {
+      top = btn.top - POPUP_H_APPROX - POPUP_GAP; left = btnCx - popupW / 2; origin = 'bottom center';
+    } else if (btnCx < vw / 2) {
+      top = btnCy - POPUP_H_APPROX / 2; left = btn.right + POPUP_GAP; origin = 'left center';
     } else {
-      const btnCx = btn.left + btn.width / 2;
-      const btnCy = btn.top + btn.height / 2;
-      let top: number, left: number, origin: string;
-
-      if (btnCy < vh * 0.3) {
-        top = btn.bottom + 12; left = btnCx - POPUP_W_DESKTOP / 2; origin = 'top center';
-      } else if (btnCy > vh * 0.7) {
-        top = btn.top - POPUP_H_APPROX - 12; left = btnCx - POPUP_W_DESKTOP / 2; origin = 'bottom center';
-      } else if (btnCx < vw / 2) {
-        top = btnCy - POPUP_H_APPROX / 2; left = btn.right + 12; origin = 'left center';
-      } else {
-        top = btnCy - POPUP_H_APPROX / 2; left = btn.left - POPUP_W_DESKTOP - 12; origin = 'right center';
-      }
-
-      left = Math.max(8, Math.min(left, vw - POPUP_W_DESKTOP - 8));
-      top  = Math.max(8, Math.min(top,  vh - POPUP_H_APPROX - 8));
-      setPopup({ id: svc.id, top, left, origin, mobile: false, width: POPUP_W_DESKTOP });
+      top = btnCy - POPUP_H_APPROX / 2; left = btn.left - popupW - POPUP_GAP; origin = 'right center';
     }
 
+    left = Math.max(8, Math.min(left, vw - popupW - 8));
+    top  = Math.max(8, Math.min(top,  vh - POPUP_H_APPROX - 8));
+
+    setPopup({ id: svc.id, top, left, origin, width: popupW });
     setActive(svc.id);
   };
 
   const closePopup = () => { setActive(null); setPopup(null); };
-
   const openModalFromPopup = (serviceName: string) => {
     closePopup();
     setModalEntry({ source: 'bubble', service: serviceName });
   };
 
-  // ── Layout ─────────────────────────────────────────────────────────────────
   return (
     <>
-      {/* Inject breathing keyframes once */}
-      <style>{BREATHE_CSS}</style>
+      <style>{BUBBLE_CSS}</style>
 
-      <div
-        style={{
-          ...(isMobile
-            ? { height: '100svh', padding: '16px 20px 24px', justifyContent: 'space-between' }
-            : { minHeight: '100vh', padding: '24px 16px', justifyContent: 'center', gap: 0 }
-          ),
-          backgroundImage: `url('${isMobile
-            ? 'https://res.cloudinary.com/dsprn0ew4/image/upload/v1778613216/Genera_esta_misma_imagen_pero_202605121305_zeudsg.jpg'
-            : 'https://res.cloudinary.com/dsprn0ew4/image/upload/v1778608740/Background_image_for_website_or_202605121158_cfvxcq.jpg'
-          }')`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center center',
-          backgroundRepeat: 'no-repeat',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          fontFamily: "'Mulish', -apple-system, sans-serif",
-          boxSizing: 'border-box',
-        }}
-      >
+      <div style={{
+        ...(isMobile
+          ? { height: '100svh', padding: '16px 20px 24px', justifyContent: 'space-between' }
+          : { minHeight: '100vh', padding: '24px 16px', justifyContent: 'center', gap: 0 }),
+        backgroundImage: `url('${isMobile
+          ? 'https://res.cloudinary.com/dsprn0ew4/image/upload/v1778613216/Genera_esta_misma_imagen_pero_202605121305_zeudsg.jpg'
+          : 'https://res.cloudinary.com/dsprn0ew4/image/upload/v1778608740/Background_image_for_website_or_202605121158_cfvxcq.jpg'
+        }')`,
+        backgroundSize: 'cover', backgroundPosition: 'center center', backgroundRepeat: 'no-repeat',
+        display: 'flex', flexDirection: 'column', alignItems: 'center',
+        fontFamily: "'Mulish', -apple-system, sans-serif",
+        boxSizing: 'border-box',
+      }}>
+
         {/* ══ Block 1: Heading ══ */}
         <div style={{
-          flexShrink: 0,
-          textAlign: 'center',
-          marginTop: 0,
-          marginBottom: isMobile ? 0 : 20,
-          maxWidth: 640,
-          padding: '0 16px',
+          flexShrink: 0, textAlign: 'center', marginTop: 0,
+          marginBottom: isMobile ? 0 : 20, maxWidth: 640, padding: '0 16px',
         }}>
           <p style={{
             margin: '0 0 14px',
             fontFamily: "'Mulish', -apple-system, sans-serif",
-            fontSize: 'clamp(32px, 5.5vw, 54px)',
-            fontWeight: 800,
-            color: C.navy,
-            lineHeight: 1.05,
-            letterSpacing: '-0.03em',
+            fontSize: 'clamp(32px, 5.5vw, 54px)', fontWeight: 800,
+            color: C.navy, lineHeight: 1.05, letterSpacing: '-0.03em',
           }}>
             AI, but make it{' '}
             <span style={{ fontStyle: 'italic', color: C.orange }}>human.</span>
@@ -494,59 +284,39 @@ export default function App() {
           <p style={{
             margin: '0 auto',
             fontFamily: "'Mulish', -apple-system, sans-serif",
-            fontSize: 'clamp(14px, 2vw, 17px)',
-            fontWeight: 400,
-            color: C.navy,
-            opacity: 0.65,
-            lineHeight: 1.55,
-            maxWidth: 580,
+            fontSize: 'clamp(14px, 2vw, 17px)', fontWeight: 400,
+            color: C.navy, opacity: 0.65, lineHeight: 1.55, maxWidth: 580,
           }}>
             AI is everywhere. We cut through the noise — the right tools, the right setup, and a partner who genuinely wants you to win.
           </p>
         </div>
 
         {/* ══ Block 2: Orbit ══ */}
-        <div style={{
-          ...(isMobile ? {
-            flex: 1,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            maxHeight: '65vw',
-            maxWidth: '65vw',
-            alignSelf: 'center',
-            margin: 'auto 0',
-          } : {}),
-        }}>
-          <div
-            style={{
-              position: 'relative',
-              width: containerSize,
-              height: containerSize,
-              flexShrink: 0,
-              ...(!isMobile && desktopScale < 1 ? {
-                transform: `scale(${desktopScale})`,
-                transformOrigin: 'top center',
-                marginBottom: -(D_TOTAL * (1 - desktopScale)),
-              } : {}),
-            }}
-          >
+        <div style={isMobile ? {
+          flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
+          maxHeight: '65vw', maxWidth: '65vw', alignSelf: 'center', margin: 'auto 0',
+        } : {}}>
+          <div style={{
+            position: 'relative', width: containerSize, height: containerSize, flexShrink: 0,
+            ...(!isMobile && desktopScale < 1 ? {
+              transform: `scale(${desktopScale})`,
+              transformOrigin: 'top center',
+              marginBottom: -(D_TOTAL * (1 - desktopScale)),
+            } : {}),
+          }}>
+
             {/* Orbit path */}
-            <div
-              style={{
-                position: 'absolute',
-                top: '50%',
-                left: '50%',
-                width: (ringRadius + bubbleSize / 2) * 2,
-                height: (ringRadius + bubbleSize / 2) * 2,
-                transform: 'translate(-50%, -50%)',
-                borderRadius: '50%',
-                border: `1.5px dashed rgba(26, 58, 74, 0.2)`,
-                opacity: active !== null ? 0.4 : 1,
-                transition: 'opacity 0.3s ease',
-                pointerEvents: 'none',
-              }}
-            />
+            <div style={{
+              position: 'absolute', top: '50%', left: '50%',
+              width: (ringRadius + bubbleSize / 2) * 2,
+              height: (ringRadius + bubbleSize / 2) * 2,
+              transform: 'translate(-50%, -50%)',
+              borderRadius: '50%',
+              border: '1.5px dashed rgba(26,58,74,0.2)',
+              opacity: active !== null ? 0.4 : 1,
+              transition: 'opacity 0.3s ease',
+              pointerEvents: 'none',
+            }} />
 
             {/* Spinning ring */}
             <motion.div
@@ -555,30 +325,33 @@ export default function App() {
               transition={{ duration: 48, repeat: Infinity, ease: 'linear' }}
             >
               {SERVICES.map((svc) => {
-                const angle = (360 / SERVICES.length) * SERVICES.indexOf(svc);
-                const rad = (Math.PI / 180) * angle;
-                const cx = Math.cos(rad) * ringRadius;
-                const cy = Math.sin(rad) * ringRadius;
+                const svcIndex = SERVICES.indexOf(svc);
+                const angleDeg = (360 / SERVICES.length) * svcIndex;
+                const angleRad = (Math.PI / 180) * angleDeg;
+                const cx = Math.cos(angleRad) * ringRadius;
+                const cy = Math.sin(angleRad) * ringRadius;
                 const isActive = active === svc.id;
+                const float = FLOAT_DATA[svc.floatIndex];
+                const colors = getComplementaryColors(svc.nodeBg);
+
+                // Sub-bubble positions: radiate outward from orbit center through active node
+                const subPositions = [-25, 0, 25].map(offsetDeg => ({
+                  x: Math.cos(angleRad + offsetDeg * Math.PI / 180) * subDist,
+                  y: Math.sin(angleRad + offsetDeg * Math.PI / 180) * subDist,
+                }));
 
                 return (
-                  // Outer button: only handles position + counter-rotation + click
                   <motion.button
                     key={svc.id}
                     className="service-node"
                     onClick={(e) => handleBubbleClick(e, svc)}
                     style={{
                       position: 'absolute',
-                      top: `calc(50% - ${bubbleSize / 2}px + ${cy}px)`,
+                      top:  `calc(50% - ${bubbleSize / 2}px + ${cy}px)`,
                       left: `calc(50% - ${bubbleSize / 2}px + ${cx}px)`,
-                      width: bubbleSize,
-                      height: bubbleSize,
-                      borderRadius: '50%',
-                      background: 'transparent',
-                      border: 'none',
-                      cursor: 'pointer',
-                      padding: 0,
-                      outline: 'none',
+                      width: bubbleSize, height: bubbleSize,
+                      borderRadius: '50%', background: 'transparent', border: 'none',
+                      cursor: 'pointer', padding: 0, outline: 'none',
                       overflow: 'visible',
                       zIndex: isActive ? 10 : 1,
                     }}
@@ -586,44 +359,66 @@ export default function App() {
                     transition={{ duration: 48, repeat: Infinity, ease: 'linear' }}
                     whileTap={{ scale: 0.94 }}
                   >
-                    {/* Inner span: visual + float animation (independent transform layer) */}
-                    <span
-                      className={`bbl bbl-f${svc.floatIndex}${isActive ? ' bbl-active' : ''}`}
-                      style={{
-                        background: svc.nodeBg,
-                        fontSize: `${bubbleFontSize}px`,
-                        fontWeight: 600,
-                        color: svc.nodeText,
-                        letterSpacing: '0.04em',
-                        textAlign: 'center',
-                        textTransform: 'uppercase',
-                        lineHeight: 1.35,
-                        whiteSpace: 'pre-line',
-                        animationPlayState: active !== null ? 'paused' : 'running',
-                        opacity: active !== null && !isActive ? 0.4 : 1,
-                        filter: active !== null && !isActive ? 'saturate(0.6)' : 'none',
-                        transition: 'opacity 0.3s ease, filter 0.3s ease',
-                        ...(isActive ? {
-                          boxShadow: `0 0 0 3px ${C.navy}, 0 8px 28px rgba(0,0,0,0.25)`,
-                        } : {}),
-                      }}
+                    {/* Framer Motion float layer — springs to rest when any bubble is active */}
+                    <motion.div
+                      animate={active !== null
+                        ? { x: 0, y: 0 }
+                        : { x: float.x, y: float.y }}
+                      transition={active !== null
+                        ? { type: 'spring', stiffness: 180, damping: 20 }
+                        : { duration: float.duration, repeat: Infinity, ease: 'easeInOut', times: [0, 0.25, 0.5, 0.75, 1] }}
+                      style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                     >
-                      {svc.label}
-                    </span>
+                      <span
+                        className="bbl"
+                        style={{
+                          background: svc.nodeBg,
+                          fontSize: `${bubbleFontSize}px`,
+                          fontWeight: 600,
+                          color: svc.nodeText,
+                          letterSpacing: '0.04em',
+                          textAlign: 'center',
+                          textTransform: 'uppercase',
+                          lineHeight: 1.35,
+                          whiteSpace: 'pre-line',
+                          opacity: active !== null && !isActive ? 0.4 : 1,
+                          filter:  active !== null && !isActive ? 'saturate(0.6)' : 'none',
+                          transform: isActive ? 'scale(1.15)' : 'scale(1)',
+                          transition: 'opacity 0.3s ease, filter 0.3s ease, transform 0.3s ease',
+                          ...(isActive ? { boxShadow: `0 0 0 3px ${C.navy}, 0 8px 28px rgba(0,0,0,0.25)` } : {}),
+                        }}
+                      >
+                        {svc.label}
+                      </span>
+                    </motion.div>
 
-                    {/* Sub-bubbles — desktop only */}
+                    {/* Sub-bubbles: circles same scale as main nodes */}
                     <AnimatePresence>
-                      {isActive && !isMobile && svc.keyPoints.map((point, i) => (
-                        <SubBubble
+                      {isActive && svc.keyPoints.map((point, i) => (
+                        <motion.div
                           key={`${svc.id}-kp-${i}`}
-                          text={point}
-                          angle={[-90, 30, 150][i]}
-                          distance={110}
-                          delay={0.15 + i * 0.08}
-                          color={SUB_BUBBLE_PALETTE[i].bg}
-                          textColor={SUB_BUBBLE_PALETTE[i].text}
-                          mobile={false}
-                        />
+                          initial={{ opacity: 0, scale: 0, x: 0, y: 0 }}
+                          animate={{ opacity: 1, scale: 1, x: subPositions[i].x, y: subPositions[i].y }}
+                          exit={{ opacity: 0, scale: 0, x: 0, y: 0 }}
+                          transition={{ duration: 0.35, delay: 0.1 + i * 0.12, type: 'spring', stiffness: 180, damping: 16 }}
+                          style={{
+                            position: 'absolute', top: '50%', left: '50%',
+                            width:  isMobile ? 'clamp(60px, 18vw, 75px)' : 'clamp(70px, 14vw, 95px)',
+                            height: isMobile ? 'clamp(60px, 18vw, 75px)' : 'clamp(70px, 14vw, 95px)',
+                            borderRadius: '50%',
+                            background: colors[i].bg, color: colors[i].text,
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            textAlign: 'center', padding: '8px',
+                            fontSize: isMobile ? '9.5px' : 'clamp(9px, 1.5vw, 11px)',
+                            fontFamily: "'Mulish', -apple-system, sans-serif",
+                            fontWeight: 700, lineHeight: 1.2, letterSpacing: '0.03em',
+                            boxShadow: '0 6px 20px rgba(0,0,0,0.18)',
+                            transform: 'translate(-50%, -50%)',
+                            pointerEvents: 'none', zIndex: 50,
+                          }}
+                        >
+                          {point}
+                        </motion.div>
                       ))}
                     </AnimatePresence>
                   </motion.button>
@@ -634,62 +429,33 @@ export default function App() {
             {/* Center logo */}
             <motion.a
               href="https://www.instagram.com/the.cocreativehub"
-              target="_blank"
-              rel="noopener noreferrer"
+              target="_blank" rel="noopener noreferrer"
               style={{
-                position: 'absolute',
-                top: '50%',
-                left: '50%',
+                position: 'absolute', top: '50%', left: '50%',
                 transform: 'translate(-50%, -50%)',
-                width: 'clamp(110px, 26vw, 180px)',
-                height: 'clamp(110px, 26vw, 180px)',
-                borderRadius: '50%',
-                background: 'transparent',
-                border: 'none',
-                boxShadow: 'none',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                zIndex: 10,
-                cursor: 'pointer',
-                textDecoration: 'none',
+                width: 'clamp(110px, 26vw, 180px)', height: 'clamp(110px, 26vw, 180px)',
+                borderRadius: '50%', background: 'transparent', border: 'none', boxShadow: 'none',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                zIndex: 10, cursor: 'pointer', textDecoration: 'none',
               }}
               title="Follow us on Instagram"
             >
               <img
                 src={CENTER_LOGO_URL}
                 alt="Primo AI Studio"
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'contain',
-                  borderRadius: '50%',
-                  display: 'block',
-                }}
+                style={{ width: '100%', height: '100%', objectFit: 'contain', borderRadius: '50%', display: 'block' }}
               />
             </motion.a>
           </div>
         </div>
 
         {/* ══ Block 3: Hint + Button ══ */}
-        <div style={{
-          flexShrink: 0,
-          textAlign: 'center',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          gap: 0,
-        }}>
+        <div style={{ flexShrink: 0, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0 }}>
           <p style={{
-            margin: '0 0 12px',
-            fontSize: 11,
-            fontWeight: 600,
-            letterSpacing: '0.12em',
-            textTransform: 'uppercase',
-            color: `rgba(26, 58, 74, 0.4)`,
-            textAlign: 'center',
-            visibility: active ? 'hidden' : 'visible',
-            lineHeight: 1,
+            margin: '0 0 12px', fontSize: 11, fontWeight: 600,
+            letterSpacing: '0.12em', textTransform: 'uppercase',
+            color: 'rgba(26,58,74,0.4)', textAlign: 'center',
+            visibility: active ? 'hidden' : 'visible', lineHeight: 1,
           }}>
             Tap a service to explore
           </p>
@@ -698,29 +464,15 @@ export default function App() {
             <motion.button
               onClick={() => setModalEntry({ source: 'getstarted' })}
               style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: 8,
-                padding: isMobile ? '11px 28px' : '16px 44px',
-                borderRadius: 999,
-                background: C.orange,
-                color: C.cream,
-                fontSize: 13,
-                fontWeight: 800,
-                letterSpacing: '0.18em',
-                textTransform: 'uppercase',
+                display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                padding: isMobile ? '11px 28px' : '16px 44px', borderRadius: 999,
+                background: C.orange, color: C.cream, fontSize: 13, fontWeight: 800,
+                letterSpacing: '0.18em', textTransform: 'uppercase',
                 boxShadow: '0 4px 24px rgba(242,100,25,0.40)',
-                cursor: 'pointer',
-                userSelect: 'none',
-                border: 'none',
+                cursor: 'pointer', userSelect: 'none', border: 'none',
                 fontFamily: "'Mulish', -apple-system, sans-serif",
               }}
-              whileHover={{
-                background: C.navy,
-                color: C.cream,
-                boxShadow: '0 8px 36px rgba(26,58,74,0.40)',
-              }}
+              whileHover={{ background: C.navy, color: C.cream, boxShadow: '0 8px 36px rgba(26,58,74,0.40)' }}
               whileTap={{ scale: 0.97 }}
               transition={{ duration: 0.2 }}
             >
@@ -732,22 +484,7 @@ export default function App() {
           </MagneticButton>
         </div>
 
-        {/* ── Mobile overlay ── */}
-        <AnimatePresence>
-          {popup?.mobile && (
-            <motion.div
-              key="overlay"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.15 }}
-              onClick={closePopup}
-              style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.55)', zIndex: 199 }}
-            />
-          )}
-        </AnimatePresence>
-
-        {/* ── Service popup ── */}
+        {/* ── Service popup (unified mobile + desktop, clears sub-bubbles) ── */}
         <AnimatePresence mode="wait">
           {popup && activeService && (
             <motion.div
@@ -759,24 +496,18 @@ export default function App() {
               transition={{ duration: 0.18, ease: 'easeOut', delay: 0.4 }}
               style={{
                 position: 'fixed',
-                top: popup.top,
-                left: popup.left,
-                width: popup.width,
+                top: popup.top, left: popup.left, width: popup.width,
                 transformOrigin: popup.origin,
-                zIndex: 200,
-                background: C.navy,
-                borderRadius: 14,
-                border: 'none',
-                padding: '14px 15px 15px',
+                zIndex: 200, background: C.navy, borderRadius: 14,
+                padding: '10px 12px 12px',
                 boxShadow: '0 8px 32px rgba(0,0,0,0.35)',
-                pointerEvents: 'auto',
+                pointerEvents: 'auto', maxHeight: 180, overflowY: 'auto',
               }}
             >
-              {/* × close */}
               <button
                 onClick={(e) => { e.stopPropagation(); closePopup(); }}
                 style={{
-                  position: 'absolute', top: 10, right: 12,
+                  position: 'absolute', top: 8, right: 10,
                   background: 'transparent', border: 'none',
                   color: C.cream, opacity: 0.6, fontSize: 18, lineHeight: 1,
                   cursor: 'pointer', padding: '2px 4px', fontFamily: 'inherit',
@@ -787,7 +518,6 @@ export default function App() {
                 aria-label="Close"
               >×</button>
 
-              {/* Service name */}
               <p style={{
                 fontSize: 10, fontWeight: 800, color: C.cream,
                 letterSpacing: '0.13em', textTransform: 'uppercase',
@@ -796,24 +526,16 @@ export default function App() {
                 {activeService.name}
               </p>
 
-              {/* Description */}
-              <p style={{
-                fontSize: 12, color: 'rgba(234,226,183,0.8)',
-                lineHeight: 1.65, fontWeight: 400, margin: 0,
-              }}>
+              <p style={{ fontSize: 11, color: 'rgba(234,226,183,0.8)', lineHeight: 1.65, fontWeight: 400, margin: 0 }}>
                 {activeService.description}
               </p>
 
-              {/* Get Started CTA */}
-              <GetStartedCTA
-                onClick={(e) => { e.stopPropagation(); openModalFromPopup(activeService.name); }}
-              />
+              <GetStartedCTA onClick={(e) => { e.stopPropagation(); openModalFromPopup(activeService.name); }} />
             </motion.div>
           )}
         </AnimatePresence>
       </div>
 
-      {/* ── Onboarding modal ── */}
       <OnboardingModal entry={modalEntry} onClose={handleModalClose} />
     </>
   );
