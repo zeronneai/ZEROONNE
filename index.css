@@ -1,3 +1,20 @@
 /* Primo AI Studio — base styles */
 *, *::before, *::after { box-sizing: border-box; font-family: inherit; }
 body, html { margin: 0; padding: 0; background: #ffffff; font-family: 'Mulish', -apple-system, sans-serif; }
+
+/* Blog post 2-column grid */
+@media (min-width: 1024px) {
+  .blog-content-grid {
+    grid-template-columns: minmax(0, 1fr) 240px !important;
+    gap: 80px !important;
+  }
+  .blog-toc-aside {
+    display: block !important;
+  }
+}
+
+@media (max-width: 1023px) {
+  .blog-toc-aside {
+    display: none !important;
+  }
+}
