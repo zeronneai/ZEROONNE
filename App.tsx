@@ -107,7 +107,7 @@ const BREATHE_CSS = `
 .bbl-f4 { animation: float-4 3.5s ease-in-out infinite; }
 .bbl-f5 { animation: float-5 4.9s ease-in-out infinite; }
 .bbl-f6 { animation: float-6 4.1s ease-in-out infinite; }
-.bbl:hover, .bbl-active { animation-play-state: paused !important; transform: translate(0,0) scale(1.1) !important; }
+.bbl:hover, .bbl-active { animation-play-state: paused !important; transform: translate(0,0) scale(1.15) !important; transition: transform 0.3s ease, opacity 0.3s ease, filter 0.3s ease; }
 `;
 
 // ── Popup CTA button ─────────────────────────────────────────────────────────
@@ -138,6 +138,52 @@ function GetStartedCTA({ onClick }: { onClick: (e: React.MouseEvent<HTMLButtonEl
     >
       Get Started →
     </button>
+  );
+}
+
+// ── Sub-bubble (key point) ────────────────────────────────────────────────────
+const SUB_BUBBLE_PALETTE = [
+  { bg: '#eae2b7', text: '#1a3a4a' },
+  { bg: '#1a3a4a', text: '#eae2b7' },
+  { bg: '#f26419', text: '#eae2b7' },
+];
+
+function SubBubble({
+  text, angle, distance, delay, color, textColor, mobile,
+}: {
+  text: string; angle: number; distance: number; delay: number;
+  color: string; textColor: string; mobile: boolean;
+}) {
+  const rad = (angle * Math.PI) / 180;
+  const x = Math.cos(rad) * distance;
+  const y = Math.sin(rad) * distance;
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0, x: 0, y: 0 }}
+      animate={{ opacity: 1, scale: 1, x, y }}
+      exit={{ opacity: 0, scale: 0, x: 0, y: 0 }}
+      transition={{ duration: 0.4, delay, type: 'spring', stiffness: 200, damping: 18 }}
+      style={{
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        background: color,
+        color: textColor,
+        padding: mobile ? '6px 11px' : '8px 14px',
+        borderRadius: 20,
+        fontSize: mobile ? 10 : 11,
+        fontWeight: 700,
+        fontFamily: "'Mulish', -apple-system, sans-serif",
+        letterSpacing: '0.04em',
+        whiteSpace: 'nowrap',
+        boxShadow: '0 4px 16px rgba(0,0,0,0.18)',
+        transform: 'translate(-50%, -50%)',
+        pointerEvents: 'none',
+        zIndex: 50,
+      }}
+    >
+      {text}
+    </motion.div>
   );
 }
 
@@ -190,7 +236,7 @@ function MagneticButton({
 
 // ── Data ──────────────────────────────────────────────────────────────────────
 const CENTER_LOGO_URL =
-  'https://res.cloudinary.com/dsprn0ew4/image/upload/v1778787182/Logo__pr___icon___mo_____pr__and_202605141259_ydscgi.jpg';
+  'https://res.cloudinary.com/dsprn0ew4/image/upload/v1778810517/replicame_ese_logo_sin_a%C3%B1adir_202605142001_xo3xpe.jpg';
 
 const SERVICES = [
   {
@@ -202,6 +248,7 @@ const SERVICES = [
     nodeBg: C.green,
     nodeText: C.navy,
     floatIndex: 3,
+    keyPoints: ['Custom API connections', 'Workflow automation', 'Zero rebuild needed'],
   },
   {
     id: 2,
@@ -212,6 +259,7 @@ const SERVICES = [
     nodeBg: C.orange,
     nodeText: C.cream,
     floatIndex: 6,
+    keyPoints: ['Multi-channel scaling', 'Brand-aligned voice', 'Daily output ready'],
   },
   {
     id: 3,
@@ -222,6 +270,7 @@ const SERVICES = [
     nodeBg: C.navy,
     nodeText: C.cream,
     floatIndex: 5,
+    keyPoints: ['Premium quality', 'Days not weeks', 'High conversion'],
   },
   {
     id: 4,
@@ -232,6 +281,7 @@ const SERVICES = [
     nodeBg: C.yellow,
     nodeText: C.navy,
     floatIndex: 4,
+    keyPoints: ['Naming & positioning', 'Design systems', 'Built to last'],
   },
   {
     id: 5,
@@ -242,6 +292,7 @@ const SERVICES = [
     nodeBg: C.orange,
     nodeText: C.cream,
     floatIndex: 1,
+    keyPoints: ['Conversion-optimized', 'Premium design', 'Built to scale'],
   },
   {
     id: 6,
@@ -252,6 +303,7 @@ const SERVICES = [
     nodeBg: C.yellow,
     nodeText: C.navy,
     floatIndex: 2,
+    keyPoints: ['Custom workflows', 'Operations on autopilot', 'Focus on growth'],
   },
 ];
 
@@ -490,6 +542,8 @@ export default function App() {
                 transform: 'translate(-50%, -50%)',
                 borderRadius: '50%',
                 border: `1.5px dashed rgba(26, 58, 74, 0.2)`,
+                opacity: active !== null ? 0.4 : 1,
+                transition: 'opacity 0.3s ease',
                 pointerEvents: 'none',
               }}
             />
@@ -525,6 +579,8 @@ export default function App() {
                       cursor: 'pointer',
                       padding: 0,
                       outline: 'none',
+                      overflow: 'visible',
+                      zIndex: isActive ? 10 : 1,
                     }}
                     animate={{ rotate: -360 }}
                     transition={{ duration: 48, repeat: Infinity, ease: 'linear' }}
@@ -543,6 +599,10 @@ export default function App() {
                         textTransform: 'uppercase',
                         lineHeight: 1.35,
                         whiteSpace: 'pre-line',
+                        animationPlayState: active !== null ? 'paused' : 'running',
+                        opacity: active !== null && !isActive ? 0.4 : 1,
+                        filter: active !== null && !isActive ? 'saturate(0.6)' : 'none',
+                        transition: 'opacity 0.3s ease, filter 0.3s ease',
                         ...(isActive ? {
                           boxShadow: `0 0 0 3px ${C.navy}, 0 8px 28px rgba(0,0,0,0.25)`,
                         } : {}),
@@ -550,6 +610,22 @@ export default function App() {
                     >
                       {svc.label}
                     </span>
+
+                    {/* Sub-bubbles — desktop only */}
+                    <AnimatePresence>
+                      {isActive && !isMobile && svc.keyPoints.map((point, i) => (
+                        <SubBubble
+                          key={`${svc.id}-kp-${i}`}
+                          text={point}
+                          angle={[-90, 30, 150][i]}
+                          distance={110}
+                          delay={0.15 + i * 0.08}
+                          color={SUB_BUBBLE_PALETTE[i].bg}
+                          textColor={SUB_BUBBLE_PALETTE[i].text}
+                          mobile={false}
+                        />
+                      ))}
+                    </AnimatePresence>
                   </motion.button>
                 );
               })}
@@ -680,7 +756,7 @@ export default function App() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
-              transition={{ duration: 0.18, ease: 'easeOut' }}
+              transition={{ duration: 0.18, ease: 'easeOut', delay: 0.4 }}
               style={{
                 position: 'fixed',
                 top: popup.top,
