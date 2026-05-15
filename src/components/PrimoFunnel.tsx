@@ -862,6 +862,16 @@ function Footer() {
               <div style={{ fontSize: 13, fontWeight: 500, color: 'rgba(234,226,183,0.55)' }}>Saturday · 10:00 AM - 5:00 PM</div>
               <div style={{ fontSize: 13, fontWeight: 500, color: 'rgba(234,226,183,0.55)' }}>Sunday · Closed</div>
             </div>
+            <div style={{ marginTop: 24 }}>
+              <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.15em', textTransform: 'uppercase', color: C.orange, marginBottom: 12 }}>Resources</div>
+              <a href="/blog"
+                style={{ fontSize: 13, fontWeight: 500, color: 'rgba(234,226,183,0.75)', textDecoration: 'none', transition: 'color 0.15s' }}
+                onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.color = C.orange; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.color = 'rgba(234,226,183,0.75)'; }}
+              >
+                Blog &amp; Insights →
+              </a>
+            </div>
           </div>
         </div>
         <div style={{ borderTop: '1px solid rgba(234,226,183,0.08)', paddingTop: 24, display: 'flex', flexWrap: 'wrap', gap: 12, justifyContent: 'space-between', alignItems: 'center' }}>
