@@ -292,9 +292,6 @@ export default function PrimoOrbit({ onStartForm, logoUrl }: PrimoOrbitProps) {
             style={{
               position: 'absolute',
               inset: 0,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
               pointerEvents: 'auto',
             }}
           >
