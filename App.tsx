@@ -235,10 +235,10 @@ const SERVICES = [
 ];
 
 // Layout constants
-const D_RING_RADIUS = 175;
-const D_BUBBLE      = 82;
+const D_RING_RADIUS = 148;
+const D_BUBBLE      = 72;
 const D_TOTAL       = D_RING_RADIUS * 2 + D_BUBBLE + 60;
-const D_BUBBLE_FONT = 9.5;
+const D_BUBBLE_FONT = 9;
 
 interface ActiveState {
   id: number;
