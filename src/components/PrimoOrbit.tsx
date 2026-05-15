@@ -137,7 +137,7 @@ export default function PrimoOrbit({ onStartForm, logoUrl }: PrimoOrbitProps) {
       style={{
         position: 'relative',
         width: '100%',
-        maxWidth: isMobile ? 360 : 620,
+        maxWidth: isMobile ? 320 : 480,
         aspectRatio: '1 / 1',
         margin: '0 auto',
       }}
@@ -163,8 +163,8 @@ export default function PrimoOrbit({ onStartForm, logoUrl }: PrimoOrbitProps) {
             position: 'absolute',
             top: '50%',
             left: '50%',
-            width: '88%',
-            height: '88%',
+            width: '76%',
+            height: '76%',
             borderRadius: '50%',
             border: `1.5px dashed ${C.navy}33`,
             transform: 'translate(-50%, -50%)',
@@ -179,7 +179,7 @@ export default function PrimoOrbit({ onStartForm, logoUrl }: PrimoOrbitProps) {
             top: '50%',
             left: '50%',
             transform: 'translate(-50%, -50%)',
-            width: '28%',
+            width: '22%',
             aspectRatio: '1 / 1',
             borderRadius: '50%',
             overflow: 'hidden',
@@ -214,7 +214,7 @@ export default function PrimoOrbit({ onStartForm, logoUrl }: PrimoOrbitProps) {
           {SERVICES.map((svc, i) => {
             const angleDeg = (360 / SERVICES.length) * i - 90; // empieza arriba
             const angleRad = (angleDeg * Math.PI) / 180;
-            const ringRadiusPct = 44; // % del contenedor
+            const ringRadiusPct = 38; // % del contenedor
 
             // Posición en %
             const dx = Math.cos(angleRad) * ringRadiusPct;
@@ -232,8 +232,8 @@ export default function PrimoOrbit({ onStartForm, logoUrl }: PrimoOrbitProps) {
                   top: `calc(50% + ${dy}%)`,
                   left: `calc(50% + ${dx}%)`,
                   transform: 'translate(-50%, -50%)',
-                  width: isMobile ? 72 : 105,
-                  height: isMobile ? 72 : 105,
+                  width: isMobile ? 60 : 82,
+                  height: isMobile ? 60 : 82,
                   borderRadius: '50%',
                   background: svc.bg,
                   color: svc.text,
@@ -244,7 +244,7 @@ export default function PrimoOrbit({ onStartForm, logoUrl }: PrimoOrbitProps) {
                   justifyContent: 'center',
                   textAlign: 'center',
                   padding: 8,
-                  fontSize: isMobile ? 9.5 : 11,
+                  fontSize: isMobile ? 8.5 : 10,
                   fontWeight: 700,
                   fontFamily: "'Mulish', sans-serif",
                   letterSpacing: '0.04em',
