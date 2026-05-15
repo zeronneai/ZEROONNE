@@ -39,40 +39,48 @@ const BUBBLE_CSS = `
 function SubBubbles({ btnCx, btnCy, points, isMobile }: {
   btnCx: number; btnCy: number; points: string[]; isMobile: boolean;
 }) {
-  const dist   = isMobile ? 130 : 180;
-  const size   = isMobile ? 78  : 110;
-  const angles = [-90, 30, 150]; // equilateral triangle: top, lower-right, lower-left
-  const colors = [
+  const expandedRadius = isMobile
+    ? Math.min(window.innerWidth * 0.5, 280) / 2
+    : 150;
+  const gap     = isMobile ? 50 : 65;
+  const dist    = expandedRadius + gap;
+  const size    = isMobile ? 75 : 95;
+  const angles  = [-90, 30, 150]; // equilateral triangle: top, lower-right, lower-left
+  const colors  = [
     { bg: C.cream,  text: C.navy  },
     { bg: C.green,  text: C.navy  },
     { bg: C.orange, text: C.cream },
   ];
 
+  const clamp = (val: number, min: number, max: number) => Math.max(min, Math.min(val, max));
+
   return (
     <>
       {points.map((point, i) => {
-        const rad = angles[i] * (Math.PI / 180);
-        const dx  = Math.cos(rad) * dist;
-        const dy  = Math.sin(rad) * dist;
+        const rad  = angles[i] * (Math.PI / 180);
+        const dx   = Math.cos(rad) * dist;
+        const dy   = Math.sin(rad) * dist;
+        const left = clamp(btnCx + dx, size / 2 + 8, window.innerWidth  - size / 2 - 8);
+        const top  = clamp(btnCy + dy, size / 2 + 8, window.innerHeight - size / 2 - 8);
         return (
           <motion.div
             key={`sub-${i}`}
-            initial={{ opacity: 0, scale: 0, x: 0, y: 0 }}
-            animate={{ opacity: 1, scale: 1, x: dx, y: dy }}
-            exit={{   opacity: 0, scale: 0, x: 0, y: 0 }}
+            initial={{ opacity: 0, scale: 0 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{   opacity: 0, scale: 0 }}
             transition={{
               duration: 0.45, delay: 0.25 + i * 0.1,
               type: 'spring', stiffness: 180, damping: 16,
             }}
             style={{
               position: 'fixed',
-              top:  btnCy - size / 2,
-              left: btnCx - size / 2,
+              top, left,
+              transform: 'translate(-50%, -50%)',
               width: size, height: size, borderRadius: '50%',
               background: colors[i].bg, color: colors[i].text,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               textAlign: 'center', padding: '10px',
-              fontSize: isMobile ? '10px' : 'clamp(10px, 1.4vw, 12px)',
+              fontSize: isMobile ? '10px' : 'clamp(10px, 1.3vw, 11px)',
               fontFamily: "'Mulish', sans-serif",
               fontWeight: 700, lineHeight: 1.25, letterSpacing: '0.02em',
               boxShadow: '0 6px 22px rgba(0,0,0,0.18)',
@@ -96,8 +104,8 @@ function ExpandedBubble({ svc, btnCx, btnCy, isMobile, windowWidth, onClose, onG
   onGetStarted: (name: string) => void;
 }) {
   const size = isMobile
-    ? Math.min(Math.round(windowWidth * 0.85), 320)
-    : Math.min(Math.max(220, Math.round(windowWidth * 0.6)), 320);
+    ? Math.min(windowWidth * 0.75, 280)
+    : 300; // fixed 300px circle on desktop
 
   const cx = isMobile ? windowWidth / 2 : btnCx;
   const cy = isMobile
@@ -116,13 +124,14 @@ function ExpandedBubble({ svc, btnCx, btnCy, isMobile, windowWidth, onClose, onG
         position: 'fixed',
         top:  cy - size / 2,
         left: cx - size / 2,
-        width: size, minHeight: size,
-        borderRadius: 28,
+        width: size, height: size,
+        borderRadius: '50%', aspectRatio: '1 / 1',
         background: svc.nodeBg, color: svc.nodeText,
-        padding: '22px 22px 18px',
+        padding: 'clamp(28px, 5vw, 40px)',
         display: 'flex', flexDirection: 'column',
         alignItems: 'center', justifyContent: 'center',
-        gap: 10, textAlign: 'center',
+        gap: 8, textAlign: 'center',
+        overflow: 'hidden',
         boxShadow: '0 12px 40px rgba(0,0,0,0.28)',
         zIndex: 100,
       }}
@@ -131,7 +140,7 @@ function ExpandedBubble({ svc, btnCx, btnCy, isMobile, windowWidth, onClose, onG
       <button
         onClick={(e) => { e.stopPropagation(); onClose(); }}
         style={{
-          position: 'absolute', top: 12, right: 14,
+          position: 'absolute', top: 12, right: 16,
           background: 'transparent', border: 'none',
           color: svc.nodeText, opacity: 0.5,
           fontSize: 20, lineHeight: 1, cursor: 'pointer',
@@ -141,9 +150,9 @@ function ExpandedBubble({ svc, btnCx, btnCy, isMobile, windowWidth, onClose, onG
 
       {/* Service name */}
       <p style={{
-        fontSize: 'clamp(11px, 1.6vw, 13px)',
+        fontSize: 'clamp(9px, 1.2vw, 11px)',
         fontWeight: 800, letterSpacing: '0.13em',
-        textTransform: 'uppercase', margin: 0,
+        textTransform: 'uppercase', margin: 0, marginBottom: 4,
         color: svc.nodeText, opacity: 0.7,
       }}>
         {svc.name}
@@ -151,9 +160,9 @@ function ExpandedBubble({ svc, btnCx, btnCy, isMobile, windowWidth, onClose, onG
 
       {/* Description */}
       <p style={{
-        fontSize: 'clamp(12px, 1.7vw, 14px)',
-        lineHeight: 1.55, margin: '4px 0 0',
-        color: svc.nodeText, fontWeight: 500, maxWidth: '90%',
+        fontSize: 'clamp(10px, 1.3vw, 12px)',
+        lineHeight: 1.45, margin: 0,
+        color: svc.nodeText, fontWeight: 500, maxWidth: '100%',
       }}>
         {svc.description}
       </p>
@@ -162,12 +171,12 @@ function ExpandedBubble({ svc, btnCx, btnCy, isMobile, windowWidth, onClose, onG
       <button
         onClick={(e) => { e.stopPropagation(); onGetStarted(svc.name); }}
         style={{
-          marginTop: 12,
+          marginTop: 10,
           background: C.orange, color: C.cream,
           border: 'none', borderRadius: 50,
-          padding: '11px 26px',
-          fontSize: 'clamp(11px, 1.4vw, 12px)',
-          fontWeight: 800, letterSpacing: '0.12em',
+          padding: '9px 20px',
+          fontSize: 'clamp(9px, 1.2vw, 11px)',
+          fontWeight: 800, letterSpacing: '0.1em',
           textTransform: 'uppercase',
           fontFamily: "'Mulish', sans-serif",
           cursor: 'pointer',
@@ -417,18 +426,6 @@ export default function App() {
               })}
             </motion.div>
 
-            {/* ── Sub-bubbles — fixed coords, outside rotator ── */}
-            <AnimatePresence>
-              {frozen && activeService && popup && (
-                <SubBubbles
-                  btnCx={popup.btnCx}
-                  btnCy={popup.btnCy}
-                  points={activeService.keyPoints}
-                  isMobile={isMobile}
-                />
-              )}
-            </AnimatePresence>
-
             {/* Center logo */}
             <motion.a
               href="https://www.instagram.com/the.cocreativehub"
@@ -477,6 +474,39 @@ export default function App() {
             </motion.button>
           </MagneticButton>
         </div>
+
+        {/* ── Backdrop — sits below sub-bubbles and expanded bubble ── */}
+        <AnimatePresence>
+          {frozen && (
+            <motion.div
+              key="backdrop"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.25 }}
+              onClick={closePopup}
+              style={{
+                position: 'fixed', inset: 0,
+                background: 'rgba(26, 58, 74, 0.15)',
+                backdropFilter: 'blur(2px)',
+                zIndex: 90,
+                pointerEvents: 'auto',
+              }}
+            />
+          )}
+        </AnimatePresence>
+
+        {/* ── Sub-bubbles — fixed coords, outside rotator ── */}
+        <AnimatePresence>
+          {frozen && activeService && popup && (
+            <SubBubbles
+              btnCx={popup.btnCx}
+              btnCy={popup.btnCy}
+              points={activeService.keyPoints}
+              isMobile={isMobile}
+            />
+          )}
+        </AnimatePresence>
 
         {/* ── Expanded bubble overlay (replaces popup) ── */}
         <AnimatePresence>
