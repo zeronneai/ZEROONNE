@@ -21,7 +21,7 @@ const FLOAT_DATA: Record<number, { x: number[]; y: number[]; duration: number }>
   6: { x: [0, -6,  7,  4,  0], y: [0,  -9, -13,  -5,  0], duration: 4.1 },
 };
 
-// Shared orbit rotation transition — same params on rotator AND per-button counter so they stay in sync
+// Shared orbit rotation transition — identical params on rotator AND counter so they stay in sync
 const orbitTransition = (frozen: boolean) =>
   frozen
     ? ({ duration: 0.6, ease: 'easeOut' } as const)
@@ -35,59 +35,48 @@ const BUBBLE_CSS = `
 }
 `;
 
-// ── Popup CTA ─────────────────────────────────────────────────────────────────
-function GetStartedCTA({ onClick }: { onClick: (e: React.MouseEvent<HTMLButtonElement>) => void }) {
-  const [hov, setHov] = useState(false);
-  return (
-    <button onClick={onClick} onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
-      style={{
-        display: 'block', width: '100%', marginTop: 12, padding: '10px 20px',
-        borderRadius: 50, border: 'none',
-        background: hov ? C.navy : C.orange, color: C.cream,
-        fontFamily: "'Mulish', -apple-system, sans-serif",
-        fontSize: 11, fontWeight: 700, letterSpacing: '0.12em',
-        textTransform: 'uppercase', cursor: 'pointer', transition: 'background 0.2s ease',
-      }}>
-      Get Started →
-    </button>
-  );
-}
-
-// ── Sub-bubbles component — fixed positioning, no rotation inheritance ─────────
-function SubBubbles({ btnCx, btnCy, angle, points, colors, isMobile, dist }: {
-  btnCx: number; btnCy: number; angle: number;
-  points: string[]; colors: { bg: string; text: string }[];
-  isMobile: boolean; dist: number;
+// ── Sub-bubbles: 360° equilateral triangle around the expanded bubble ─────────
+function SubBubbles({ btnCx, btnCy, points, isMobile }: {
+  btnCx: number; btnCy: number; points: string[]; isMobile: boolean;
 }) {
-  const offsets = [-30, 0, 30]; // degrees around the outward angle
+  const dist   = isMobile ? 130 : 180;
+  const size   = isMobile ? 78  : 110;
+  const angles = [-90, 30, 150]; // equilateral triangle: top, lower-right, lower-left
+  const colors = [
+    { bg: C.cream,  text: C.navy  },
+    { bg: C.green,  text: C.navy  },
+    { bg: C.orange, text: C.cream },
+  ];
+
   return (
     <>
       {points.map((point, i) => {
-        const a = angle + offsets[i] * (Math.PI / 180);
+        const rad = angles[i] * (Math.PI / 180);
+        const dx  = Math.cos(rad) * dist;
+        const dy  = Math.sin(rad) * dist;
         return (
           <motion.div
             key={`sub-${i}`}
-            initial={{ opacity: 0, scale: 0 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0 }}
-            transition={{ duration: 0.4, delay: 0.1 + i * 0.12, type: 'spring', stiffness: 200, damping: 18 }}
+            initial={{ opacity: 0, scale: 0, x: 0, y: 0 }}
+            animate={{ opacity: 1, scale: 1, x: dx, y: dy }}
+            exit={{   opacity: 0, scale: 0, x: 0, y: 0 }}
+            transition={{
+              duration: 0.45, delay: 0.25 + i * 0.1,
+              type: 'spring', stiffness: 180, damping: 16,
+            }}
             style={{
               position: 'fixed',
-              top:  btnCy + Math.sin(a) * dist,
-              left: btnCx + Math.cos(a) * dist,
-              transform: 'translate(-50%, -50%)',
-              width:  isMobile ? 70 : 90,
-              height: isMobile ? 70 : 90,
-              borderRadius: '50%',
-              background: colors[i]?.bg ?? C.cream,
-              color:      colors[i]?.text ?? C.navy,
+              top:  btnCy - size / 2,
+              left: btnCx - size / 2,
+              width: size, height: size, borderRadius: '50%',
+              background: colors[i].bg, color: colors[i].text,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              textAlign: 'center', padding: '8px',
-              fontSize: isMobile ? '9px' : '10.5px',
-              fontFamily: "'Mulish', -apple-system, sans-serif",
-              fontWeight: 700, lineHeight: 1.2, letterSpacing: '0.03em',
-              boxShadow: '0 6px 20px rgba(0,0,0,0.2)',
-              pointerEvents: 'none', zIndex: 150,
+              textAlign: 'center', padding: '10px',
+              fontSize: isMobile ? '10px' : 'clamp(10px, 1.4vw, 12px)',
+              fontFamily: "'Mulish', sans-serif",
+              fontWeight: 700, lineHeight: 1.25, letterSpacing: '0.02em',
+              boxShadow: '0 6px 22px rgba(0,0,0,0.18)',
+              pointerEvents: 'none', zIndex: 95,
             }}
           >
             {point}
@@ -98,25 +87,98 @@ function SubBubbles({ btnCx, btnCy, angle, points, colors, isMobile, dist }: {
   );
 }
 
-// ── Complementary colors (avoids the active node's own color) ─────────────────
-function getComplementaryColors(activeColor: string) {
-  return [
-    { bg: C.navy,   text: C.cream },
-    { bg: C.orange, text: C.cream },
-    { bg: C.yellow, text: C.navy  },
-    { bg: C.green,  text: C.navy  },
-    { bg: C.cream,  text: C.navy  },
-  ].filter(c => c.bg !== activeColor).slice(0, 3);
-}
+// ── Expanded bubble — replaces the separate popup ─────────────────────────────
+function ExpandedBubble({ svc, btnCx, btnCy, isMobile, windowWidth, onClose, onGetStarted }: {
+  svc: typeof SERVICES[0];
+  btnCx: number; btnCy: number;
+  isMobile: boolean; windowWidth: number;
+  onClose: () => void;
+  onGetStarted: (name: string) => void;
+}) {
+  const size = isMobile
+    ? Math.min(Math.round(windowWidth * 0.85), 320)
+    : Math.min(Math.max(220, Math.round(windowWidth * 0.6)), 320);
 
-// ── Popup tail (triangle pointing toward the active bubble) ───────────────────
-function PopupTail({ origin }: { origin: string }) {
-  const base: React.CSSProperties = { position: 'absolute', width: 0, height: 0 };
-  if (origin === 'left center')   return <div style={{ ...base, top: '50%', left: -12, transform: 'translateY(-50%)', borderTop: '8px solid transparent', borderBottom: '8px solid transparent', borderRight: `8px solid ${C.navy}` }} />;
-  if (origin === 'right center')  return <div style={{ ...base, top: '50%', right: -12, transform: 'translateY(-50%)', borderTop: '8px solid transparent', borderBottom: '8px solid transparent', borderLeft: `8px solid ${C.navy}` }} />;
-  if (origin === 'top center')    return <div style={{ ...base, left: '50%', top: -12, transform: 'translateX(-50%)', borderLeft: '8px solid transparent', borderRight: '8px solid transparent', borderBottom: `8px solid ${C.navy}` }} />;
-  if (origin === 'bottom center') return <div style={{ ...base, left: '50%', bottom: -12, transform: 'translateX(-50%)', borderLeft: '8px solid transparent', borderRight: '8px solid transparent', borderTop: `8px solid ${C.navy}` }} />;
-  return null;
+  const cx = isMobile ? windowWidth / 2 : btnCx;
+  const cy = isMobile
+    ? (typeof window !== 'undefined' ? window.innerHeight / 2 : 400)
+    : btnCy;
+
+  return (
+    <motion.div
+      className="expanded-bubble"
+      initial={{ scale: 0.2, opacity: 0 }}
+      animate={{ scale: 1, opacity: 1 }}
+      exit={{   scale: 0.2, opacity: 0 }}
+      transition={{ type: 'spring', stiffness: 280, damping: 22 }}
+      onClick={(e) => e.stopPropagation()}
+      style={{
+        position: 'fixed',
+        top:  cy - size / 2,
+        left: cx - size / 2,
+        width: size, minHeight: size,
+        borderRadius: 28,
+        background: svc.nodeBg, color: svc.nodeText,
+        padding: '22px 22px 18px',
+        display: 'flex', flexDirection: 'column',
+        alignItems: 'center', justifyContent: 'center',
+        gap: 10, textAlign: 'center',
+        boxShadow: '0 12px 40px rgba(0,0,0,0.28)',
+        zIndex: 100,
+      }}
+    >
+      {/* Close button */}
+      <button
+        onClick={(e) => { e.stopPropagation(); onClose(); }}
+        style={{
+          position: 'absolute', top: 12, right: 14,
+          background: 'transparent', border: 'none',
+          color: svc.nodeText, opacity: 0.5,
+          fontSize: 20, lineHeight: 1, cursor: 'pointer',
+          fontFamily: 'inherit', padding: 4,
+        }}
+      >×</button>
+
+      {/* Service name */}
+      <p style={{
+        fontSize: 'clamp(11px, 1.6vw, 13px)',
+        fontWeight: 800, letterSpacing: '0.13em',
+        textTransform: 'uppercase', margin: 0,
+        color: svc.nodeText, opacity: 0.7,
+      }}>
+        {svc.name}
+      </p>
+
+      {/* Description */}
+      <p style={{
+        fontSize: 'clamp(12px, 1.7vw, 14px)',
+        lineHeight: 1.55, margin: '4px 0 0',
+        color: svc.nodeText, fontWeight: 500, maxWidth: '90%',
+      }}>
+        {svc.description}
+      </p>
+
+      {/* Get Started */}
+      <button
+        onClick={(e) => { e.stopPropagation(); onGetStarted(svc.name); }}
+        style={{
+          marginTop: 12,
+          background: C.orange, color: C.cream,
+          border: 'none', borderRadius: 50,
+          padding: '11px 26px',
+          fontSize: 'clamp(11px, 1.4vw, 12px)',
+          fontWeight: 800, letterSpacing: '0.12em',
+          textTransform: 'uppercase',
+          fontFamily: "'Mulish', sans-serif",
+          cursor: 'pointer',
+          boxShadow: '0 4px 14px rgba(242,100,25,0.4)',
+          transition: 'all 0.2s',
+        }}
+      >
+        Get Started →
+      </button>
+    </motion.div>
+  );
 }
 
 // ── Magnetic Button ───────────────────────────────────────────────────────────
@@ -167,19 +229,17 @@ const D_RING_RADIUS = 175;
 const D_BUBBLE      = 82;
 const D_TOTAL       = D_RING_RADIUS * 2 + D_BUBBLE + 60;
 const D_BUBBLE_FONT = 9.5;
-const POPUP_W_DESKTOP = 240;
-const POPUP_W_MOBILE  = 180;
-const POPUP_H_APPROX  = 180;
 
-interface PopupState {
-  id: number; top: number; left: number; origin: string; width: number;
-  angleRad: number; btnCx: number; btnCy: number;
+interface ActiveState {
+  id: number;
+  btnCx: number;
+  btnCy: number;
 }
 
 // ── App ───────────────────────────────────────────────────────────────────────
 export default function App() {
   const [active, setActive]           = useState<number | null>(null);
-  const [popup, setPopup]             = useState<PopupState | null>(null);
+  const [popup, setPopup]             = useState<ActiveState | null>(null);
   const [modalEntry, setModalEntry]   = useState<ModalEntry | null>(null);
   const [windowWidth, setWindowWidth] = useState(
     typeof window !== 'undefined' ? window.innerWidth : 1200,
@@ -196,7 +256,7 @@ export default function App() {
     const handler = (e: MouseEvent) => {
       if (modalEntry) return;
       const t = e.target as Element;
-      if (!t.closest('.service-node') && !t.closest('.service-popup')) {
+      if (!t.closest('.service-node') && !t.closest('.expanded-bubble')) {
         setActive(null); setPopup(null);
       }
     };
@@ -204,7 +264,7 @@ export default function App() {
     return () => document.removeEventListener('click', handler);
   }, [modalEntry]);
 
-  const isMobile     = windowWidth <= 768;
+  const isMobile      = windowWidth <= 768;
   const activeService = SERVICES.find(s => s.id === active) ?? null;
 
   const containerSize  = isMobile ? Math.min(0.65 * windowWidth, 300) : D_TOTAL;
@@ -213,10 +273,7 @@ export default function App() {
   const bubbleFontSize = isMobile ? Math.max(7, Math.min(0.018 * windowWidth, 10)) : D_BUBBLE_FONT;
   const desktopScale   = isMobile ? 1 : Math.min(1, (windowWidth - 32) / D_TOTAL);
 
-  const subDist  = isMobile ? 75 : 100;
-  const popupW   = isMobile ? POPUP_W_MOBILE : POPUP_W_DESKTOP;
-
-  const frozen = active !== null; // convenient alias
+  const frozen = active !== null;
 
   const handleModalClose = () => { setModalEntry(null); setActive(null); };
 
@@ -224,38 +281,23 @@ export default function App() {
     e.stopPropagation();
     if (active === svc.id) { setActive(null); setPopup(null); return; }
 
-    const btn    = e.currentTarget.getBoundingClientRect();
-    const btnCx  = btn.left + btn.width / 2;
-    const btnCy  = btn.top  + btn.height / 2;
-    const vw = window.innerWidth, vh = window.innerHeight;
+    const btn   = e.currentTarget.getBoundingClientRect();
+    const btnCx = btn.left + btn.width  / 2;
+    const btnCy = btn.top  + btn.height / 2;
 
-    // Real angle from orbit center → bubble at this moment
-    const orbitEl   = document.querySelector('.orbit-container');
-    const orbitRect = orbitEl?.getBoundingClientRect();
-    const orbitCx   = orbitRect ? orbitRect.left + orbitRect.width  / 2 : btnCx;
-    const orbitCy   = orbitRect ? orbitRect.top  + orbitRect.height / 2 : btnCy;
-    const realAngle = Math.atan2(btnCy - orbitCy, btnCx - orbitCx);
-
-    // Popup: place outward from orbit center, beyond the sub-bubbles
-    const popupDist = subDist + 130;
-    let popupLeft = btnCx + Math.cos(realAngle) * popupDist - popupW / 2;
-    let popupTop  = btnCy + Math.sin(realAngle) * popupDist - POPUP_H_APPROX / 2;
-    popupLeft = Math.max(8, Math.min(popupLeft, vw - popupW - 8));
-    popupTop  = Math.max(8, Math.min(popupTop,  vh - POPUP_H_APPROX - 8));
-
-    // Tail direction: popup is at angle from bubble → tail points back at bubble
-    const deg = (realAngle * 180) / Math.PI;
-    let origin: string;
-    if      (deg > -45  && deg <  45)  origin = 'left center';
-    else if (deg >= 45  && deg < 135)  origin = 'top center';
-    else if (deg >= 135 || deg < -135) origin = 'right center';
-    else                               origin = 'bottom center';
-
-    setPopup({ id: svc.id, top: popupTop, left: popupLeft, origin, width: popupW, angleRad: realAngle, btnCx, btnCy });
+    if (isMobile) {
+      setPopup({
+        id: svc.id,
+        btnCx: window.innerWidth  / 2,
+        btnCy: window.innerHeight / 2,
+      });
+    } else {
+      setPopup({ id: svc.id, btnCx, btnCy });
+    }
     setActive(svc.id);
   };
 
-  const closePopup = () => { setActive(null); setPopup(null); };
+  const closePopup        = () => { setActive(null); setPopup(null); };
   const openModalFromPopup = (name: string) => { closePopup(); setModalEntry({ source: 'bubble', service: name }); };
 
   return (
@@ -307,7 +349,7 @@ export default function App() {
               pointerEvents: 'none',
             }} />
 
-            {/* ── Orbit rotator (single rotating wrapper) ── */}
+            {/* ── Single orbit rotator ── */}
             <motion.div
               style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', transformOrigin: 'center center' }}
               animate={frozen ? { rotate: 0 } : { rotate: 360 }}
@@ -354,15 +396,16 @@ export default function App() {
                         <span
                           className="bbl"
                           style={{
-                            background: svc.nodeBg, fontSize: `${bubbleFontSize}px`,
-                            fontWeight: 600, color: svc.nodeText,
+                            background: svc.nodeBg,
+                            fontSize: `${bubbleFontSize}px`, fontWeight: 600,
+                            color: svc.nodeText,
                             letterSpacing: '0.04em', textAlign: 'center',
                             textTransform: 'uppercase', lineHeight: 1.35, whiteSpace: 'pre-line',
-                            opacity:   frozen && !isActive ? 0.4 : 1,
-                            filter:    frozen && !isActive ? 'saturate(0.6)' : 'none',
-                            transform: isActive ? 'scale(1.15)' : 'scale(1)',
-                            transition: 'opacity 0.3s ease, filter 0.3s ease, transform 0.3s ease',
-                            ...(isActive ? { boxShadow: `0 0 0 3px ${C.navy}, 0 8px 28px rgba(0,0,0,0.25)` } : {}),
+                            // Active bubble is invisible — the expanded overlay covers it
+                            opacity:    isActive ? 0 : (frozen ? 0.25 : 1),
+                            filter:     !isActive && frozen ? 'saturate(0.4) blur(1px)' : 'none',
+                            transform:  !isActive && frozen ? 'scale(0.85)' : 'scale(1)',
+                            transition: 'opacity 0.4s ease, filter 0.4s ease, transform 0.4s ease',
                           }}
                         >
                           {svc.label}
@@ -374,17 +417,14 @@ export default function App() {
               })}
             </motion.div>
 
-            {/* ── Sub-bubbles — outside the rotator, fixed screen coords ── */}
+            {/* ── Sub-bubbles — fixed coords, outside rotator ── */}
             <AnimatePresence>
               {frozen && activeService && popup && (
                 <SubBubbles
                   btnCx={popup.btnCx}
                   btnCy={popup.btnCy}
-                  angle={popup.angleRad}
                   points={activeService.keyPoints}
-                  colors={getComplementaryColors(activeService.nodeBg)}
                   isMobile={isMobile}
-                  dist={subDist}
                 />
               )}
             </AnimatePresence>
@@ -438,48 +478,18 @@ export default function App() {
           </MagneticButton>
         </div>
 
-        {/* ── Service popup ── */}
-        <AnimatePresence mode="wait">
-          {popup && activeService && (
-            <motion.div
-              key={popup.id}
-              className="service-popup"
-              initial={{ opacity: 0, scale: 0.88 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.88 }}
-              transition={{ duration: 0.2, ease: 'easeOut', delay: 0.38 }}
-              style={{
-                position: 'fixed', top: popup.top, left: popup.left, width: popup.width,
-                transformOrigin: popup.origin, zIndex: 200,
-                background: C.navy, borderRadius: 22,
-                padding: '10px 12px 12px',
-                boxShadow: '0 8px 32px rgba(0,0,0,0.35)',
-                pointerEvents: 'auto', maxHeight: 180, overflowY: 'auto',
-              }}
-            >
-              <PopupTail origin={popup.origin} />
-
-              <button
-                onClick={(e) => { e.stopPropagation(); closePopup(); }}
-                style={{
-                  position: 'absolute', top: 8, right: 10,
-                  background: 'transparent', border: 'none', color: C.cream, opacity: 0.6,
-                  fontSize: 18, lineHeight: 1, cursor: 'pointer', padding: '2px 4px',
-                  transition: 'opacity 0.15s',
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.opacity = '1')}
-                onMouseLeave={(e) => (e.currentTarget.style.opacity = '0.6')}
-                aria-label="Close"
-              >×</button>
-
-              <p style={{ fontSize: 10, fontWeight: 800, color: C.cream, letterSpacing: '0.13em', textTransform: 'uppercase', margin: '0 0 6px', paddingRight: 20 }}>
-                {activeService.name}
-              </p>
-              <p style={{ fontSize: 11, color: 'rgba(234,226,183,0.8)', lineHeight: 1.65, fontWeight: 400, margin: 0 }}>
-                {activeService.description}
-              </p>
-              <GetStartedCTA onClick={(e) => { e.stopPropagation(); openModalFromPopup(activeService.name); }} />
-            </motion.div>
+        {/* ── Expanded bubble overlay (replaces popup) ── */}
+        <AnimatePresence>
+          {frozen && activeService && popup && (
+            <ExpandedBubble
+              svc={activeService}
+              btnCx={popup.btnCx}
+              btnCy={popup.btnCy}
+              isMobile={isMobile}
+              windowWidth={windowWidth}
+              onClose={closePopup}
+              onGetStarted={openModalFromPopup}
+            />
           )}
         </AnimatePresence>
       </div>
