@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useMotionValue, useSpring } from 'framer-motion';
 import OnboardingModal, { ModalEntry } from './OnboardingModal';
+import PrimoFunnel from './src/components/PrimoFunnel';
 
 // ── Color tokens ──────────────────────────────────────────────────────────────
 const C = {
@@ -247,10 +248,12 @@ interface ActiveState {
 
 // ── App ───────────────────────────────────────────────────────────────────────
 export default function App() {
-  const [active, setActive]           = useState<number | null>(null);
-  const [popup, setPopup]             = useState<ActiveState | null>(null);
-  const [modalEntry, setModalEntry]   = useState<ModalEntry | null>(null);
-  const [windowWidth, setWindowWidth] = useState(
+  const [active, setActive]               = useState<number | null>(null);
+  const [popup, setPopup]                 = useState<ActiveState | null>(null);
+  const [modalEntry, setModalEntry]       = useState<ModalEntry | null>(null);
+  const [funnelUnlocked, setFunnelUnlocked] = useState(false);
+  const funnelRef                         = useRef<HTMLDivElement>(null);
+  const [windowWidth, setWindowWidth]     = useState(
     typeof window !== 'undefined' ? window.innerWidth : 1200,
   );
 
@@ -260,6 +263,11 @@ export default function App() {
     window.addEventListener('resize', update);
     return () => window.removeEventListener('resize', update);
   }, []);
+
+  useEffect(() => {
+    document.body.style.overflow = funnelUnlocked ? 'auto' : 'hidden';
+    return () => { document.body.style.overflow = 'auto'; };
+  }, [funnelUnlocked]);
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -329,7 +337,7 @@ export default function App() {
         {/* ══ Block 1: Heading ══ */}
         <div style={{ flexShrink: 0, textAlign: 'center', marginTop: 0, marginBottom: isMobile ? 0 : 20, maxWidth: 640, padding: '0 16px' }}>
           <p style={{ margin: '0 0 14px', fontFamily: "'Mulish', -apple-system, sans-serif", fontSize: 'clamp(32px, 5.5vw, 54px)', fontWeight: 800, color: C.navy, lineHeight: 1.05, letterSpacing: '-0.03em' }}>
-            AI, but make it{' '}<span style={{ fontStyle: 'italic', color: C.orange }}>human.</span>
+            The AI partner you can trust,{' '}<span style={{ fontStyle: 'italic', color: C.orange }}>like that family member you can always count on.</span>
           </p>
           <p style={{ margin: '0 auto', fontFamily: "'Mulish', -apple-system, sans-serif", fontSize: 'clamp(14px, 2vw, 17px)', fontWeight: 400, color: C.navy, opacity: 0.65, lineHeight: 1.55, maxWidth: 580 }}>
             AI is everywhere. We cut through the noise — the right tools, the right setup, and a partner who genuinely wants you to win.
@@ -473,6 +481,32 @@ export default function App() {
               </svg>
             </motion.button>
           </MagneticButton>
+
+          {/* Explore funnel unlock button */}
+          {!funnelUnlocked && (
+            <motion.button
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.8 }}
+              onClick={() => {
+                setFunnelUnlocked(true);
+                setTimeout(() => funnelRef.current?.scrollIntoView({ behavior: 'smooth' }), 120);
+              }}
+              style={{
+                marginTop: 18, background: 'transparent', border: 'none',
+                color: 'rgba(26,58,74,0.45)', fontSize: 12, fontWeight: 700,
+                letterSpacing: '0.12em', textTransform: 'uppercase',
+                cursor: 'pointer', fontFamily: "'Mulish', sans-serif",
+                display: 'flex', alignItems: 'center', gap: 6, padding: '6px 0',
+              }}
+              whileHover={{ color: C.navy }}
+            >
+              Explore the full Primo system
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                <path d="M6 1v10M1 6l5 5 5-5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </motion.button>
+          )}
         </div>
 
         {/* ── Backdrop — sits below sub-bubbles and expanded bubble ── */}
@@ -522,6 +556,13 @@ export default function App() {
             />
           )}
         </AnimatePresence>
+      </div>
+
+      {/* ── Sales Funnel (unlocked on demand) ── */}
+      <div ref={funnelRef}>
+        {funnelUnlocked && (
+          <PrimoFunnel onOpenForm={(name) => setModalEntry({ source: 'bubble', service: name })} />
+        )}
       </div>
 
       <OnboardingModal entry={modalEntry} onClose={handleModalClose} />
