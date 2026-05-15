@@ -43,9 +43,9 @@ function SubBubbles({ btnCx, btnCy, points, isMobile }: {
   const expandedRadius = isMobile
     ? Math.min(window.innerWidth * 0.5, 280) / 2
     : 150;
-  const gap     = isMobile ? 50 : 65;
+  const gap     = isMobile ? 52 : 80;
   const dist    = expandedRadius + gap;
-  const size    = isMobile ? 75 : 95;
+  const size    = isMobile ? 75 : 90;
   const angles  = [-90, 30, 150]; // equilateral triangle: top, lower-right, lower-left
   const colors  = [
     { bg: C.cream,  text: C.navy  },
@@ -85,7 +85,7 @@ function SubBubbles({ btnCx, btnCy, points, isMobile }: {
               fontFamily: "'Mulish', sans-serif",
               fontWeight: 700, lineHeight: 1.25, letterSpacing: '0.02em',
               boxShadow: '0 6px 22px rgba(0,0,0,0.18)',
-              pointerEvents: 'none', zIndex: 95,
+              pointerEvents: 'none', zIndex: 110,
             }}
           >
             {point}
@@ -309,7 +309,11 @@ export default function App() {
         btnCy: window.innerHeight / 2,
       });
     } else {
-      setPopup({ id: svc.id, btnCx, btnCy });
+      setPopup({
+        id: svc.id,
+        btnCx: window.innerWidth  / 2,
+        btnCy: window.innerHeight / 2,
+      });
     }
     setActive(svc.id);
   };
