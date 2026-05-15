@@ -1,4 +1,4 @@
-import matter from 'gray-matter';
+import fm from 'front-matter';
 
 const modules = import.meta.glob('/src/content/blog/*.md', {
   query: '?raw',
@@ -25,7 +25,9 @@ export function getAllPosts(): BlogPost[] {
 
   for (const path in modules) {
     const raw = modules[path];
-    const { data, content } = matter(raw);
+    const parsed = fm(raw);
+    const data = parsed.attributes as any;
+    const content = parsed.body;
     const slug = path.split('/').pop()?.replace('.md', '') || '';
 
     posts.push({
