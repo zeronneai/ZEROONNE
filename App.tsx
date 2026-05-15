@@ -565,11 +565,12 @@ export default function App() {
                 top: '50%',
                 left: '50%',
                 transform: 'translate(-50%, -50%)',
-                width: centerSize,
-                height: centerSize,
+                width: 'clamp(110px, 26vw, 180px)',
+                height: 'clamp(110px, 26vw, 180px)',
                 borderRadius: '50%',
-                background: C.navy,
-                boxShadow: `0 0 0 2px ${C.cream}, 0 8px 32px rgba(0,0,0,0.35), 0 2px 8px rgba(0,0,0,0.20)`,
+                background: 'transparent',
+                border: 'none',
+                boxShadow: 'none',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -577,16 +578,14 @@ export default function App() {
                 cursor: 'pointer',
                 textDecoration: 'none',
               }}
-              whileHover={{ boxShadow: `0 0 0 3px ${C.cream}, 0 12px 40px rgba(0,0,0,0.45), 0 2px 8px rgba(0,0,0,0.25)` }}
-              transition={{ duration: 0.25 }}
               title="Follow us on Instagram"
             >
               <img
                 src={CENTER_LOGO_URL}
                 alt="Primo AI Studio"
                 style={{
-                  width: '75%',
-                  height: '75%',
+                  width: '100%',
+                  height: '100%',
                   objectFit: 'contain',
                   borderRadius: '50%',
                   display: 'block',
