@@ -173,7 +173,7 @@ function NextButton({
           border: 'none',
           borderRadius: 50,
           padding: '14px 32px',
-          fontFamily: 'Arial, sans-serif',
+          fontFamily: "'Mulish', -apple-system, sans-serif",
           fontSize: 13,
           fontWeight: 700,
           letterSpacing: '0.1em',
@@ -216,7 +216,7 @@ function ServiceCard({
         borderRadius: 12,
         padding: '14px 18px',
         cursor: 'pointer',
-        fontFamily: 'Arial, sans-serif',
+        fontFamily: "'Mulish', -apple-system, sans-serif",
         fontSize: 14,
         fontWeight: selected ? 600 : 400,
         color: '#1a3a4a',
@@ -263,9 +263,9 @@ function OptionItem({
         padding: '14px 18px',
         marginBottom: 10,
         cursor: 'pointer',
-        fontFamily: 'Arial, sans-serif',
+        fontFamily: "'Mulish', -apple-system, sans-serif",
         fontSize: 14,
-        fontWeight: selected ? 600 : 400,
+        fontWeight: selected ? 700 : 500,
         color: '#1a3a4a',
         transition: 'all 0.15s ease',
         userSelect: 'none',
@@ -305,7 +305,7 @@ function ServiceSelectionStep({
         borderRadius: 20,
         border: '1.5px solid #1a3a4a',
         color: '#1a3a4a',
-        fontFamily: 'Arial, sans-serif',
+        fontFamily: "'Mulish', -apple-system, sans-serif",
         fontSize: 10,
         fontWeight: 700,
         letterSpacing: '0.12em',
@@ -316,7 +316,7 @@ function ServiceSelectionStep({
       </span>
 
       <p className="primo-q-text" style={{
-        fontFamily: 'Georgia, serif',
+        fontFamily: "'Mulish', -apple-system, sans-serif",
         fontSize: 22,
         fontWeight: 700,
         color: '#1a3a4a',
@@ -326,7 +326,7 @@ function ServiceSelectionStep({
         Which services are you interested in?
       </p>
       <p style={{
-        fontFamily: 'Arial, sans-serif',
+        fontFamily: "'Mulish', -apple-system, sans-serif",
         fontSize: 12,
         color: 'rgba(26,58,74,0.45)',
         margin: '0 0 24px',
@@ -384,7 +384,7 @@ function QuestionStep({
           display: 'inline-block',
           background: '#f26419',
           color: '#eae2b7',
-          fontFamily: 'Arial, sans-serif',
+          fontFamily: "'Mulish', -apple-system, sans-serif",
           fontSize: 10,
           fontWeight: 700,
           letterSpacing: '0.12em',
@@ -402,16 +402,16 @@ function QuestionStep({
         fontSize: 11,
         letterSpacing: '0.2em',
         color: '#f26419',
-        fontFamily: 'Arial, sans-serif',
+        fontFamily: "'Mulish', -apple-system, sans-serif",
         fontWeight: 600,
       }}>
         {String(stepIndex + 1).padStart(2, '0')} / {String(QUESTIONS.length).padStart(2, '0')}
       </p>
 
       <p className="primo-q-text" style={{
-        fontFamily: 'Georgia, serif',
+        fontFamily: "'Mulish', -apple-system, sans-serif",
         fontSize: 20,
-        fontWeight: 700,
+        fontWeight: 800,
         color: '#1a3a4a',
         lineHeight: 1.4,
         margin: '0 0 28px',
@@ -522,7 +522,7 @@ function ContactStep({
         : '1.5px solid rgba(26,58,74,0.15)',
     borderRadius: 12,
     padding: '14px 18px',
-    fontFamily: 'Arial, sans-serif',
+    fontFamily: "'Mulish', -apple-system, sans-serif",
     fontSize: 14,
     color: '#1a3a4a',
     marginBottom: errors[field] ? 4 : 12,
@@ -533,7 +533,7 @@ function ContactStep({
 
   const errorMsg = (field: string) =>
     errors[field] ? (
-      <p style={{ fontSize: 11, color: '#e05555', marginTop: -8, marginBottom: 10, fontFamily: 'Arial, sans-serif' }}>
+      <p style={{ fontSize: 11, color: '#e05555', marginTop: -8, marginBottom: 10, fontFamily: "'Mulish', -apple-system, sans-serif" }}>
         {errors[field]}
       </p>
     ) : null;
@@ -548,7 +548,7 @@ function ContactStep({
       style={{ paddingBottom: 24 }}
     >
       <p className="primo-q-text" style={{
-        fontFamily: 'Georgia, serif',
+        fontFamily: "'Mulish', -apple-system, sans-serif",
         fontSize: 22,
         fontWeight: 700,
         color: '#1a3a4a',
@@ -557,7 +557,7 @@ function ContactStep({
         Almost there.
       </p>
       <p style={{
-        fontFamily: 'Arial, sans-serif',
+        fontFamily: "'Mulish', -apple-system, sans-serif",
         fontSize: 13,
         color: '#1a3a4a',
         opacity: 0.5,
@@ -641,10 +641,10 @@ function ThankYouScreen({ onClose }: { onClose: () => void }) {
           filter: 'sepia(1) saturate(4) hue-rotate(-10deg) brightness(0.95)',
         }}
       />
-      <p style={{ fontFamily: 'Georgia, serif', fontSize: 24, fontWeight: 700, color: '#1a3a4a', margin: '0 0 10px', lineHeight: 1.3 }}>
+      <p style={{ fontFamily: "'Mulish', -apple-system, sans-serif", fontSize: 24, fontWeight: 700, color: '#1a3a4a', margin: '0 0 10px', lineHeight: 1.3 }}>
         We'll be in touch soon.
       </p>
-      <p style={{ fontFamily: 'Arial, sans-serif', fontSize: 14, color: 'rgba(26,58,74,0.6)', margin: '0 0 32px' }}>
+      <p style={{ fontFamily: "'Mulish', -apple-system, sans-serif", fontSize: 14, color: 'rgba(26,58,74,0.6)', margin: '0 0 32px' }}>
         Your primo is already working on it.
       </p>
       <button
@@ -657,7 +657,7 @@ function ThankYouScreen({ onClose }: { onClose: () => void }) {
           color: hovered ? '#eae2b7' : '#1a3a4a',
           borderRadius: 50,
           padding: '12px 32px',
-          fontFamily: 'Arial, sans-serif',
+          fontFamily: "'Mulish', -apple-system, sans-serif",
           fontSize: 13,
           fontWeight: 700,
           letterSpacing: '0.1em',
@@ -806,7 +806,7 @@ export default function OnboardingModal({ entry, onClose }: OnboardingModalProps
                     opacity: 0.5,
                     cursor: 'pointer',
                     padding: '4px 6px',
-                    fontFamily: 'Arial, sans-serif',
+                    fontFamily: "'Mulish', -apple-system, sans-serif",
                     zIndex: 1,
                     transition: 'opacity 0.15s',
                   }}
@@ -856,7 +856,7 @@ export default function OnboardingModal({ entry, onClose }: OnboardingModalProps
                     color: 'rgba(26,58,74,0.5)',
                     textAlign: 'right',
                     letterSpacing: '0.1em',
-                    fontFamily: 'Arial, sans-serif',
+                    fontFamily: "'Mulish', -apple-system, sans-serif",
                   }}>
                     {progressLabel}
                   </p>
