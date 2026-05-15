@@ -337,7 +337,7 @@ export default function App() {
         {/* ══ Block 1: Heading ══ */}
         <div style={{ flexShrink: 0, textAlign: 'center', marginTop: 0, marginBottom: isMobile ? 0 : 20, maxWidth: 640, padding: '0 16px' }}>
           <p style={{ margin: '0 0 14px', fontFamily: "'Mulish', -apple-system, sans-serif", fontSize: 'clamp(32px, 5.5vw, 54px)', fontWeight: 800, color: C.navy, lineHeight: 1.05, letterSpacing: '-0.03em' }}>
-            AI, but make it{' '}<span style={{ fontStyle: 'italic', color: C.orange }}>human.</span>
+            The AI partner you can trust,{' '}<span style={{ fontStyle: 'italic', color: C.orange }}>like that family member you can always count on.</span>
           </p>
           <p style={{ margin: '0 auto', fontFamily: "'Mulish', -apple-system, sans-serif", fontSize: 'clamp(14px, 2vw, 17px)', fontWeight: 400, color: C.navy, opacity: 0.65, lineHeight: 1.55, maxWidth: 580 }}>
             AI is everywhere. We cut through the noise — the right tools, the right setup, and a partner who genuinely wants you to win.
