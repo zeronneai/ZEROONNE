@@ -235,10 +235,10 @@ const SERVICES = [
 ];
 
 // Layout constants
-const D_RING_RADIUS = 148;
-const D_BUBBLE      = 72;
+const D_RING_RADIUS = 128;
+const D_BUBBLE      = 64;
 const D_TOTAL       = D_RING_RADIUS * 2 + D_BUBBLE + 60;
-const D_BUBBLE_FONT = 9;
+const D_BUBBLE_FONT = 8.5;
 
 interface ActiveState {
   id: number;
@@ -457,9 +457,7 @@ export default function App() {
 
         {/* ══ Block 3: Hint + Button ══ */}
         <div style={{ flexShrink: 0, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0 }}>
-          <p style={{ margin: '0 0 12px', fontSize: 11, fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(26,58,74,0.4)', visibility: active ? 'hidden' : 'visible', lineHeight: 1 }}>
-            Tap a service to explore
-          </p>
+
           <MagneticButton>
             <motion.button
               onClick={() => setModalEntry({ source: 'getstarted' })}
