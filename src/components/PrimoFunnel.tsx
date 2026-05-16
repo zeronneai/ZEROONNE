@@ -5,6 +5,7 @@ import {
   useMotionValue, useSpring, useReducedMotion,
   animate, LayoutGroup,
 } from 'framer-motion';
+import { PrimoIcon, IconName } from './PrimoIcon';
 
 // ── Color tokens ──────────────────────────────────────────────────────────────
 const C = {
@@ -175,7 +176,7 @@ function DotNav({ activeSection }: { activeSection: number }) {
 // ── Vertical Spine (Section 3 & 6) ───────────────────────────────────────────
 interface SpineCard {
   label: string;
-  icon: string;
+  icon: IconName;
   title: string;
   body: string;
 }
@@ -308,7 +309,7 @@ function SpineCard({ card, index, side, isMobile, textColor, bg, reduced }:
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 10 }}>
-          <span style={{ fontSize: 22 }}>{card.icon}</span>
+          <PrimoIcon name={card.icon} size={44} />
           <span style={{ fontSize: 10, fontWeight: 800, letterSpacing: '0.14em', textTransform: 'uppercase', color: C.orange }}>{card.label}</span>
         </div>
         <div style={{ fontSize: 16, fontWeight: 800, color: textColor, marginBottom: 10, lineHeight: 1.25 }}>{card.title}</div>
@@ -355,7 +356,7 @@ function MagneticCard({ card, delay }: { card: typeof ICP_CARDS[0]; delay: numbe
       }}
       whileHover={reduced ? {} : { y: -8, boxShadow: '0 24px 60px rgba(0,0,0,0.22)' }}
     >
-      <div style={{ fontSize: 32, marginBottom: 14 }}>{card.icon}</div>
+      <div style={{ marginBottom: 14 }}><PrimoIcon name={card.icon} size={56} /></div>
       <div style={{ fontSize: 15, fontWeight: 800, color: C.cream, marginBottom: 12, lineHeight: 1.3 }}>{card.title}</div>
       <div style={{ fontSize: 13, fontWeight: 400, color: 'rgba(234,226,183,0.7)', lineHeight: 1.55, marginBottom: 18 }}>{card.hook}</div>
       <div style={{
@@ -488,11 +489,11 @@ function Section1({ onOpenForm }: { onOpenForm: (s?: string) => void }) {
 
 // ── Section 2 — Built For You ─────────────────────────────────────────────────
 const ICP_CARDS = [
-  { icon: '🏥', title: 'Healthcare & Wellness', hook: 'Patients want answers fast. AI gives them — before the appointment.', pkg: 'AI Automation + Content Marketing', color: C.green },
-  { icon: '⚖️', title: 'Legal & Professional Services', hook: 'Trust is earned in seconds online. AI builds the brand that converts.', pkg: 'Brand Identity + Web Platforms', color: C.yellow },
-  { icon: '🏠', title: 'Real Estate & Finance', hook: 'Every day without AI is leads going to your competitor.', pkg: 'AI Integration + Video Ads', color: C.orange },
-  { icon: '🛍️', title: 'E-Commerce & Retail', hook: 'Personalization at scale is the only edge left. AI delivers it.', pkg: 'Content Marketing + AI Automation', color: C.navy },
-  { icon: '🎓', title: 'Education & Coaching', hook: 'Your expertise is the product. AI makes it infinitely scalable.', pkg: 'Brand Identity + Content Marketing', color: C.green },
+  { icon: 'healthcare' as IconName, title: 'Healthcare & Wellness', hook: 'Patients want answers fast. AI gives them — before the appointment.', pkg: 'AI Automation + Content Marketing', color: C.green },
+  { icon: 'legal' as IconName, title: 'Legal & Professional Services', hook: 'Trust is earned in seconds online. AI builds the brand that converts.', pkg: 'Brand Identity + Web Platforms', color: C.yellow },
+  { icon: 'realestate' as IconName, title: 'Real Estate & Finance', hook: 'Every day without AI is leads going to your competitor.', pkg: 'AI Integration + Video Ads', color: C.orange },
+  { icon: 'ecommerce' as IconName, title: 'E-Commerce & Retail', hook: 'Personalization at scale is the only edge left. AI delivers it.', pkg: 'Content Marketing + AI Automation', color: C.navy },
+  { icon: 'education' as IconName, title: 'Education & Coaching', hook: 'Your expertise is the product. AI makes it infinitely scalable.', pkg: 'Brand Identity + Content Marketing', color: C.green },
 ];
 
 function Section2({ onOpenForm }: { onOpenForm: (s?: string) => void }) {
@@ -544,14 +545,14 @@ function Section2({ onOpenForm }: { onOpenForm: (s?: string) => void }) {
 
 // ── Section 3 — Client Journey (Spine) ───────────────────────────────────────
 const JOURNEY_CARDS: SpineCard[] = [
-  { label: 'Discovery',        icon: '👁️', title: 'They find you',                    body: 'AI-powered content and ads bring qualified traffic to your door — people already looking for what you offer.' },
-  { label: 'First Impression', icon: '⚡', title: 'You captivate instantly',           body: 'Your AI-built brand creates instant trust. They stay, they read, they want more.' },
-  { label: 'Nurture',          icon: '🤝', title: 'AI keeps them warm',               body: 'Automated sequences and always-on content keep your brand top of mind between touchpoints.' },
-  { label: 'Conversion',       icon: '🎯', title: 'The right offer at the right time', body: 'AI identifies buying signals and surfaces the perfect offer — no guesswork, no generic blasts.' },
-  { label: 'Delivery',         icon: '🚀', title: 'Effortless fulfillment',            body: 'Integrated AI tools handle onboarding and communication — premium experience without extra overhead.' },
-  { label: 'Retention',        icon: '🔄', title: 'They stay and grow',               body: 'Smart re-engagement campaigns and upsell sequences keep clients in your ecosystem longer.' },
-  { label: 'Advocacy',         icon: '📣', title: 'Clients become fans',              body: 'Automated referral and testimonial systems turn happy clients into your loudest growth channel.' },
-  { label: 'Mastery',          icon: '🏆', title: 'You scale with confidence',        body: 'Every stage is measured and compounding. You\'re not guessing anymore — you\'re growing on purpose.' },
+  { label: 'Discovery',        icon: 'discovery'        as IconName, title: 'They find you',                    body: 'AI-powered content and ads bring qualified traffic to your door — people already looking for what you offer.' },
+  { label: 'First Impression', icon: 'firstimpression'  as IconName, title: 'You captivate instantly',           body: 'Your AI-built brand creates instant trust. They stay, they read, they want more.' },
+  { label: 'Nurture',          icon: 'nurture'          as IconName, title: 'AI keeps them warm',               body: 'Automated sequences and always-on content keep your brand top of mind between touchpoints.' },
+  { label: 'Conversion',       icon: 'conversion'       as IconName, title: 'The right offer at the right time', body: 'AI identifies buying signals and surfaces the perfect offer — no guesswork, no generic blasts.' },
+  { label: 'Delivery',         icon: 'delivery'         as IconName, title: 'Effortless fulfillment',            body: 'Integrated AI tools handle onboarding and communication — premium experience without extra overhead.' },
+  { label: 'Retention',        icon: 'retention'        as IconName, title: 'They stay and grow',               body: 'Smart re-engagement campaigns and upsell sequences keep clients in your ecosystem longer.' },
+  { label: 'Advocacy',         icon: 'advocacy'         as IconName, title: 'Clients become fans',              body: 'Automated referral and testimonial systems turn happy clients into your loudest growth channel.' },
+  { label: 'Mastery',          icon: 'mastery'          as IconName, title: 'You scale with confidence',        body: 'Every stage is measured and compounding. You\'re not guessing anymore — you\'re growing on purpose.' },
 ];
 
 function Section3({ onOpenForm }: { onOpenForm: (s?: string) => void }) {
@@ -751,12 +752,12 @@ function Section5() {
 
 // ── Section 6 — 90-Day Timeline (Spine) ──────────────────────────────────────
 const MILESTONE_CARDS: SpineCard[] = [
-  { label: 'Day 1',  icon: '📞', title: 'Strategy call & AI audit',    body: 'We align on goals, assess your stack, and define the exact scope of your sprint.' },
-  { label: 'Day 7',  icon: '🗺️', title: 'Roadmap delivered',           body: 'A complete, prioritized action plan is in your hands — clear path forward.' },
-  { label: 'Day 14', icon: '🚀', title: 'First deliverables live',      body: 'Initial assets, automations, or content pieces are deployed and generating real output.' },
-  { label: 'Day 30', icon: '⚙️', title: 'Full sprint activation',       body: 'Every element of your chosen services is running. We\'re tracking, measuring, and iterating.' },
-  { label: 'Day 60', icon: '📊', title: 'Optimization review',          body: 'Data drives our next moves. We double down on what\'s working and eliminate what isn\'t.' },
-  { label: 'Day 90', icon: '🏆', title: 'Scale decision point',         body: 'You\'ve seen results. Now we plan the next phase — more services, more channels, more growth.' },
+  { label: 'Day 1',  icon: 'strategycall'  as IconName, title: 'Strategy call & AI audit',    body: 'We align on goals, assess your stack, and define the exact scope of your sprint.' },
+  { label: 'Day 7',  icon: 'roadmap'       as IconName, title: 'Roadmap delivered',           body: 'A complete, prioritized action plan is in your hands — clear path forward.' },
+  { label: 'Day 14', icon: 'launch'        as IconName, title: 'First deliverables live',      body: 'Initial assets, automations, or content pieces are deployed and generating real output.' },
+  { label: 'Day 30', icon: 'sprint'        as IconName, title: 'Full sprint activation',       body: 'Every element of your chosen services is running. We\'re tracking, measuring, and iterating.' },
+  { label: 'Day 60', icon: 'optimization'  as IconName, title: 'Optimization review',          body: 'Data drives our next moves. We double down on what\'s working and eliminate what isn\'t.' },
+  { label: 'Day 90', icon: 'scale'         as IconName, title: 'Scale decision point',         body: 'You\'ve seen results. Now we plan the next phase — more services, more channels, more growth.' },
 ];
 
 function Section6({ onOpenForm }: { onOpenForm: (s?: string) => void }) {
@@ -858,7 +859,10 @@ function Footer() {
           <div>
             <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.14em', textTransform: 'uppercase', color: C.orange, marginBottom: 16 }}>Hours</div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-              <div style={{ fontSize: 13, fontWeight: 500, color: 'rgba(234,226,183,0.55)' }}>🕗 Mon-Fri · 8:00 AM - 5:00 PM</div>
+              <div style={{ fontSize: 13, fontWeight: 500, color: 'rgba(234,226,183,0.55)', display: 'flex', alignItems: 'center', gap: 6 }}>
+                <PrimoIcon name="clock" size={16} />
+                Mon-Fri · 8:00 AM - 5:00 PM
+              </div>
               <div style={{ fontSize: 13, fontWeight: 500, color: 'rgba(234,226,183,0.55)' }}>Saturday · 10:00 AM - 5:00 PM</div>
               <div style={{ fontSize: 13, fontWeight: 500, color: 'rgba(234,226,183,0.55)' }}>Sunday · Closed</div>
             </div>

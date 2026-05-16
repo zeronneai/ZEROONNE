@@ -9,6 +9,7 @@ import BlogHeader from '../components/BlogHeader';
 import TableOfContents from '../components/TableOfContents';
 import BlogCTA from '../components/BlogCTA';
 import BlogCard from '../components/BlogCard';
+import { PrimoIcon } from '../components/PrimoIcon';
 import { getPostBySlug, getRelatedPosts } from '../lib/blog';
 
 const C = { navy: '#1a3a4a', orange: '#f26419', cream: '#eae2b7' };
@@ -286,19 +287,28 @@ export default function BlogPost() {
 
           <div style={{
             display: 'flex',
-            gap: 12,
+            gap: 16,
             fontSize: 13,
             color: C.navy,
-            opacity: 0.55,
+            opacity: 0.6,
             fontFamily: "'Mulish', sans-serif",
             flexWrap: 'wrap',
             alignItems: 'center',
           }}>
-            <span>By {post.author}</span>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+              <PrimoIcon name="calendar" size={16} />
+              {formattedDate}
+            </span>
             <span>·</span>
-            <span>{formattedDate}</span>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+              <PrimoIcon name="readtime" size={16} />
+              {post.readTime}
+            </span>
             <span>·</span>
-            <span>{post.readTime}</span>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+              <PrimoIcon name="author" size={16} />
+              {post.author}
+            </span>
           </div>
         </section>
 
