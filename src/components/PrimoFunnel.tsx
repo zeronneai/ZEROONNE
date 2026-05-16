@@ -358,15 +358,26 @@ function MagneticCard({ card, delay }: { card: typeof ICP_CARDS[0]; delay: numbe
       whileHover={reduced ? {} : { y: -8, boxShadow: '0 24px 60px rgba(0,0,0,0.22)' }}
     >
       <div style={{ marginBottom: 14 }}><PrimoIcon name={card.icon} size={56} /></div>
-      <div style={{ fontSize: 15, fontWeight: 800, color: C.cream, marginBottom: 12, lineHeight: 1.3 }}>{card.title}</div>
-      <div style={{ fontSize: 13, fontWeight: 400, color: 'rgba(234,226,183,0.7)', lineHeight: 1.55, marginBottom: 18 }}>{card.hook}</div>
       <div style={{
-        display: 'inline-block', background: `${card.color}22`,
-        border: `1px solid ${card.color}55`, borderRadius: 999,
-        padding: '4px 12px', fontSize: 11, fontWeight: 700,
-        color: card.color === C.navy ? C.cream : card.color, letterSpacing: '0.05em',
+        fontFamily: "'Mulish', sans-serif", fontSize: 'clamp(16px, 1.9vw, 19px)',
+        fontWeight: 800, color: C.cream, marginBottom: 12, lineHeight: 1.25,
+        letterSpacing: '-0.01em',
       }}>
-        {card.pkg}
+        {card.title}
+      </div>
+      <div style={{
+        fontFamily: "'Mulish', sans-serif", fontSize: 'clamp(13px, 1.5vw, 15px)',
+        fontWeight: 500, color: 'rgba(234,226,183,0.8)', lineHeight: 1.55,
+      }}>
+        {card.hook}
+      </div>
+      <div style={{
+        fontFamily: "'Mulish', sans-serif", fontSize: 'clamp(13px, 1.6vw, 16px)',
+        fontWeight: 700, fontStyle: 'italic', color: C.orange, lineHeight: 1.4,
+        marginTop: 14, paddingTop: 14,
+        borderTop: '1px solid rgba(234,226,183,0.15)',
+      }}>
+        {card.closing}
       </div>
     </motion.div>
   );
@@ -700,11 +711,11 @@ function Section1({ onOpenForm }: { onOpenForm: (s?: string) => void }) {
 
 // ── Section 2 — Built For You ─────────────────────────────────────────────────
 const ICP_CARDS = [
-  { icon: 'healthcare' as IconName, title: 'Healthcare & Wellness', hook: 'Patients want answers fast. AI gives them — before the appointment.', pkg: 'AI Automation + Content Marketing', color: C.green },
-  { icon: 'legal' as IconName, title: 'Legal & Professional Services', hook: 'Trust is earned in seconds online. AI builds the brand that converts.', pkg: 'Brand Identity + Web Platforms', color: C.yellow },
-  { icon: 'realestate' as IconName, title: 'Real Estate & Finance', hook: 'Every day without AI is leads going to your competitor.', pkg: 'AI Integration + Video Ads', color: C.orange },
-  { icon: 'ecommerce' as IconName, title: 'E-Commerce & Retail', hook: 'Personalization at scale is the only edge left. AI delivers it.', pkg: 'Content Marketing + AI Automation', color: C.navy },
-  { icon: 'education' as IconName, title: 'Education & Coaching', hook: 'Your expertise is the product. AI makes it infinitely scalable.', pkg: 'Brand Identity + Content Marketing', color: C.green },
+  { icon: 'healthcare' as IconName, title: 'Healthcare & Wellness Clinics',    hook: "You're booking patients, training staff, handling insurance. The last thing you need is to learn how to 'prompt engineer' an intake bot.",                                                 closing: 'We install it. You see patients.',          color: C.green  },
+  { icon: 'legal'      as IconName, title: 'Legal & Professional Services',     hook: "Your billable hours are too valuable to spend on data entry, lead follow-up, or figuring out which AI tool won't hallucinate.",                                                              closing: 'We build the systems. You bill the hours.', color: C.yellow },
+  { icon: 'realestate' as IconName, title: 'Real Estate & Finance',             hook: "Speed wins deals. You need to respond to leads in seconds, not 'when I get back to my desk.'",                                                                                              closing: 'We make your business answer 24/7. You close the deal.', color: C.orange },
+  { icon: 'ecommerce'  as IconName, title: 'E-Commerce & Retail',               hook: "You're managing inventory, shipping, customer support, ads, and content. AI can run 4 of those for you. You probably know which 4.",                                                        closing: 'We set it up. You watch margins improve.',  color: C.cream  },
+  { icon: 'education'  as IconName, title: 'Education & Coaching',               hook: "You sell knowledge — and your time is the bottleneck. AI agents can scale your expertise without scaling your hours.",                                                                      closing: 'We clone your process. You scale your impact.', color: C.green },
 ];
 
 function Section2({ onOpenForm }: { onOpenForm: (s?: string) => void }) {
@@ -726,13 +737,13 @@ function Section2({ onOpenForm }: { onOpenForm: (s?: string) => void }) {
           >
             Built For You
           </motion.p>
-          <AnimatedHeading text="Built for businesses like yours." color={C.cream} center />
+          <AnimatedHeading text="Built for owners who don't have time to become AI experts." color={C.cream} center />
           <motion.p
             initial={{ opacity: 0, y: 12 }} animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.7, ease: EASE_OUT, delay: 0.2 }}
-            style={{ margin: '20px auto 0', fontSize: 'clamp(15px,2vw,18px)', fontWeight: 400, color: 'rgba(234,226,183,0.6)', maxWidth: 500, lineHeight: 1.6 }}
+            style={{ margin: '20px auto 0', fontSize: 'clamp(15px,1.8vw,18px)', fontWeight: 500, color: 'rgba(234,226,183,0.7)', maxWidth: 620, lineHeight: 1.55 }}
           >
-            We've built AI systems for every vertical. Here's how we think about yours.
+            If you&apos;re growing a business, you&apos;re already wearing 12 hats. We&apos;re not going to hand you a 13th. We handle this one for you.
           </motion.p>
         </div>
 
