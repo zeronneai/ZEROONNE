@@ -834,7 +834,7 @@ function Section4({ onOpenForm }: { onOpenForm: (s?: string) => void }) {
           </motion.p>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(200px,1fr))', gap: 'clamp(20px,3vw,40px)', marginBottom: 48 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(220px,1fr))', gap: 'clamp(20px,3vw,40px)', marginBottom: 48, alignItems: 'stretch' }}>
           {PRICING_CARDS.map((card, i) => {
             const isPopular = i === POPULAR_IDX;
             const delay = isPopular ? (PRICING_CARDS.length * 0.08) : (i * 0.08);
@@ -851,6 +851,7 @@ function Section4({ onOpenForm }: { onOpenForm: (s?: string) => void }) {
                 style={{
                   background: card.bg, borderRadius: 22, padding: '32px 24px',
                   display: 'flex', flexDirection: 'column',
+                  height: '100%', minHeight: 480,
                   position: 'relative', overflow: 'hidden',
                   boxShadow: isPopular ? `0 8px 48px ${C.orange}44` : '0 2px 12px rgba(0,0,0,0.12)',
                 }}

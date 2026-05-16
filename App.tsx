@@ -235,10 +235,10 @@ const SERVICES = [
 ];
 
 // Layout constants
-const D_RING_RADIUS = 128;
-const D_BUBBLE      = 64;
+const D_RING_RADIUS = 175;
+const D_BUBBLE      = 80;
 const D_TOTAL       = D_RING_RADIUS * 2 + D_BUBBLE + 60;
-const D_BUBBLE_FONT = 8.5;
+const D_BUBBLE_FONT = 7.5;
 
 interface ActiveState {
   id: number;
@@ -284,7 +284,7 @@ export default function App() {
   const isMobile      = windowWidth <= 768;
   const activeService = SERVICES.find(s => s.id === active) ?? null;
 
-  const containerSize  = isMobile ? Math.min(0.65 * windowWidth, 300) : D_TOTAL;
+  const containerSize  = isMobile ? Math.min(0.68 * windowWidth, 320) : D_TOTAL;
   const bubbleSize     = isMobile ? Math.max(52, Math.min(0.13 * windowWidth, 72)) : D_BUBBLE;
   const ringRadius     = isMobile ? containerSize / 2 - bubbleSize / 2 - 6 : D_RING_RADIUS;
   const bubbleFontSize = isMobile ? Math.max(7, Math.min(0.018 * windowWidth, 10)) : D_BUBBLE_FONT;
@@ -359,6 +359,51 @@ export default function App() {
             <strong style={{ fontWeight: 700, color: 'rgba(26,58,74,0.85)' }}>You stay focused on what you do best. We handle the rest.</strong>
           </p>
         </div>
+
+        {/* ══ Punch line ══ */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+          style={{
+            marginTop: 'clamp(20px, 3vh, 32px)',
+            marginBottom: 'clamp(16px, 2.5vh, 24px)',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: 8,
+          }}
+        >
+          <span style={{
+            fontFamily: "'Mulish', sans-serif",
+            fontSize: 10,
+            fontWeight: 800,
+            letterSpacing: '0.2em',
+            textTransform: 'uppercase',
+            color: '#f26419',
+            background: 'rgba(242, 100, 25, 0.1)',
+            padding: '5px 12px',
+            borderRadius: 20,
+            border: '1px solid rgba(242, 100, 25, 0.25)',
+          }}>
+            ✦ Your next move
+          </span>
+          <h2 style={{
+            fontFamily: "'Mulish', sans-serif",
+            fontSize: 'clamp(18px, 2.8vw, 26px)',
+            fontWeight: 800,
+            color: '#1a3a4a',
+            textAlign: 'center',
+            margin: 0,
+            lineHeight: 1.2,
+            letterSpacing: '-0.01em',
+          }}>
+            Want to see what AI could{' '}
+            <span style={{ color: '#f26419', fontStyle: 'italic' }}>
+              handle for you?
+            </span>
+          </h2>
+        </motion.div>
 
         {/* ══ Block 2: Orbit ══ */}
         <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', minHeight: 0, overflow: 'visible', ...(isMobile ? { maxHeight: '65vw', maxWidth: '65vw', alignSelf: 'center' } : {}) }}>
