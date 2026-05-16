@@ -358,7 +358,7 @@ export default function App() {
             <strong style={{ fontWeight: 700, opacity: 1 }}>we&rsquo;re already installing yours.</strong>
             {' · '}
             <span style={{ fontWeight: 700, color: '#f26419', fontStyle: 'italic' }}>
-              We handle the rest.
+              Ready to deploy your first AI agent?
             </span>
           </p>
         </div>
