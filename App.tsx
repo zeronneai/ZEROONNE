@@ -235,10 +235,10 @@ const SERVICES = [
 ];
 
 // Layout constants
-const D_RING_RADIUS = 128;
-const D_BUBBLE      = 64;
+const D_RING_RADIUS = 155;
+const D_BUBBLE      = 74;
 const D_TOTAL       = D_RING_RADIUS * 2 + D_BUBBLE + 60;
-const D_BUBBLE_FONT = 8.5;
+const D_BUBBLE_FONT = 7.5;
 
 interface ActiveState {
   id: number;
@@ -284,7 +284,7 @@ export default function App() {
   const isMobile      = windowWidth <= 768;
   const activeService = SERVICES.find(s => s.id === active) ?? null;
 
-  const containerSize  = isMobile ? Math.min(0.65 * windowWidth, 300) : D_TOTAL;
+  const containerSize  = isMobile ? Math.min(0.68 * windowWidth, 320) : D_TOTAL;
   const bubbleSize     = isMobile ? Math.max(52, Math.min(0.13 * windowWidth, 72)) : D_BUBBLE;
   const ringRadius     = isMobile ? containerSize / 2 - bubbleSize / 2 - 6 : D_RING_RADIUS;
   const bubbleFontSize = isMobile ? Math.max(7, Math.min(0.018 * windowWidth, 10)) : D_BUBBLE_FONT;
@@ -329,39 +329,61 @@ export default function App() {
         height: '100svh', minHeight: '100svh',
         padding: isMobile ? '16px 20px 24px' : '24px 16px',
         justifyContent: 'space-between',
-        backgroundImage: `url('${isMobile
-          ? 'https://res.cloudinary.com/dsprn0ew4/image/upload/v1778613216/Genera_esta_misma_imagen_pero_202605121305_zeudsg.jpg'
-          : 'https://res.cloudinary.com/dsprn0ew4/image/upload/v1778608740/Background_image_for_website_or_202605121158_cfvxcq.jpg'
-        }')`,
-        backgroundSize: 'cover', backgroundPosition: 'center center', backgroundRepeat: 'no-repeat',
+        background: '#eae2b7',
         display: 'flex', flexDirection: 'column', alignItems: 'center',
         fontFamily: "'Mulish', -apple-system, sans-serif", boxSizing: 'border-box',
+        position: 'relative', overflow: 'hidden',
       }}>
 
+        {/* ── Decorative background "i" ── */}
+        <svg
+          aria-hidden="true"
+          style={{
+            position: 'absolute',
+            top: '8%',
+            right: isMobile ? '-15%' : '2%',
+            height: '160%',
+            width: 'auto',
+            pointerEvents: 'none',
+            zIndex: 0,
+          }}
+          viewBox="0 0 400 1000"
+          preserveAspectRatio="xMidYMid meet"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <g opacity="0.07">
+            <circle cx="200" cy="140" r="78" fill="#f26419"/>
+            <rect x="125" y="265" width="150" height="640" rx="75" fill="#f26419"/>
+          </g>
+        </svg>
+
         {/* ══ Block 1: Heading + Subtitle ══ */}
-        <div style={{ flexShrink: 0, textAlign: 'center', marginTop: 0, maxWidth: 640, padding: '0 16px', paddingBottom: 'clamp(12px, 2.5vh, 28px)' }}>
-          <h1 style={{ margin: 0, fontFamily: "'Mulish', -apple-system, sans-serif", fontSize: 'clamp(32px, 5.5vw, 54px)', fontWeight: 800, color: C.navy, lineHeight: 1.05, letterSpacing: '-0.03em' }}>
+        <div style={{ flexShrink: 0, textAlign: 'center', marginTop: 0, maxWidth: 640, padding: '0 16px', paddingBottom: 'clamp(4px, 0.8vh, 10px)', position: 'relative', zIndex: 1 }}>
+          <h1 style={{ margin: 0, fontFamily: "'Mulish', -apple-system, sans-serif", fontSize: 'clamp(28px, 4.5vw, 46px)', fontWeight: 800, color: C.navy, lineHeight: 1.0, letterSpacing: '-0.03em' }}>
             The AI partner you can trust,{' '}<span style={{ fontStyle: 'italic', color: C.orange }}>like that family member you can always count on.</span>
           </h1>
           <p style={{
             fontFamily: "'Mulish', sans-serif",
             fontWeight: 400,
-            fontSize: 'clamp(14px, 1.8vw, 17px)',
-            color: 'rgba(26,58,74,0.65)',
-            lineHeight: 1.55,
-            maxWidth: 620,
-            margin: '14px auto 0',
+            fontSize: 'clamp(13px, 1.6vw, 16px)',
+            color: '#1a3a4a',
+            opacity: 0.7,
+            lineHeight: 1.5,
+            maxWidth: 580,
+            margin: '8px auto 0',
             textAlign: 'center',
           }}>
             While your competition is still trying to figure out what an &lsquo;LLM&rsquo; is,{' '}
-            <strong style={{ fontWeight: 700 }}>we&rsquo;re already installing yours.</strong>
-            <br />
-            <strong style={{ fontWeight: 700, color: 'rgba(26,58,74,0.85)' }}>You stay focused on what you do best. We handle the rest.</strong>
+            <strong style={{ fontWeight: 700, opacity: 1 }}>we&rsquo;re already installing yours.</strong>
+            {' · '}
+            <span style={{ fontWeight: 700, color: '#f26419', fontStyle: 'italic' }}>
+              Ready to deploy your first AI agent?
+            </span>
           </p>
         </div>
 
         {/* ══ Block 2: Orbit ══ */}
-        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', minHeight: 0, overflow: 'visible', ...(isMobile ? { maxHeight: '65vw', maxWidth: '65vw', alignSelf: 'center' } : {}) }}>
+        <div style={{ flex: 1, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', width: '100%', minHeight: 0, overflow: 'visible', paddingTop: 'clamp(0px, 1vh, 16px)', paddingBottom: 0, marginTop: 'clamp(-8px, -1vh, 0px)', position: 'relative', zIndex: 1, ...(isMobile ? { maxHeight: '60vw', maxWidth: '60vw', alignSelf: 'center' } : {}) }}>
           <div
             className="orbit-container"
             style={{
@@ -471,7 +493,7 @@ export default function App() {
         </div>
 
         {/* ══ Block 3: Hint + Button ══ */}
-        <div style={{ flexShrink: 0, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0 }}>
+        <div style={{ flexShrink: 0, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'clamp(8px, 1.5vh, 14px)', marginBottom: 'clamp(16px, 3vh, 32px)', position: 'relative', zIndex: 10 }}>
 
           <MagneticButton>
             <motion.button

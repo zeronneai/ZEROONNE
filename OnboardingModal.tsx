@@ -9,12 +9,12 @@ const LOGO_URL =
   'https://res.cloudinary.com/dsprn0ew4/image/upload/v1778360725/ChatGPT_Image_May_9_2026_03_04_56_PM_hdfdcd.png';
 
 const ALL_SERVICES = [
-  'Web Platforms',
-  'AI Automation',
-  'AI Integration',
-  'Brand Identity',
-  'AI Video Ads',
-  'Content Marketing',
+  'AI Agents',
+  'Done-For-You Automations',
+  'AI Content Creation',
+  'Brand AI',
+  'Custom Software',
+  'Voice & Chat Bots',
 ];
 
 const QUESTIONS = [
@@ -22,58 +22,58 @@ const QUESTIONS = [
     id: 1,
     question: 'Which of these is currently eating up the most time in your business each week?',
     options: [
-      'Answering the same customer questions over and over',
-      'Following up with leads manually',
-      'Creating content (social, emails, etc.)',
+      'Answering the same questions over and over',
+      'Following up with leads (and dropping some)',
+      'Creating content (or not creating it)',
       'Manual data entry / admin work',
-      'All of the above',
+      'Honestly? All of the above',
     ],
   },
   {
     id: 2,
-    question: 'How many leads do you estimate slip through the cracks each month because no one followed up fast enough?',
+    question: 'How many leads do you estimate slip through each month because nobody followed up fast enough?',
     options: [
-      "0–5 (we've got it handled)",
-      '5–20',
-      '20–50',
-      "50+ (it's bleeding money)",
-      "Honestly, I don't even track it",
+      "0–5 (we're handling it)",
+      '5–20 (it stings)',
+      '20–50 (it hurts)',
+      "50+ (we're hemorrhaging money)",
+      "I honestly don't even track it",
     ],
   },
   {
     id: 3,
-    question: 'Your top 3 competitors are already using AI to respond to leads in under 60 seconds, generate content daily, and qualify prospects 24/7. Where do you stand?',
+    question: 'Your competitors are already using AI to respond to leads in 60 seconds, post content daily, and qualify prospects 24/7. Where do you stand?',
     options: [
       "We're ahead of them",
       'About the same',
       'Behind, and I know it',
-      "I have no idea what they're doing",
+      "I have no idea what they're doing (and I'd rather not)",
     ],
   },
   {
     id: 4,
-    question: 'If you could reclaim 15–20 hours a week starting next month, what would you do with it?',
+    question: 'If you got back 15–20 hours a week starting next month, what would you do with it?',
     options: [
       'Close more deals / focus on revenue',
       'Finally work ON the business, not in it',
-      'Spend it with family / get my life back',
+      'Spend it with my family',
       'Scale to the next level',
     ],
   },
   {
     id: 5,
-    question: "What's the #1 thing holding you back from implementing AI in your business right now?",
+    question: "What's the #1 thing holding you back from using AI right now?",
     options: [
       "I don't know where to start",
-      "I tried tools (ChatGPT, etc.) but couldn't make them work for MY business",
-      'No time to figure it out',
-      'Worried about cost',
-      "Honestly, I've been procrastinating",
+      "I tried tools (ChatGPT etc) but couldn't make them work for MY business",
+      'I literally have no time to figure this out',
+      "I'm worried about the cost",
+      "Honestly? I keep putting it off",
     ],
   },
   {
     id: 6,
-    question: 'How much do you think one missed customer or unanswered lead costs your business?',
+    question: 'How much do you think one missed customer or unanswered lead actually costs you?',
     options: [
       'Under $500',
       '$500–$2,000',
@@ -84,7 +84,7 @@ const QUESTIONS = [
   },
   {
     id: 7,
-    question: 'When you imagine your business 12 months from now WITHOUT AI handling the heavy lifting — what does that look like?',
+    question: 'Imagine your business 12 months from now WITHOUT AI handling the heavy lifting. What does that look like?',
     options: [
       'Same as today (stuck)',
       'Burned out and behind',
@@ -94,14 +94,15 @@ const QUESTIONS = [
   },
   {
     id: 8,
-    question: "What is your business's current monthly revenue?",
+    question: "Last one: what's your business's current monthly revenue?",
+    sub: "This helps us recommend the right starting point. We're not here to upsell — we're here to fit.",
     options: [
-      'Pre-revenue / just starting out',
-      'Under $5,000 / month',
-      '$5,000 – $20,000 / month',
-      '$20,000 – $50,000 / month',
-      '$50,000 – $150,000 / month',
-      '$150,000+ / month',
+      'Pre-revenue / just starting',
+      'Under $5K/month',
+      '$5K–$20K/month',
+      '$20K–$50K/month',
+      '$50K–$150K/month',
+      '$150K+/month',
     ],
   },
 ];
@@ -312,7 +313,7 @@ function ServiceSelectionStep({
         textTransform: 'uppercase',
         marginBottom: 16,
       }}>
-        Let's find your fit
+        ✦ Tell us what's hurting
       </span>
 
       <p className="primo-q-text" style={{
@@ -331,7 +332,7 @@ function ServiceSelectionStep({
         color: 'rgba(26,58,74,0.45)',
         margin: '0 0 24px',
       }}>
-        Select all that apply.
+        Pick all that apply. We'll figure out the right combo for you.
       </p>
 
       <div className="primo-service-grid">
@@ -414,10 +415,21 @@ function QuestionStep({
         fontWeight: 800,
         color: '#1a3a4a',
         lineHeight: 1.4,
-        margin: '0 0 28px',
+        margin: '0 0 8px',
       }}>
         {q.question}
       </p>
+      {(q as any).sub && (
+        <p style={{
+          fontFamily: "'Mulish', -apple-system, sans-serif",
+          fontSize: 13,
+          color: 'rgba(26,58,74,0.5)',
+          margin: '0 0 20px',
+          lineHeight: 1.5,
+        }}>
+          {(q as any).sub}
+        </p>
+      )}
 
       {q.options.map((opt) => (
         <OptionItem
@@ -554,7 +566,7 @@ function ContactStep({
         color: '#1a3a4a',
         margin: '0 0 6px',
       }}>
-        Almost there.
+        Almost done. Where should your primo reach out?
       </p>
       <p style={{
         fontFamily: "'Mulish', -apple-system, sans-serif",
@@ -563,7 +575,7 @@ function ContactStep({
         opacity: 0.5,
         margin: '0 0 28px',
       }}>
-        Who should we reach out to?
+        We'll send your custom report within 24 hours. No spam, no list-selling, no nonsense.
       </p>
 
       <input
@@ -642,10 +654,10 @@ function ThankYouScreen({ onClose }: { onClose: () => void }) {
         }}
       />
       <p style={{ fontFamily: "'Mulish', -apple-system, sans-serif", fontSize: 24, fontWeight: 700, color: '#1a3a4a', margin: '0 0 10px', lineHeight: 1.3 }}>
-        We'll be in touch soon.
+        We got it. Welcome to the Primo family.
       </p>
-      <p style={{ fontFamily: "'Mulish', -apple-system, sans-serif", fontSize: 14, color: 'rgba(26,58,74,0.6)', margin: '0 0 32px' }}>
-        Your primo is already working on it.
+      <p style={{ fontFamily: "'Mulish', -apple-system, sans-serif", fontSize: 14, color: 'rgba(26,58,74,0.6)', margin: '0 0 32px', lineHeight: 1.55 }}>
+        Your custom AI opportunity report is being prepared right now. Check your email within 24 hours — we'll outline exactly what we can handle for you, and what it'd take to get started.
       </p>
       <button
         onClick={onClose}

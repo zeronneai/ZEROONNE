@@ -74,22 +74,21 @@ export default function BlogIndex() {
               transition={{ duration: 0.6, ease: EASE_OUT }}
               style={{ margin: '0 0 16px', fontSize: 11, fontWeight: 800, letterSpacing: '0.18em', textTransform: 'uppercase', color: C.orange }}
             >
-              El Paso · AI · Business Growth
+              WRITTEN BY YOUR PRIMOS
             </motion.p>
             <motion.h1
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, ease: EASE_OUT, delay: 0.1 }}
               style={{ margin: '0 0 20px', fontFamily: "'Mulish',sans-serif", fontSize: 'clamp(32px,5vw,56px)', fontWeight: 900, color: C.cream, lineHeight: 1.1 }}
             >
-              Insights from El Paso's<br />#1 AI Studio
+              Insights from your primo.
             </motion.h1>
             <motion.p
               initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, ease: EASE_OUT, delay: 0.2 }}
               style={{ margin: 0, fontSize: 'clamp(15px,2vw,18px)', fontWeight: 400, color: `${C.cream}bb`, lineHeight: 1.6 }}
             >
-              Practical AI strategies, local case studies, and human-first thinking
-              for businesses ready to scale.
+              Real strategies, real numbers, zero jargon. Written by humans who'd rather you implement than read.
             </motion.p>
           </div>
         </section>
