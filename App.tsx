@@ -393,9 +393,9 @@ export default function App() {
             style={{
               position: 'relative', width: containerSize, height: containerSize, flexShrink: 0,
               ...(!isMobile && desktopScale < 1 ? {
-                transform: `scale(${desktopScale})`, transformOrigin: 'top center',
+                transform: `scale(${desktopScale}) translateY(-22px)`, transformOrigin: 'top center',
                 marginBottom: -(D_TOTAL * (1 - desktopScale)),
-              } : {}),
+              } : { transform: 'translateY(-22px)' }),
             }}
           >
             {/* Orbit path ring */}
@@ -497,7 +497,7 @@ export default function App() {
         </div>
 
         {/* ══ Block 3: Hint + Button ══ */}
-        <div style={{ flexShrink: 0, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'clamp(8px, 1.5vh, 14px)', marginBottom: 'clamp(16px, 3vh, 32px)', position: 'relative', zIndex: 10 }}>
+        <div style={{ flexShrink: 0, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'clamp(8px, 1.5vh, 14px)', marginBottom: 'clamp(28px, 5vh, 52px)', position: 'relative', zIndex: 10 }}>
 
           <MagneticButton>
             <motion.button
@@ -533,7 +533,7 @@ export default function App() {
                 setTimeout(() => funnelRef.current?.scrollIntoView({ behavior: 'smooth' }), 120);
               }}
               style={{
-                marginTop: 18, background: 'transparent', border: 'none',
+                marginTop: 4, background: 'transparent', border: 'none',
                 color: 'rgba(26,58,74,0.45)', fontSize: 12, fontWeight: 700,
                 letterSpacing: '0.12em', textTransform: 'uppercase',
                 cursor: 'pointer', fontFamily: "'Mulish', sans-serif",
