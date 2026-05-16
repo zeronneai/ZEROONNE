@@ -808,6 +808,13 @@ function Section4({ onOpenForm }: { onOpenForm: (s?: string) => void }) {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, amount: 0.15 });
   const reduced = useReducedMotion();
+  const [winW, setWinW] = useState(typeof window !== 'undefined' ? window.innerWidth : 1280);
+  useEffect(() => {
+    const update = () => setWinW(window.innerWidth);
+    window.addEventListener('resize', update);
+    return () => window.removeEventListener('resize', update);
+  }, []);
+  const pricingCols = winW >= 900 ? 'repeat(5, minmax(0, 1fr))' : 'repeat(auto-fit, minmax(260px, 1fr))';
 
   return (
     <section id="funnel-section-4" ref={ref} style={{
@@ -834,7 +841,7 @@ function Section4({ onOpenForm }: { onOpenForm: (s?: string) => void }) {
           </motion.p>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(220px,1fr))', gap: 'clamp(20px,3vw,40px)', marginBottom: 48, alignItems: 'stretch' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: pricingCols, gap: 'clamp(12px,2vw,24px)', marginBottom: 48, alignItems: 'stretch' }}>
           {PRICING_CARDS.map((card, i) => {
             const isPopular = i === POPULAR_IDX;
             const delay = isPopular ? (PRICING_CARDS.length * 0.08) : (i * 0.08);
@@ -849,9 +856,9 @@ function Section4({ onOpenForm }: { onOpenForm: (s?: string) => void }) {
                 transition={reduced ? { duration: 0.3 } : springConfig}
                 whileHover={reduced ? {} : { y: -8 }}
                 style={{
-                  background: card.bg, borderRadius: 22, padding: '32px 24px',
+                  background: card.bg, borderRadius: 20, padding: 'clamp(20px,2.5vw,28px) clamp(16px,2vw,22px)',
                   display: 'flex', flexDirection: 'column',
-                  height: '100%', minHeight: 480,
+                  height: '100%', minHeight: 460,
                   position: 'relative', overflow: 'hidden',
                   boxShadow: isPopular ? `0 8px 48px ${C.orange}44` : '0 2px 12px rgba(0,0,0,0.12)',
                 }}
@@ -871,16 +878,16 @@ function Section4({ onOpenForm }: { onOpenForm: (s?: string) => void }) {
                     {card.badge}
                   </motion.div>
                 )}
-                <div style={{ fontSize: 12, fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase', color: `${card.color}99`, marginBottom: 4 }}>{card.name}</div>
-                <div style={{ fontSize: 13, fontWeight: 600, fontStyle: 'italic', color: `${card.color}cc`, marginBottom: 14 }}>{(card as any).tagline}</div>
-                <div style={{ marginBottom: 16 }}>
-                  <span style={{ fontSize: 36, fontWeight: 900, color: card.color, lineHeight: 1 }}>{card.price}</span>
-                  {card.period && <span style={{ fontSize: 13, fontWeight: 500, color: `${card.color}88`, marginLeft: 4 }}>{card.period}</span>}
+                <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase', color: `${card.color}99`, marginBottom: 3 }}>{card.name}</div>
+                <div style={{ fontSize: 12, fontWeight: 600, fontStyle: 'italic', color: `${card.color}cc`, marginBottom: 10 }}>{(card as any).tagline}</div>
+                <div style={{ marginBottom: 12 }}>
+                  <span style={{ fontSize: 'clamp(26px,3vw,34px)', fontWeight: 900, color: card.color, lineHeight: 1 }}>{card.price}</span>
+                  {card.period && <span style={{ fontSize: 11, fontWeight: 500, color: `${card.color}88`, marginLeft: 3 }}>{card.period}</span>}
                 </div>
-                <div style={{ fontSize: 13, fontWeight: 400, color: `${card.color}bb`, lineHeight: 1.55, marginBottom: 20 }}>{card.desc}</div>
-                <ul style={{ margin: '0 0 24px', padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 8 }}>
+                <div style={{ fontSize: 12, fontWeight: 400, color: `${card.color}bb`, lineHeight: 1.5, marginBottom: 14 }}>{card.desc}</div>
+                <ul style={{ margin: '0 0 16px', padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 6 }}>
                   {card.features.map((f, j) => (
-                    <li key={j} style={{ display: 'flex', alignItems: 'flex-start', gap: 8, fontSize: 13, fontWeight: 500, color: `${card.color}cc` }}>
+                    <li key={j} style={{ display: 'flex', alignItems: 'flex-start', gap: 6, fontSize: 12, fontWeight: 500, color: `${card.color}cc` }}>
                       <span style={{ color: card.bg === C.orange ? C.navy : C.orange, flexShrink: 0, marginTop: 1 }}>✓</span>
                       {f}
                     </li>
