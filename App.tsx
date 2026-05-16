@@ -226,12 +226,12 @@ const CENTER_LOGO_URL =
   'https://res.cloudinary.com/dsprn0ew4/image/upload/v1778810517/replicame_ese_logo_sin_a%C3%B1adir_202605142001_xo3xpe.jpg';
 
 const SERVICES = [
-  { id: 1, label: 'AI\nIntegration',    name: 'AI Integration',       description: 'Plug AI directly into your existing stack. Automate key decisions, eliminate bottlenecks, and unlock new efficiencies — without rebuilding from scratch.',    nodeBg: C.green,  nodeText: C.navy,  floatIndex: 3, keyPoints: ['Custom API connections', 'Workflow automation',     'Zero rebuild needed']    },
-  { id: 2, label: 'Content\nMarketing', name: 'AI Content Marketing', description: 'Scale content creation with intelligent automation. Consistent, high-quality output across every channel — in a fraction of the time.',                       nodeBg: C.orange, nodeText: C.cream, floatIndex: 6, keyPoints: ['Multi-channel scaling',  'Brand-aligned voice',       'Daily output ready']      },
-  { id: 3, label: 'AI Video\nAds',      name: 'AI Video Production',  description: 'Premium video ads crafted by AI. Fast deployment, high conversion rates, and zero agency delays. Your brand, always on.',                                     nodeBg: C.navy,   nodeText: C.cream, floatIndex: 5, keyPoints: ['Premium quality',          'Days not weeks',            'High conversion']         },
-  { id: 4, label: 'Brand\nIdentity',    name: 'Brand Identity',       description: 'AI-powered visual identity that stands apart. Naming, positioning, and design systems engineered for modern markets and lasting recall.',                      nodeBg: C.yellow, nodeText: C.navy,  floatIndex: 4, keyPoints: ['Naming & positioning',    'Design systems',            'Built to last']           },
-  { id: 5, label: 'Web\nPlatforms',     name: 'Web Platforms',        description: 'High-performance landing pages and web platforms deployed in days. Conversion-optimized, visually premium, and built to scale.',                              nodeBg: C.orange, nodeText: C.cream, floatIndex: 1, keyPoints: ['Conversion-optimized',    'Premium design',            'Built to scale']          },
-  { id: 6, label: 'AI\nAutomation',     name: 'AI Automation',        description: 'Eliminate repetitive work forever. Custom AI workflows handle your operations, nurturing, and reporting so you can focus on growth.',                         nodeBg: C.yellow, nodeText: C.navy,  floatIndex: 2, keyPoints: ['Custom workflows',         'Operations on autopilot',   'Focus on growth']         },
+  { id: 1, label: 'AI\nAgents',                name: 'AI Agents',                description: "Custom agents that track your numbers, send reports, and handle the boring stuff so you don't have to look at another dashboard ever again.",            nodeBg: C.green,  nodeText: C.navy,  floatIndex: 3, keyPoints: ['Track metrics',        'Auto reports',   'Zero dashboards'] },
+  { id: 2, label: 'Done-For-You\nAutomations', name: 'Done-For-You Automations', description: 'Repetitive tasks running on autopilot. From lead follow-up to invoice reminders — set it once, never touch it again.',                               nodeBg: C.orange, nodeText: C.cream, floatIndex: 6, keyPoints: ['Set & forget',         'Lead follow-up', 'Auto reminders']  },
+  { id: 3, label: 'AI Content\nCreation',      name: 'AI Content Creation',      description: 'AI trained on YOUR brand voice — generating on-brand ideas, scripts, and edits. You film. We handle the rest (or we film for you too).',              nodeBg: C.navy,   nodeText: C.cream, floatIndex: 5, keyPoints: ['On-brand',             'Daily output',   'We edit too']      },
+  { id: 4, label: 'Brand\nAI',                 name: 'Brand AI',                 description: 'Your brand identity, trained into AI. Every piece of content sounds like you, looks like you, and stays consistent across every channel.',              nodeBg: C.yellow, nodeText: C.navy,  floatIndex: 4, keyPoints: ['Brand voice',           'Visual identity','All channels']     },
+  { id: 5, label: 'Custom\nSoftware',          name: 'Custom Software',          description: 'Custom websites, apps, and back-end systems. Built fast, built clean, built for your business — not a template.',                                       nodeBg: C.orange, nodeText: C.cream, floatIndex: 1, keyPoints: ['Web & apps',            'Built fast',     'Built for you']    },
+  { id: 6, label: 'Voice & Chat\nBots',        name: 'Voice & Chat Bots',        description: '24/7 customer service bots and personal assistants that sound human, never sleep, and never call in sick.',                                             nodeBg: C.yellow, nodeText: C.navy,  floatIndex: 2, keyPoints: ['24/7 service',         'Sounds human',   'Bilingual']        },
 ];
 
 // Layout constants
@@ -338,11 +338,26 @@ export default function App() {
         fontFamily: "'Mulish', -apple-system, sans-serif", boxSizing: 'border-box',
       }}>
 
-        {/* ══ Block 1: Heading ══ */}
+        {/* ══ Block 1: Heading + Subtitle ══ */}
         <div style={{ flexShrink: 0, textAlign: 'center', marginTop: 0, maxWidth: 640, padding: '0 16px', paddingBottom: 'clamp(12px, 2.5vh, 28px)' }}>
           <h1 style={{ margin: 0, fontFamily: "'Mulish', -apple-system, sans-serif", fontSize: 'clamp(32px, 5.5vw, 54px)', fontWeight: 800, color: C.navy, lineHeight: 1.05, letterSpacing: '-0.03em' }}>
             The AI partner you can trust,{' '}<span style={{ fontStyle: 'italic', color: C.orange }}>like that family member you can always count on.</span>
           </h1>
+          <p style={{
+            fontFamily: "'Mulish', sans-serif",
+            fontWeight: 400,
+            fontSize: 'clamp(14px, 1.8vw, 17px)',
+            color: 'rgba(26,58,74,0.65)',
+            lineHeight: 1.55,
+            maxWidth: 620,
+            margin: '14px auto 0',
+            textAlign: 'center',
+          }}>
+            While your competition is still trying to figure out what an &lsquo;LLM&rsquo; is,{' '}
+            <strong style={{ fontWeight: 700 }}>we&rsquo;re already installing yours.</strong>
+            <br />
+            <strong style={{ fontWeight: 700, color: 'rgba(26,58,74,0.85)' }}>You stay focused on what you do best. We handle the rest.</strong>
+          </p>
         </div>
 
         {/* ══ Block 2: Orbit ══ */}
@@ -500,7 +515,7 @@ export default function App() {
               }}
               whileHover={{ color: C.navy }}
             >
-              Explore the full Primo system
+              See what we&apos;ll handle for you
               <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
                 <path d="M6 1v10M1 6l5 5 5-5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
