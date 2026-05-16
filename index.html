@@ -53,213 +53,152 @@
     <link rel="manifest" href="/site.webmanifest" />
     <meta name="theme-color" content="#1a3a4a" />
 
-    <!-- Schema.org JSON-LD — ProfessionalService -->
+    <!-- Schema.org @graph — linked entity graph for Google, Bing, and AI crawlers -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "ProfessionalService",
-      "@id": "https://primostudio.us/#organization",
-      "name": "Primo AI Studio",
-      "alternateName": ["Primo Studio", "PrimoStudio"],
-      "url": "https://primostudio.us",
-      "logo": {
-        "@type": "ImageObject",
-        "url": "https://primostudio.us/logo.png",
-        "width": 512,
-        "height": 512
-      },
-      "image": "https://primostudio.us/og-image.jpg",
-      "description": "Human-first AI agency for El Paso businesses. AI automation, web platforms, AI video ads, content marketing, brand identity, and AI integrations.",
-      "slogan": "The AI partner you can trust, like that family member you can always count on.",
-      "priceRange": "$$-$$$",
-      "telephone": "+1-915-234-3655",
-      "email": "primostudio.us@gmail.com",
-      "address": {
-        "@type": "PostalAddress",
-        "streetAddress": "601 N Mesa St Suite 1440",
-        "addressLocality": "El Paso",
-        "addressRegion": "TX",
-        "postalCode": "79901",
-        "addressCountry": "US"
-      },
-      "geo": {
-        "@type": "GeoCoordinates",
-        "latitude": 31.7588,
-        "longitude": -106.4869
-      },
-      "openingHoursSpecification": [
+      "@graph": [
         {
-          "@type": "OpeningHoursSpecification",
-          "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-          "opens": "08:00",
-          "closes": "17:00"
-        },
-        {
-          "@type": "OpeningHoursSpecification",
-          "dayOfWeek": "Saturday",
-          "opens": "10:00",
-          "closes": "17:00"
-        }
-      ],
-      "areaServed": [
-        {
-          "@type": "City",
-          "name": "El Paso",
-          "containedInPlace": { "@type": "State", "name": "Texas" }
-        },
-        { "@type": "State", "name": "Texas" },
-        { "@type": "Country", "name": "United States" }
-      ],
-      "serviceType": [
-        "AI Integration",
-        "AI Automation",
-        "AI Video Production",
-        "Content Marketing",
-        "Brand Identity Design",
-        "Web Platform Development",
-        "AI Consulting",
-        "AI Training"
-      ],
-      "hasOfferCatalog": {
-        "@type": "OfferCatalog",
-        "name": "Primo AI Studio Services",
-        "itemListElement": [
-          {
-            "@type": "Offer",
-            "itemOffered": {
-              "@type": "Service",
-              "name": "AI Opportunity Scorecard",
-              "description": "Free 5-minute diagnostic to identify your business's highest-value AI growth opportunities."
-            }
+          "@type": "ProfessionalService",
+          "@id": "https://primostudio.us/#organization",
+          "name": "Primo AI Studio",
+          "alternateName": ["Primo Studio", "PrimoStudio"],
+          "url": "https://primostudio.us",
+          "logo": {
+            "@type": "ImageObject",
+            "@id": "https://primostudio.us/#logo",
+            "url": "https://primostudio.us/logo.png",
+            "width": 512,
+            "height": 512
           },
-          {
-            "@type": "Offer",
-            "itemOffered": {
-              "@type": "Service",
-              "name": "30-Day Human-First AI Growth Sprint",
-              "description": "Implementation of practical AI systems across automation, web platforms, content, and video ads."
-            }
+          "image": { "@id": "https://primostudio.us/#logo" },
+          "description": "Human-first AI agency for El Paso businesses. AI Agents, Done-For-You Automations, AI Content Creation, Brand AI, Custom Software, and Voice & Chat Bots.",
+          "slogan": "The AI partner you can trust, like that family member you can always count on.",
+          "priceRange": "$$-$$$",
+          "telephone": "+1-915-234-3655",
+          "email": "primostudio.us@gmail.com",
+          "address": {
+            "@type": "PostalAddress",
+            "@id": "https://primostudio.us/#address",
+            "streetAddress": "601 N Mesa St Suite 1440",
+            "addressLocality": "El Paso",
+            "addressRegion": "TX",
+            "postalCode": "79901",
+            "addressCountry": "US"
           },
-          {
-            "@type": "Offer",
-            "itemOffered": {
-              "@type": "Service",
-              "name": "AI Growth OS Retainer",
-              "description": "Monthly optimization, content velocity, reporting, training, and new automations."
+          "geo": {
+            "@type": "GeoCoordinates",
+            "latitude": 31.7588,
+            "longitude": -106.4869
+          },
+          "openingHoursSpecification": [
+            {
+              "@type": "OpeningHoursSpecification",
+              "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+              "opens": "08:00",
+              "closes": "17:00"
+            },
+            {
+              "@type": "OpeningHoursSpecification",
+              "dayOfWeek": "Saturday",
+              "opens": "10:00",
+              "closes": "17:00"
             }
-          }
-        ]
-      },
-      "knowsLanguage": ["English", "Spanish"],
-      "contactPoint": {
-        "@type": "ContactPoint",
-        "telephone": "+1-915-234-3655",
-        "contactType": "sales",
-        "email": "primostudio.us@gmail.com",
-        "areaServed": "US",
-        "availableLanguage": ["English", "Spanish"]
-      },
-      "sameAs": [
-        "https://www.instagram.com/primostudio.us"
-      ]
-    }
-    </script>
-
-    <!-- Schema.org WebSite -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebSite",
-      "@id": "https://primostudio.us/#website",
-      "url": "https://primostudio.us",
-      "name": "Primo AI Studio",
-      "description": "AI agency for El Paso businesses",
-      "publisher": { "@id": "https://primostudio.us/#organization" },
-      "inLanguage": "en-US"
-    }
-    </script>
-
-    <!-- Schema.org FAQPage -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "FAQPage",
-      "mainEntity": [
-        {
-          "@type": "Question",
-          "name": "What is the best AI agency in El Paso, Texas?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Primo AI Studio is the leading human-first AI agency in El Paso, helping local businesses implement AI automation, content marketing, AI video ads, and web platforms with practical, measurable results."
-          }
+          ],
+          "areaServed": [
+            {
+              "@type": "City",
+              "name": "El Paso",
+              "containedInPlace": { "@type": "State", "name": "Texas" }
+            },
+            { "@type": "State", "name": "Texas" },
+            { "@type": "Country", "name": "United States" }
+          ],
+          "serviceType": [
+            "AI Agents",
+            "Done-For-You Automations",
+            "AI Content Creation",
+            "Brand AI",
+            "Custom Software",
+            "Voice & Chat Bots"
+          ],
+          "knowsLanguage": ["English", "Spanish"],
+          "sameAs": [
+            "https://www.instagram.com/primostudio.us"
+          ]
         },
         {
-          "@type": "Question",
-          "name": "Where is Primo AI Studio located?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Primo AI Studio is headquartered at 601 N Mesa St Suite 1440, El Paso, TX 79901. We serve businesses across El Paso and the greater Texas region."
-          }
+          "@type": "WebSite",
+          "@id": "https://primostudio.us/#website",
+          "url": "https://primostudio.us",
+          "name": "Primo AI Studio",
+          "description": "AI agency for El Paso businesses — we handle the tech, you handle what you do best.",
+          "publisher": { "@id": "https://primostudio.us/#organization" },
+          "inLanguage": "en-US"
         },
         {
-          "@type": "Question",
-          "name": "How much does it cost to work with Primo AI Studio?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Primo offers a free AI Opportunity Scorecard, paid Clarity Audits starting at $297, 30-day implementation sprints from $4,500, and monthly retainers from $1,500. Pricing scales based on scope and business size."
-          }
+          "@type": "LocalBusiness",
+          "@id": "https://primostudio.us/#localbusiness",
+          "name": "Primo AI Studio",
+          "image": { "@id": "https://primostudio.us/#logo" },
+          "url": "https://primostudio.us",
+          "telephone": "+1-915-234-3655",
+          "email": "primostudio.us@gmail.com",
+          "priceRange": "$$",
+          "address": { "@id": "https://primostudio.us/#address" },
+          "geo": {
+            "@type": "GeoCoordinates",
+            "latitude": 31.7588,
+            "longitude": -106.4869
+          },
+          "parentOrganization": { "@id": "https://primostudio.us/#organization" }
         },
         {
-          "@type": "Question",
-          "name": "What services does Primo AI Studio offer?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "We offer 6 core services: AI Integration, AI Automation, Content Marketing, AI Video Ads, Brand Identity, and Web Platforms — all designed to help El Paso businesses grow without losing their human touch."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "Does Primo AI Studio offer bilingual services?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Yes. Primo AI Studio operates bilingually in English and Spanish, perfectly suited for El Paso's bilingual market and cross-border business community."
-          }
-        }
-      ]
-    }
-    </script>
-
-    <!-- Schema.org LocalBusiness -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "LocalBusiness",
-      "@id": "https://primostudio.us/#localbusiness",
-      "name": "Primo AI Studio",
-      "image": "https://primostudio.us/og-image.jpg",
-      "url": "https://primostudio.us",
-      "telephone": "+1-915-234-3655",
-      "email": "primostudio.us@gmail.com",
-      "priceRange": "$$",
-      "address": {
-        "@type": "PostalAddress",
-        "streetAddress": "601 N Mesa St Suite 1440",
-        "addressLocality": "El Paso",
-        "addressRegion": "TX",
-        "postalCode": "79901",
-        "addressCountry": "US"
-      },
-      "geo": {
-        "@type": "GeoCoordinates",
-        "latitude": 31.7588,
-        "longitude": -106.4869
-      },
-      "openingHoursSpecification": [
-        {
-          "@type": "OpeningHoursSpecification",
-          "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-          "opens": "09:00",
-          "closes": "18:00"
+          "@type": "FAQPage",
+          "@id": "https://primostudio.us/#faq",
+          "isPartOf": { "@id": "https://primostudio.us/#website" },
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "What is the best AI agency in El Paso, Texas?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Primo AI Studio is the leading human-first AI agency in El Paso, helping local businesses implement AI Agents, Done-For-You Automations, AI Content Creation, Brand AI, Custom Software, and Voice & Chat Bots with practical, measurable results."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Where is Primo AI Studio located?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Primo AI Studio is headquartered at 601 N Mesa St Suite 1440, El Paso, TX 79901. We serve businesses across El Paso and the greater Texas region."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "What services does Primo AI Studio offer?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "We offer 6 core services: AI Agents, Done-For-You Automations, AI Content Creation, Brand AI, Custom Software, and Voice & Chat Bots — all designed to help El Paso businesses grow without spending time learning AI themselves."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "How much does it cost to work with Primo AI Studio?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Primo offers a free AI Opportunity Scorecard, paid AI Audits starting at $497, monthly Sprints from $2,500/mo, Growth plans from $4,500/mo, Scale plans from $8,000/mo, and custom Enterprise pricing."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Does Primo AI Studio offer bilingual services?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes. Primo AI Studio operates bilingually in English and Spanish, perfectly suited for El Paso's bilingual market and cross-border business community."
+              }
+            }
+          ]
         }
       ]
     }
