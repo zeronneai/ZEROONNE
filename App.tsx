@@ -281,6 +281,10 @@ export default function App() {
     return () => document.removeEventListener('click', handler);
   }, [modalEntry]);
 
+  useEffect(() => {
+    document.dispatchEvent(new Event('render-event'));
+  }, []);
+
   const isMobile      = windowWidth <= 768;
   const activeService = SERVICES.find(s => s.id === active) ?? null;
 
