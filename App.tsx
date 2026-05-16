@@ -340,9 +340,9 @@ export default function App() {
           aria-hidden="true"
           style={{
             position: 'absolute',
-            top: 0,
+            top: '8%',
             right: isMobile ? '-15%' : '2%',
-            height: '100%',
+            height: '160%',
             width: 'auto',
             pointerEvents: 'none',
             zIndex: 0,
