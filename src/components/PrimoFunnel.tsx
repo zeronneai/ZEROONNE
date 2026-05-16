@@ -24,6 +24,7 @@ const EASE_MICRO:[number,number,number,number] = [0.34, 1.56, 0.64, 1];
 const FUNNEL_CSS = `
   @media (max-width: 768px) { .dot-nav-desktop { display: none !important; } }
   @media (max-width: 768px) { .primo-comparison { grid-template-columns: 1fr !important; gap: 20px !important; } }
+  @media (max-width: 768px) { .primos-grid { grid-template-columns: 1fr !important; gap: 20px !important; } }
   @keyframes spine-pulse {
     0%,100% { transform: translate(-50%,-50%) scale(1);   box-shadow: 0 0 0 0   rgba(242,100,25,0.6); }
     50%      { transform: translate(-50%,-50%) scale(1.2); box-shadow: 0 0 0 8px rgba(242,100,25,0);   }
@@ -768,7 +769,7 @@ function Section2({ onOpenForm }: { onOpenForm: (s?: string) => void }) {
 
 // ── Section 3 — Client Journey (Spine) ───────────────────────────────────────
 const JOURNEY_CARDS: SpineCard[] = [
-  { label: 'Discovery',        icon: 'discovery'        as IconName, title: 'Discovery',                        body: '30-min call. No pitch deck. Just you telling us what\'s draining your week, and us telling you what we can handle.' },
+  { label: 'Discovery',        icon: 'discovery'        as IconName, title: 'Discovery',                        body: 'A 30-min call. No pitch deck. Just you telling us what\'s draining your week, and us telling you what we can handle.' },
   { label: 'First Impression', icon: 'firstimpression'  as IconName, title: 'First Impression',                 body: 'Within 5 days you get a one-page plan: what we\'ll build, what you\'ll save, what it\'ll cost. No jargon. No fluff.' },
   { label: 'Nurture',          icon: 'nurture'          as IconName, title: 'Build Phase',                      body: 'While we\'re building, you keep running your business. No 2-hour weekly check-ins. We don\'t need you to \'learn.\'' },
   { label: 'Conversion',       icon: 'conversion'       as IconName, title: 'First Win',                        body: 'Within 14-21 days, your first system is running. Real results, not slides. You see numbers change. That\'s the only deliverable that matters.' },
@@ -1054,6 +1055,286 @@ function Section5b() {
   );
 }
 
+// ── Section 5c — Meet your primos ────────────────────────────────────────────
+function Section5c() {
+  return (
+    <section
+      id="funnel-section-5c"
+      style={{
+        background: '#1a3a4a',
+        padding: 'clamp(80px, 14vh, 140px) clamp(20px, 5vw, 60px)',
+        color: '#eae2b7',
+        position: 'relative',
+        overflow: 'hidden',
+      }}
+    >
+      {/* Decoración: i naranja gigante de fondo */}
+      <svg
+        aria-hidden="true"
+        style={{
+          position: 'absolute',
+          top: '10%',
+          left: '-8%',
+          height: '80%',
+          width: 'auto',
+          opacity: 0.04,
+          pointerEvents: 'none',
+        }}
+        viewBox="0 0 400 1000"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <g>
+          <circle cx="200" cy="140" r="78" fill="#f26419"/>
+          <rect x="125" y="265" width="150" height="640" rx="75" fill="#f26419"/>
+        </g>
+      </svg>
+
+      <div style={{ maxWidth: 1200, margin: '0 auto', position: 'relative', zIndex: 1 }}>
+
+        {/* HEADER */}
+        <div style={{ textAlign: 'center', marginBottom: 'clamp(60px, 10vh, 100px)' }}>
+          <motion.span
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            style={{
+              display: 'inline-block',
+              fontFamily: "'Mulish', sans-serif",
+              fontSize: 11, fontWeight: 800, letterSpacing: '0.2em',
+              textTransform: 'uppercase', color: '#f26419',
+              background: 'rgba(242, 100, 25, 0.1)',
+              padding: '6px 14px', borderRadius: 20,
+              border: '1px solid rgba(242, 100, 25, 0.3)',
+              marginBottom: 24,
+            }}
+          >
+            ✦ Meet your primos
+          </motion.span>
+
+          <motion.h2
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.1 }}
+            style={{
+              fontFamily: "'Mulish', sans-serif",
+              fontSize: 'clamp(32px, 6vw, 64px)', fontWeight: 900,
+              lineHeight: 1.05, letterSpacing: '-0.025em',
+              margin: '0 auto 24px', maxWidth: 900,
+            }}
+          >
+            Same blood.{' '}
+            <span style={{ color: '#f26419' }}>Same border.</span>{' '}
+            Same mission.
+          </motion.h2>
+
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            style={{
+              fontFamily: "'Mulish', sans-serif",
+              fontSize: 'clamp(15px, 1.9vw, 18px)', fontWeight: 500,
+              lineHeight: 1.6, color: 'rgba(234, 226, 183, 0.85)',
+              maxWidth: 680, margin: '0 auto',
+            }}
+          >
+            Two cousins, born in Chihuahua. Our moms are sisters.
+            One built his life in El Paso. The other builds products
+            from both sides of the border. We grew up watching family
+            businesses work twice as hard for half the credit. So we
+            decided to build the kind of AI partner we wished they
+            had —{' '}
+            <em style={{ color: '#f26419', fontStyle: 'italic', fontWeight: 700 }}>
+              one you can actually trust.
+            </em>
+          </motion.p>
+        </div>
+
+        {/* GRID DE LOS 2 PRIMOS */}
+        <div
+          className="primos-grid"
+          style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'clamp(20px, 4vw, 48px)' }}
+        >
+          {/* PRIMO 1 — FABIAN */}
+          <motion.div
+            initial={{ opacity: 0, x: -40 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+            style={{
+              background: 'rgba(234, 226, 183, 0.04)',
+              border: '1px solid rgba(234, 226, 183, 0.1)',
+              borderRadius: 24, padding: 'clamp(28px, 4vw, 44px)',
+              display: 'flex', flexDirection: 'column',
+            }}
+          >
+            <div style={{
+              width: '100%', aspectRatio: '1 / 1', borderRadius: 16,
+              overflow: 'hidden', marginBottom: 24, background: '#f26419', position: 'relative',
+            }}>
+              <img
+                src="https://res.cloudinary.com/dsprn0ew4/image/upload/v1778952617/WhatsApp_Image_2026-05-16_at_11.18.11_AM_fxnbf0.jpg"
+                alt="Fabian, Co-founder of Primo AI Studio"
+                style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+              />
+              <span style={{
+                position: 'absolute', top: 14, left: 14,
+                background: '#1a3a4a', color: '#eae2b7',
+                padding: '4px 10px', borderRadius: 14,
+                fontFamily: "'Mulish', sans-serif", fontSize: 10, fontWeight: 800,
+                letterSpacing: '0.12em', textTransform: 'uppercase',
+              }}>
+                Strategy
+              </span>
+            </div>
+
+            <h3 style={{
+              fontFamily: "'Mulish', sans-serif",
+              fontSize: 'clamp(24px, 3.2vw, 32px)', fontWeight: 900,
+              color: '#eae2b7', margin: '0 0 4px', letterSpacing: '-0.02em',
+            }}>
+              Fabian
+            </h3>
+
+            <p style={{
+              fontFamily: "'Mulish', sans-serif",
+              fontSize: 'clamp(13px, 1.4vw, 14px)', fontWeight: 700,
+              color: '#f26419', letterSpacing: '0.1em', textTransform: 'uppercase',
+              margin: '0 0 20px',
+            }}>
+              Co-founder &amp; Head of Strategy
+            </p>
+
+            <p style={{
+              fontFamily: "'Mulish', sans-serif",
+              fontSize: 'clamp(14px, 1.6vw, 16px)', fontWeight: 500,
+              lineHeight: 1.6, color: 'rgba(234, 226, 183, 0.8)',
+              margin: '0 0 24px', flex: 1,
+            }}>
+              Founder of{' '}
+              <strong style={{ color: '#eae2b7', fontWeight: 700 }}>ZERONNE</strong>,
+              a digital studio shipping products for clients across industries. Obsessed
+              with product, design, and the engineering it takes to make them work. Splits
+              his life between Chihuahua and El Paso — and reads UX patterns the way some
+              people read poetry.
+            </p>
+
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 'auto' }}>
+              {['Product', 'Design', 'Engineering', 'Strategy'].map(skill => (
+                <span key={skill} style={{
+                  fontFamily: "'Mulish', sans-serif", fontSize: 11, fontWeight: 700,
+                  color: '#eae2b7', background: 'rgba(234, 226, 183, 0.1)',
+                  padding: '5px 12px', borderRadius: 16, letterSpacing: '0.05em',
+                }}>
+                  {skill}
+                </span>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* PRIMO 2 — NADIM */}
+          <motion.div
+            initial={{ opacity: 0, x: 40 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.8, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
+            style={{
+              background: 'rgba(234, 226, 183, 0.04)',
+              border: '1px solid rgba(234, 226, 183, 0.1)',
+              borderRadius: 24, padding: 'clamp(28px, 4vw, 44px)',
+              display: 'flex', flexDirection: 'column',
+            }}
+          >
+            <div style={{
+              width: '100%', aspectRatio: '1 / 1', borderRadius: 16,
+              overflow: 'hidden', marginBottom: 24, background: '#1a3a4a', position: 'relative',
+            }}>
+              <img
+                src="https://res.cloudinary.com/dsprn0ew4/image/upload/v1778952617/ChatGPT_Image_May_16_2026_11_25_59_AM_wsrbij.png"
+                alt="Nadim, Co-founder & CEO of Primo AI Studio"
+                style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+              />
+              <span style={{
+                position: 'absolute', top: 14, left: 14,
+                background: '#f26419', color: '#eae2b7',
+                padding: '4px 10px', borderRadius: 14,
+                fontFamily: "'Mulish', sans-serif", fontSize: 10, fontWeight: 800,
+                letterSpacing: '0.12em', textTransform: 'uppercase',
+              }}>
+                Operations
+              </span>
+            </div>
+
+            <h3 style={{
+              fontFamily: "'Mulish', sans-serif",
+              fontSize: 'clamp(24px, 3.2vw, 32px)', fontWeight: 900,
+              color: '#eae2b7', margin: '0 0 4px', letterSpacing: '-0.02em',
+            }}>
+              Nadim
+            </h3>
+
+            <p style={{
+              fontFamily: "'Mulish', sans-serif",
+              fontSize: 'clamp(13px, 1.4vw, 14px)', fontWeight: 700,
+              color: '#f26419', letterSpacing: '0.1em', textTransform: 'uppercase',
+              margin: '0 0 20px',
+            }}>
+              Co-founder &amp; CEO
+            </p>
+
+            <p style={{
+              fontFamily: "'Mulish', sans-serif",
+              fontSize: 'clamp(14px, 1.6vw, 16px)', fontWeight: 500,
+              lineHeight: 1.6, color: 'rgba(234, 226, 183, 0.8)',
+              margin: '0 0 24px', flex: 1,
+            }}>
+              Founder of{' '}
+              <strong style={{ color: '#eae2b7', fontWeight: 700 }}>Purple Roots</strong>,
+              a cinematography and marketing agency serving El Paso businesses.
+              Lives and breathes the local market — knows which clients need what,
+              how they buy, and what makes them stay. Outdoor type when he&apos;s not
+              running operations.
+            </p>
+
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 'auto' }}>
+              {['Operations', 'Client Strategy', 'Marketing', 'Content'].map(skill => (
+                <span key={skill} style={{
+                  fontFamily: "'Mulish', sans-serif", fontSize: 11, fontWeight: 700,
+                  color: '#eae2b7', background: 'rgba(234, 226, 183, 0.1)',
+                  padding: '5px 12px', borderRadius: 16, letterSpacing: '0.05em',
+                }}>
+                  {skill}
+                </span>
+              ))}
+            </div>
+          </motion.div>
+        </div>
+
+        <motion.p
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8, delay: 0.4 }}
+          style={{
+            fontFamily: "'Mulish', sans-serif",
+            fontSize: 'clamp(14px, 1.8vw, 18px)', fontWeight: 600,
+            fontStyle: 'italic', color: 'rgba(234, 226, 183, 0.7)',
+            textAlign: 'center', marginTop: 'clamp(40px, 6vh, 60px)',
+            maxWidth: 720, marginLeft: 'auto', marginRight: 'auto', lineHeight: 1.55,
+          }}
+        >
+          We&apos;re not a &ldquo;team of senior consultants from McKinsey.&rdquo;
+          We&apos;re two primos who know how PyMEs actually work —
+          because we&apos;ve spent our lives around them.
+        </motion.p>
+      </div>
+    </section>
+  );
+}
+
 // ── Section 6 — 90-Day Timeline (Spine) ──────────────────────────────────────
 const MILESTONE_CARDS: SpineCard[] = [
   { label: 'Day 1',  icon: 'strategycall'  as IconName, title: 'Strategy Call',           body: 'One call. One hour. We figure out the highest-leverage thing we can build for you. You leave with clarity.' },
@@ -1233,6 +1514,7 @@ export default function PrimoFunnel({ onOpenForm }: PrimoFunnelProps) {
       <Section4 onOpenForm={onOpenForm} />
       <Section5 />
       <Section5b />
+      <Section5c />
       <Section6 onOpenForm={onOpenForm} />
       <Section7 onOpenForm={onOpenForm} />
       <Footer />
