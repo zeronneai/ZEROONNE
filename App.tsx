@@ -336,10 +336,34 @@ export default function App() {
         backgroundSize: 'cover', backgroundPosition: 'center center', backgroundRepeat: 'no-repeat',
         display: 'flex', flexDirection: 'column', alignItems: 'center',
         fontFamily: "'Mulish', -apple-system, sans-serif", boxSizing: 'border-box',
+        position: 'relative', overflow: 'hidden',
       }}>
 
+        {/* ── Decorative background "i" ── */}
+        <svg
+          aria-hidden="true"
+          style={{
+            position: 'absolute',
+            top: 0,
+            right: isMobile ? '-25%' : '-12%',
+            height: '100%',
+            width: 'auto',
+            pointerEvents: 'none',
+            zIndex: 0,
+            opacity: isMobile ? 0.5 : 1,
+          }}
+          viewBox="0 0 400 1000"
+          preserveAspectRatio="xMidYMid meet"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <g opacity="0.07">
+            <circle cx="200" cy="140" r="78" fill="#f26419"/>
+            <rect x="125" y="265" width="150" height="640" rx="75" fill="#f26419"/>
+          </g>
+        </svg>
+
         {/* ══ Block 1: Heading + Subtitle ══ */}
-        <div style={{ flexShrink: 0, textAlign: 'center', marginTop: 0, maxWidth: 640, padding: '0 16px', paddingBottom: 'clamp(4px, 0.8vh, 10px)' }}>
+        <div style={{ flexShrink: 0, textAlign: 'center', marginTop: 0, maxWidth: 640, padding: '0 16px', paddingBottom: 'clamp(4px, 0.8vh, 10px)', position: 'relative', zIndex: 1 }}>
           <h1 style={{ margin: 0, fontFamily: "'Mulish', -apple-system, sans-serif", fontSize: 'clamp(28px, 4.5vw, 46px)', fontWeight: 800, color: C.navy, lineHeight: 1.0, letterSpacing: '-0.03em' }}>
             The AI partner you can trust,{' '}<span style={{ fontStyle: 'italic', color: C.orange }}>like that family member you can always count on.</span>
           </h1>
@@ -364,7 +388,7 @@ export default function App() {
         </div>
 
         {/* ══ Block 2: Orbit ══ */}
-        <div style={{ flex: 1, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', width: '100%', minHeight: 0, overflow: 'visible', paddingTop: 'clamp(0px, 1vh, 16px)', paddingBottom: 0, marginTop: 'clamp(-8px, -1vh, 0px)', ...(isMobile ? { maxHeight: '60vw', maxWidth: '60vw', alignSelf: 'center' } : {}) }}>
+        <div style={{ flex: 1, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', width: '100%', minHeight: 0, overflow: 'visible', paddingTop: 'clamp(0px, 1vh, 16px)', paddingBottom: 0, marginTop: 'clamp(-8px, -1vh, 0px)', position: 'relative', zIndex: 1, ...(isMobile ? { maxHeight: '60vw', maxWidth: '60vw', alignSelf: 'center' } : {}) }}>
           <div
             className="orbit-container"
             style={{
