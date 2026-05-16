@@ -329,6 +329,7 @@ export default function App() {
         height: '100svh', minHeight: '100svh',
         padding: isMobile ? '16px 20px 24px' : '24px 16px',
         justifyContent: 'space-between',
+        background: '#eae2b7',
         display: 'flex', flexDirection: 'column', alignItems: 'center',
         fontFamily: "'Mulish', -apple-system, sans-serif", boxSizing: 'border-box',
         position: 'relative', overflow: 'hidden',
@@ -340,12 +341,11 @@ export default function App() {
           style={{
             position: 'absolute',
             top: 0,
-            right: isMobile ? '-25%' : '-12%',
+            right: isMobile ? '-15%' : '2%',
             height: '100%',
             width: 'auto',
             pointerEvents: 'none',
             zIndex: 0,
-            opacity: isMobile ? 0.5 : 1,
           }}
           viewBox="0 0 400 1000"
           preserveAspectRatio="xMidYMid meet"
