@@ -235,8 +235,8 @@ const SERVICES = [
 ];
 
 // Layout constants
-const D_RING_RADIUS = 175;
-const D_BUBBLE      = 80;
+const D_RING_RADIUS = 155;
+const D_BUBBLE      = 74;
 const D_TOTAL       = D_RING_RADIUS * 2 + D_BUBBLE + 60;
 const D_BUBBLE_FONT = 7.5;
 
@@ -339,29 +339,26 @@ export default function App() {
       }}>
 
         {/* ══ Block 1: Heading + Subtitle ══ */}
-        <div style={{ flexShrink: 0, textAlign: 'center', marginTop: 0, maxWidth: 640, padding: '0 16px', paddingBottom: 'clamp(12px, 2.5vh, 28px)' }}>
-          <h1 style={{ margin: 0, fontFamily: "'Mulish', -apple-system, sans-serif", fontSize: 'clamp(32px, 5.5vw, 54px)', fontWeight: 800, color: C.navy, lineHeight: 1.05, letterSpacing: '-0.03em' }}>
+        <div style={{ flexShrink: 0, textAlign: 'center', marginTop: 0, maxWidth: 640, padding: '0 16px', paddingBottom: 'clamp(4px, 0.8vh, 10px)' }}>
+          <h1 style={{ margin: 0, fontFamily: "'Mulish', -apple-system, sans-serif", fontSize: 'clamp(28px, 4.5vw, 46px)', fontWeight: 800, color: C.navy, lineHeight: 1.0, letterSpacing: '-0.03em' }}>
             The AI partner you can trust,{' '}<span style={{ fontStyle: 'italic', color: C.orange }}>like that family member you can always count on.</span>
           </h1>
           <p style={{
             fontFamily: "'Mulish', sans-serif",
             fontWeight: 400,
-            fontSize: 'clamp(14px, 1.8vw, 17px)',
+            fontSize: 'clamp(13px, 1.6vw, 16px)',
             color: '#1a3a4a',
             opacity: 0.7,
-            lineHeight: 1.55,
-            maxWidth: 640,
-            margin: '14px auto 0',
+            lineHeight: 1.5,
+            maxWidth: 580,
+            margin: '8px auto 0',
             textAlign: 'center',
           }}>
             While your competition is still trying to figure out what an &lsquo;LLM&rsquo; is,{' '}
             <strong style={{ fontWeight: 700, opacity: 1 }}>we&rsquo;re already installing yours.</strong>
-            <br /><br />
-            <span style={{ fontWeight: 700, color: '#1a3a4a', opacity: 0.95, fontSize: 'clamp(15px, 1.9vw, 18px)' }}>
-              You stay focused on what you do best.{' '}
-              <span style={{ color: '#f26419', fontStyle: 'italic' }}>
-                We handle the rest.
-              </span>
+            {' · '}
+            <span style={{ fontWeight: 700, color: '#f26419', fontStyle: 'italic' }}>
+              We handle the rest.
             </span>
           </p>
         </div>
