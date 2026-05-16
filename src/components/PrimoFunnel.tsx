@@ -610,10 +610,10 @@ function SectionIntro({ onOpenForm }: { onOpenForm: (s?: string) => void }) {
 
 // ── Section 1 — The System ────────────────────────────────────────────────────
 const STEPS = [
-  { num: '01', title: 'Audit & Strategy', desc: 'We map your existing stack, identify AI-ready touchpoints, and build a tailored growth blueprint.' },
-  { num: '02', title: 'Build & Integrate', desc: 'Our team deploys AI tools directly into your workflows — no rebuilding, no downtime.' },
-  { num: '03', title: 'Activate & Launch', desc: 'Your content engine, automations, and campaigns go live. Real output from day one.' },
-  { num: '04', title: 'Optimize & Scale', desc: 'We track what moves the needle and double down — continuous iteration, compounding results.' },
+  { num: '01', title: 'Audit & Strategy', sub: 'We listen. You vent.', desc: "30 minutes on a call. You tell us what's eating your week. We tell you exactly what we can take off your plate. No 'discovery framework.' No pitch deck." },
+  { num: '02', title: 'Build & Integrate', sub: 'We disappear for 2 weeks.', desc: "We build everything in the background. No daily Slack pings. No 'just need 30 minutes of your time.' You keep running your business. We keep building." },
+  { num: '03', title: 'Activate & Launch', sub: 'Your business gets superpowers.', desc: "We turn it on. You see leads getting answered at 3am. Content posting itself. Reports landing in your inbox. The 15 hours of admin you used to do — gone." },
+  { num: '04', title: 'Optimize & Scale', sub: 'We keep making it sharper.', desc: "Once one system runs itself, we add the next. Quarter by quarter, your business becomes AI-native — and you never had to learn what that means." },
 ];
 
 function Section1({ onOpenForm }: { onOpenForm: (s?: string) => void }) {
@@ -637,13 +637,13 @@ function Section1({ onOpenForm }: { onOpenForm: (s?: string) => void }) {
           >
             The System
           </motion.p>
-          <AnimatedHeading text="Stop guessing. Start growing." color={C.navy} center />
+          <AnimatedHeading text="You don't need to learn AI. You need someone who already did." color={C.navy} center />
           <motion.p
             initial={{ opacity: 0, y: 12 }} animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.7, ease: EASE_OUT, delay: 0.2 }}
-            style={{ margin: '20px auto 0', fontSize: 'clamp(15px,2vw,18px)', fontWeight: 400, color: 'rgba(26,58,74,0.65)', maxWidth: 520, lineHeight: 1.6 }}
+            style={{ margin: '20px auto 0', fontSize: 'clamp(15px,2vw,18px)', fontWeight: 400, color: 'rgba(26,58,74,0.65)', maxWidth: 620, lineHeight: 1.6 }}
           >
-            A four-step process that turns AI from a buzzword into your biggest competitive advantage.
+            Here's how we take you from 'I should probably look into AI' to 'my business basically runs itself' — in 4 moves.
           </motion.p>
         </div>
 
@@ -676,8 +676,9 @@ function Section1({ onOpenForm }: { onOpenForm: (s?: string) => void }) {
                   pointerEvents: 'none',
                 }} />
               )}
-              <div style={{ fontSize: 38, fontWeight: 900, color: C.orange, lineHeight: 1, marginBottom: 16, fontFamily: "'Mulish',sans-serif" }}>{step.num}</div>
-              <div style={{ fontSize: 16, fontWeight: 800, color: C.cream, marginBottom: 10, lineHeight: 1.2 }}>{step.title}</div>
+              <div style={{ fontSize: 38, fontWeight: 900, color: C.orange, lineHeight: 1, marginBottom: 12, fontFamily: "'Mulish',sans-serif" }}>{step.num}</div>
+              <div style={{ fontSize: 16, fontWeight: 800, color: C.cream, marginBottom: 6, lineHeight: 1.2 }}>{step.title}</div>
+              <div style={{ fontSize: 13, fontWeight: 600, fontStyle: 'italic', color: `${C.cream}bb`, marginBottom: 10, lineHeight: 1.3 }}>{(step as any).sub}</div>
               <AnimatePresence>
                 {tooltip === i && (
                   <motion.div
@@ -767,14 +768,14 @@ function Section2({ onOpenForm }: { onOpenForm: (s?: string) => void }) {
 
 // ── Section 3 — Client Journey (Spine) ───────────────────────────────────────
 const JOURNEY_CARDS: SpineCard[] = [
-  { label: 'Discovery',        icon: 'discovery'        as IconName, title: 'They find you',                    body: 'AI-powered content and ads bring qualified traffic to your door — people already looking for what you offer.' },
-  { label: 'First Impression', icon: 'firstimpression'  as IconName, title: 'You captivate instantly',           body: 'Your AI-built brand creates instant trust. They stay, they read, they want more.' },
-  { label: 'Nurture',          icon: 'nurture'          as IconName, title: 'AI keeps them warm',               body: 'Automated sequences and always-on content keep your brand top of mind between touchpoints.' },
-  { label: 'Conversion',       icon: 'conversion'       as IconName, title: 'The right offer at the right time', body: 'AI identifies buying signals and surfaces the perfect offer — no guesswork, no generic blasts.' },
-  { label: 'Delivery',         icon: 'delivery'         as IconName, title: 'Effortless fulfillment',            body: 'Integrated AI tools handle onboarding and communication — premium experience without extra overhead.' },
-  { label: 'Retention',        icon: 'retention'        as IconName, title: 'They stay and grow',               body: 'Smart re-engagement campaigns and upsell sequences keep clients in your ecosystem longer.' },
-  { label: 'Advocacy',         icon: 'advocacy'         as IconName, title: 'Clients become fans',              body: 'Automated referral and testimonial systems turn happy clients into your loudest growth channel.' },
-  { label: 'Mastery',          icon: 'mastery'          as IconName, title: 'You scale with confidence',        body: 'Every stage is measured and compounding. You\'re not guessing anymore — you\'re growing on purpose.' },
+  { label: 'Discovery',        icon: 'discovery'        as IconName, title: 'Discovery',                        body: '30-min call. No pitch deck. Just you telling us what\'s draining your week, and us telling you what we can handle.' },
+  { label: 'First Impression', icon: 'firstimpression'  as IconName, title: 'First Impression',                 body: 'Within 5 days you get a one-page plan: what we\'ll build, what you\'ll save, what it\'ll cost. No jargon. No fluff.' },
+  { label: 'Nurture',          icon: 'nurture'          as IconName, title: 'Build Phase',                      body: 'While we\'re building, you keep running your business. No 2-hour weekly check-ins. We don\'t need you to \'learn.\'' },
+  { label: 'Conversion',       icon: 'conversion'       as IconName, title: 'First Win',                        body: 'Within 14-21 days, your first system is running. Real results, not slides. You see numbers change. That\'s the only deliverable that matters.' },
+  { label: 'Delivery',         icon: 'delivery'         as IconName, title: 'Handoff (Without the Burden)',     body: 'You get the system. We keep the maintenance. You don\'t need to know what\'s under the hood. You just need it to work.' },
+  { label: 'Retention',        icon: 'retention'        as IconName, title: 'Running Quietly',                  body: 'No 47 Slack channels. No \'where\'s that login again?\' emails. The system runs. We keep it running. You stay focused.' },
+  { label: 'Advocacy',         icon: 'advocacy'         as IconName, title: 'They Start Asking How',            body: 'Your competitors notice your faster response times, your tighter margins, your team that suddenly has free hours. Let them wonder.' },
+  { label: 'Mastery',          icon: 'mastery'          as IconName, title: 'Add the Next Layer',               body: 'Once one system runs itself, we add the next. One quarter at a time, your business becomes AI-native — without you ever learning what \'AI-native\' means.' },
 ];
 
 function Section3({ onOpenForm }: { onOpenForm: (s?: string) => void }) {
@@ -783,8 +784,8 @@ function Section3({ onOpenForm }: { onOpenForm: (s?: string) => void }) {
       id="funnel-section-3"
       bg={C.cream} textColor={C.navy} labelColor={C.orange}
       supLabel="Client Journey"
-      heading="From first click to lifelong client."
-      subtitle="Eight stages. Every one powered by AI. Every one designed to compound."
+      heading="From the first hello to running on autopilot."
+      subtitle="Eight stages. We handle them all. You just show up to do what you do best."
       cards={JOURNEY_CARDS}
       ctaLabel="Map my client journey →"
       onCta={() => onOpenForm()}
@@ -794,14 +795,14 @@ function Section3({ onOpenForm }: { onOpenForm: (s?: string) => void }) {
 
 // ── Section 4 — Pricing ───────────────────────────────────────────────────────
 const PRICING_CARDS = [
-  { name: 'AI Audit', price: '$497', period: 'one-time', badge: null, color: C.cream, bg: C.navy, desc: 'A deep-dive into your business. We map every AI opportunity and hand you a prioritized roadmap.', features: ['2-hour strategy session','Full AI opportunity map','Priority action plan','Tool recommendations'], cta: 'Start with an audit' },
-  { name: 'Sprint', price: '$2,500', period: '/month', badge: 'Most Popular', color: C.navy, bg: C.orange, desc: 'One focused service, maximum impact. Ideal for businesses ready to activate a single AI capability.', features: ['Choose 1 core service','Full implementation','30-day activation','Monthly optimization'], cta: 'Launch my sprint' },
-  { name: 'Growth', price: '$4,500', period: '/month', badge: null, color: C.cream, bg: C.navy, desc: 'Two to three services working together. Compound results from your first integrated AI system.', features: ['2–3 core services','Integrated strategy','Bi-weekly calls','Full analytics dashboard'], cta: 'Build my growth system' },
-  { name: 'Scale', price: '$8,000', period: '/month', badge: null, color: C.navy, bg: C.yellow, desc: 'Full Primo system activation. Every service, every channel, compounding every month.', features: ['All 6 services','Dedicated AI strategist','Weekly performance reviews','Priority support & SLA'], cta: 'Activate the full system' },
-  { name: 'Enterprise', price: 'Custom', period: '', badge: null, color: C.cream, bg: C.navy, desc: 'For organizations with unique requirements. We build around your architecture, team, and goals.', features: ['Custom scope','On-site option','Dedicated account team','Flexible contract terms'], cta: "Let's talk" },
+  { name: 'AI Audit', price: '$497', period: 'one-time', badge: null, tagline: 'For the curious.', color: C.cream, bg: C.navy, desc: 'A deep-dive into your business. We map every workflow we can automate, calculate the ROI, and hand you a roadmap. Use it with us — or anywhere. Yours to keep.', features: ['Full operational audit','AI opportunity map','Custom ROI projections','90-day implementation roadmap'], cta: 'Book my audit →' },
+  { name: 'Sprint', price: '$2,500', period: '/month', badge: null, tagline: 'For one painful bottleneck.', color: C.navy, bg: C.orange, desc: 'One system, fully built and installed in 30 days. Pick the workflow that\'s eating your time. We\'ll make it run itself.', features: ['1 fully-built AI system','Team training (under 2 hours)','30-day support','Plain-English documentation'], cta: 'Start a sprint →' },
+  { name: 'Growth', price: '$4,500', period: '/month', badge: 'Most Popular', tagline: 'For real growth.', color: C.cream, bg: C.navy, desc: 'Three integrated systems running across your business. The package most owners pick when they\'re ready to scale operations without scaling headcount.', features: ['3 integrated AI systems','Custom dashboard with your KPIs','Workflow automation across departments','60-day support + monthly check-ins'], cta: "Let's grow →" },
+  { name: 'Scale', price: '$8,000', period: '/month', badge: null, tagline: 'For going AI-native.', color: C.navy, bg: C.yellow, desc: 'Multi-department infrastructure. Custom agents, voice/chat bots, content engine, automated reporting. Built for businesses ready to compound their advantage every month.', features: ['Multi-department AI infrastructure','Custom agents + voice/chat bots','Content engine + automated reporting','Quarterly strategy sessions'], cta: 'Scale up →' },
+  { name: 'Enterprise', price: 'Custom', period: '', badge: null, tagline: 'For full transformation.', color: C.cream, bg: C.navy, desc: "When AI isn't a project — it's how the business operates. Multi-location, multi-department, custom development. Built around your operation, not a template.", features: ['Custom-built for your operation','Dedicated team','White-glove implementation','Ongoing strategic partnership'], cta: 'Book strategy call →' },
 ];
 
-const POPULAR_IDX = 1;
+const POPULAR_IDX = 2;
 
 function Section4({ onOpenForm }: { onOpenForm: (s?: string) => void }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -823,13 +824,13 @@ function Section4({ onOpenForm }: { onOpenForm: (s?: string) => void }) {
           >
             Pricing
           </motion.p>
-          <AnimatedHeading text="Choose your starting point." color={C.cream} center />
+          <AnimatedHeading text="Pick where you start. We'll grow with you." color={C.cream} center />
           <motion.p
             initial={{ opacity: 0, y: 12 }} animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.7, ease: EASE_OUT, delay: 0.2 }}
-            style={{ margin: '20px auto 0', fontSize: 'clamp(15px,2vw,18px)', fontWeight: 400, color: 'rgba(234,226,183,0.6)', maxWidth: 480, lineHeight: 1.6 }}
+            style={{ margin: '20px auto 0', fontSize: 'clamp(15px,2vw,18px)', fontWeight: 400, color: 'rgba(234,226,183,0.6)', maxWidth: 560, lineHeight: 1.6 }}
           >
-            Every engagement is built to compound. Start where it makes sense for you.
+            Most clients break even within 60 days. Some within 30. We'll show you the math before you sign anything.
           </motion.p>
         </div>
 
@@ -869,7 +870,8 @@ function Section4({ onOpenForm }: { onOpenForm: (s?: string) => void }) {
                     {card.badge}
                   </motion.div>
                 )}
-                <div style={{ fontSize: 12, fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase', color: `${card.color}99`, marginBottom: 8 }}>{card.name}</div>
+                <div style={{ fontSize: 12, fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase', color: `${card.color}99`, marginBottom: 4 }}>{card.name}</div>
+                <div style={{ fontSize: 13, fontWeight: 600, fontStyle: 'italic', color: `${card.color}cc`, marginBottom: 14 }}>{(card as any).tagline}</div>
                 <div style={{ marginBottom: 16 }}>
                   <span style={{ fontSize: 36, fontWeight: 900, color: card.color, lineHeight: 1 }}>{card.price}</span>
                   {card.period && <span style={{ fontSize: 13, fontWeight: 500, color: `${card.color}88`, marginLeft: 4 }}>{card.period}</span>}
@@ -917,9 +919,9 @@ function Section4({ onOpenForm }: { onOpenForm: (s?: string) => void }) {
 
 // ── Section 5 — Stats ─────────────────────────────────────────────────────────
 const STATS = [
-  { to: 75, suffix: '%', label: 'of SMBs that adopt AI report faster growth within 6 months.', color: C.orange },
-  { to: 25, suffix: '%', label: 'average reduction in operational costs after AI integration.', color: C.yellow },
-  { to: 100, suffix: '%', label: 'of our clients see measurable results within the first sprint.', color: C.green },
+  { to: 75, suffix: '%', heading: 'of small businesses', label: 'are already using or exploring AI in 2026. The other 25% are about to be playing very expensive catch-up. Source: Reimagine Main Street.', color: C.orange },
+  { to: 9, suffix: 'x', heading: 'more leads converted', label: "by businesses that respond in under 5 minutes vs over 30 minutes. AI doesn't sleep, doesn't take lunch, and doesn't drop the ball.", color: C.yellow },
+  { to: 15, suffix: '+', heading: 'hours saved per week', label: "is what our average client gets back after their first Primo system goes live. That's a full working day, every week, for the rest of your business's life.", color: C.green },
 ];
 
 function Section5() {
@@ -941,13 +943,13 @@ function Section5() {
           >
             The Data
           </motion.p>
-          <AnimatedHeading text="We know your market." color={C.navy} center />
+          <AnimatedHeading text="The numbers your competitors don't want you to see." color={C.navy} center />
           <motion.p
             initial={{ opacity: 0, y: 12 }} animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.7, ease: EASE_OUT, delay: 0.2 }}
-            style={{ margin: '20px auto 0', fontSize: 'clamp(15px,2vw,18px)', fontWeight: 400, color: 'rgba(26,58,74,0.65)', maxWidth: 480, lineHeight: 1.6 }}
+            style={{ margin: '20px auto 0', fontSize: 'clamp(15px,2vw,18px)', fontWeight: 400, color: 'rgba(26,58,74,0.65)', maxWidth: 560, lineHeight: 1.6 }}
           >
-            The numbers aren't hypothetical. They're what happens when AI is deployed with intent.
+            These aren't projections. This is what happens to local businesses that stop guessing about AI and start using it.
           </motion.p>
         </div>
 
@@ -960,10 +962,82 @@ function Section5() {
               transition={{ duration: 0.75, ease: EASE_OUT, delay: 0.1 + i * 0.1 }}
               style={{ background: C.navy, borderRadius: 22, padding: '48px 32px', textAlign: 'center' }}
             >
-              <div style={{ fontSize: 'clamp(56px,8vw,96px)', fontWeight: 900, color: stat.color, lineHeight: 1, marginBottom: 16, fontFamily: "'Mulish',sans-serif" }}>
+              <div style={{ fontSize: 'clamp(56px,8vw,96px)', fontWeight: 900, color: stat.color, lineHeight: 1, marginBottom: 8, fontFamily: "'Mulish',sans-serif" }}>
                 <Counter to={stat.to} suffix={stat.suffix} color={stat.color} />
               </div>
-              <div style={{ fontSize: 15, fontWeight: 400, color: 'rgba(234,226,183,0.68)', lineHeight: 1.55 }}>{stat.label}</div>
+              <div style={{ fontSize: 16, fontWeight: 700, color: stat.color, marginBottom: 10, lineHeight: 1.3, fontFamily: "'Mulish',sans-serif" }}>{(stat as any).heading}</div>
+              <div style={{ fontSize: 14, fontWeight: 400, color: 'rgba(234,226,183,0.68)', lineHeight: 1.55 }}>{stat.label}</div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ── Section 5b — Why El Paso Businesses Trust Primo ──────────────────────────
+const TRUST_CARDS = [
+  { title: 'Bilingual by default', text: "Every system we build works in English AND Spanish. No 'we'll add Spanish in phase 2.' It just works." },
+  { title: 'We work on local time', text: "When you call, you don't get a queue from Bangalore. You get a human, in El Paso, who answers in under 4 hours." },
+  { title: 'We know your competitors', text: "We know what's happening in El Paso, Juárez, Las Cruces. We're not building for 'small business owners' in general. We're building for YOUR market." },
+];
+const TRUST_ICONS: (IconName | null)[] = [null, 'clock', 'location'];
+
+function Section5b() {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, amount: 0.15 });
+
+  return (
+    <section id="funnel-section-5b" style={{
+      background: C.cream,
+      padding: 'clamp(80px, 14vh, 140px) clamp(20px, 5vw, 60px)',
+      display: 'flex', flexDirection: 'column', alignItems: 'center',
+    }}>
+      <div style={{ maxWidth: 1200, width: '100%', margin: '0 auto' }}>
+        <div style={{ textAlign: 'center', marginBottom: 'clamp(40px, 8vh, 80px)' }}>
+          <AnimatedHeading
+            text="We're not a Silicon Valley agency that 'also serves' El Paso. We're from here. We work like you do."
+            color={C.navy}
+            center
+          />
+          <motion.p
+            initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7, ease: EASE_OUT, delay: 0.2 }}
+            style={{ margin: '20px auto 0', fontSize: 'clamp(15px,2vw,18px)', fontWeight: 400, color: `${C.navy}aa`, maxWidth: 560, lineHeight: 1.6 }}
+          >
+            Most agencies want to put you on a 45-day Slack-based onboarding. We'd rather meet you for coffee at L&J.
+          </motion.p>
+        </div>
+
+        <div ref={ref} style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+          gap: 'clamp(20px, 3vw, 32px)',
+        }}>
+          {TRUST_CARDS.map((card, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 32 }}
+              animate={inView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.75, ease: EASE_OUT, delay: i * 0.1 }}
+              style={{
+                background: 'white',
+                borderRadius: 22,
+                padding: 'clamp(28px, 4vw, 40px)',
+                boxShadow: '0 2px 16px rgba(26,58,74,0.07)',
+                border: '1px solid rgba(26,58,74,0.07)',
+              }}
+            >
+              <div style={{ marginBottom: 20, fontSize: 48, lineHeight: 1 }}>
+                {TRUST_ICONS[i] ? <PrimoIcon name={TRUST_ICONS[i]!} size={64} /> : <span>🇲🇽🇺🇸</span>}
+              </div>
+              <div style={{ fontFamily: "'Mulish', sans-serif", fontSize: 'clamp(16px, 1.9vw, 19px)', fontWeight: 800, color: C.navy, marginBottom: 12, lineHeight: 1.25 }}>
+                {card.title}
+              </div>
+              <div style={{ fontFamily: "'Mulish', sans-serif", fontSize: 'clamp(13px, 1.5vw, 15px)', fontWeight: 500, color: `${C.navy}bb`, lineHeight: 1.6 }}>
+                {card.text}
+              </div>
             </motion.div>
           ))}
         </div>
@@ -974,12 +1048,12 @@ function Section5() {
 
 // ── Section 6 — 90-Day Timeline (Spine) ──────────────────────────────────────
 const MILESTONE_CARDS: SpineCard[] = [
-  { label: 'Day 1',  icon: 'strategycall'  as IconName, title: 'Strategy call & AI audit',    body: 'We align on goals, assess your stack, and define the exact scope of your sprint.' },
-  { label: 'Day 7',  icon: 'roadmap'       as IconName, title: 'Roadmap delivered',           body: 'A complete, prioritized action plan is in your hands — clear path forward.' },
-  { label: 'Day 14', icon: 'launch'        as IconName, title: 'First deliverables live',      body: 'Initial assets, automations, or content pieces are deployed and generating real output.' },
-  { label: 'Day 30', icon: 'sprint'        as IconName, title: 'Full sprint activation',       body: 'Every element of your chosen services is running. We\'re tracking, measuring, and iterating.' },
-  { label: 'Day 60', icon: 'optimization'  as IconName, title: 'Optimization review',          body: 'Data drives our next moves. We double down on what\'s working and eliminate what isn\'t.' },
-  { label: 'Day 90', icon: 'scale'         as IconName, title: 'Scale decision point',         body: 'You\'ve seen results. Now we plan the next phase — more services, more channels, more growth.' },
+  { label: 'Day 1',  icon: 'strategycall'  as IconName, title: 'Strategy Call',           body: 'One call. One hour. We figure out the highest-leverage thing we can build for you. You leave with clarity.' },
+  { label: 'Day 7',  icon: 'roadmap'       as IconName, title: 'Your Roadmap',            body: 'A one-page plan with deliverables, timelines, and exact ROI projections. Read it in 4 minutes. Sign with one click.' },
+  { label: 'Day 14', icon: 'launch'        as IconName, title: 'First Deliverables Live', body: "Your first AI system is live and running. Real workflows. Real time saved. Not a 'demo.'" },
+  { label: 'Day 30', icon: 'sprint'        as IconName, title: 'Full Sprint Activation',  body: 'Additional systems layer in. Your team starts noticing they have time again. You notice your bottom line moving.' },
+  { label: 'Day 60', icon: 'optimization'  as IconName, title: 'Optimization Review',     body: "We measure everything. We tune what's underperforming. You see weekly reports written in plain English." },
+  { label: 'Day 90', icon: 'scale'         as IconName, title: 'Scale Decision Point',    body: "Look at your numbers. Decide what to scale next. Or just keep what's working — your call." },
 ];
 
 function Section6({ onOpenForm }: { onOpenForm: (s?: string) => void }) {
@@ -988,8 +1062,8 @@ function Section6({ onOpenForm }: { onOpenForm: (s?: string) => void }) {
       id="funnel-section-6"
       bg={C.navy} textColor={C.cream} labelColor={C.orange}
       supLabel="Your 90 Days"
-      heading="Your first 90 days with Primo."
-      subtitle="Not a theory. A timeline. Here's exactly what happens after you sign on."
+      heading="Your first 90 days with Primo, exactly."
+      subtitle="No 'results in 6-12 months.' No 'depends on a lot of factors.' Here's exactly what happens, week by week."
       cards={MILESTONE_CARDS}
       ctaLabel="Start my 90-day journey →"
       onCta={() => onOpenForm()}
@@ -1025,15 +1099,18 @@ function Section7({ onOpenForm }: { onOpenForm: (s?: string) => void }) {
           transition={{ duration: 0.9, ease: EASE_OUT }}
         >
           <h2 style={{ margin: '0 0 20px', fontSize: 'clamp(36px,6vw,64px)', fontWeight: 900, color: C.cream, lineHeight: 1.05, fontFamily: "'Mulish',sans-serif" }}>
-            Ready to make<br />AI human?
+            Want your time back?
           </h2>
           <p style={{ margin: '0 0 48px', fontSize: 'clamp(16px,2.5vw,20px)', fontWeight: 400, color: 'rgba(234,226,183,0.85)', maxWidth: 480, marginLeft: 'auto', marginRight: 'auto', lineHeight: 1.6 }}>
-            Every day you wait is a day your competitor uses AI against you. Let's change that today.
+            Take 5 minutes. Tell us what's eating your week. We'll tell you what we can handle for you.
           </p>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, justifyContent: 'center', alignItems: 'center' }}>
-            <CtaBtn label="Get Started Now →" onClick={() => onOpenForm()} variant="ghost" />
-            <CtaBtn label="Book a free audit first" onClick={() => onOpenForm('AI Audit')} variant="outline" />
+            <CtaBtn label="Get started now →" onClick={() => onOpenForm()} variant="ghost" />
+            <CtaBtn label="Just book a 15-min call" onClick={() => onOpenForm()} variant="outline" />
           </div>
+          <p style={{ margin: '24px 0 0', fontFamily: "'Mulish',sans-serif", fontSize: 13, fontStyle: 'italic', color: 'rgba(234,226,183,0.55)', textAlign: 'center' }}>
+            No 'marketing follow-up.' No 47 sales emails. Just one honest conversation, in plain English.
+          </p>
         </motion.div>
       </div>
     </section>
@@ -1048,14 +1125,17 @@ function Footer() {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(200px,1fr))', gap: 40, marginBottom: 48 }}>
           <div>
             <div style={{ fontSize: 18, fontWeight: 900, color: C.cream, marginBottom: 8, fontFamily: "'Mulish',sans-serif" }}>Primo AI Studio</div>
-            <p style={{ margin: '4px 0 0', fontSize: 'clamp(11px,1.3vw,13px)', fontStyle: 'italic', fontWeight: 500, color: 'rgba(234,226,183,0.6)', lineHeight: 1.4, maxWidth: 260 }}>
+            <p style={{ margin: '4px 0 6px', fontSize: 'clamp(11px,1.3vw,13px)', fontStyle: 'italic', fontWeight: 500, color: 'rgba(234,226,183,0.6)', lineHeight: 1.4, maxWidth: 260 }}>
               The AI partner you can trust, like that family member you can always count on.
+            </p>
+            <p style={{ margin: '0', fontSize: 'clamp(10px,1.2vw,12px)', fontWeight: 400, color: 'rgba(234,226,183,0.4)', lineHeight: 1.4, maxWidth: 260 }}>
+              El Paso's #1 human-first AI agency. We handle the tech. You handle what you do best.
             </p>
           </div>
           <div>
             <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.14em', textTransform: 'uppercase', color: C.orange, marginBottom: 16 }}>Services</div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-              {['AI Integration','Content Marketing','AI Video Ads','Brand Identity','Web Platforms','AI Automation'].map(s => (
+              {['AI Agents','Done-For-You Automations','AI Content Creation','Brand AI','Custom Software','Voice & Chat Bots'].map(s => (
                 <div key={s} style={{ fontSize: 13, fontWeight: 500, color: 'rgba(234,226,183,0.55)' }}>{s}</div>
               ))}
             </div>
@@ -1090,19 +1170,25 @@ function Footer() {
             </div>
             <div style={{ marginTop: 24 }}>
               <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.15em', textTransform: 'uppercase', color: C.orange, marginBottom: 12 }}>Resources</div>
-              <a href="/blog"
-                style={{ fontSize: 13, fontWeight: 500, color: 'rgba(234,226,183,0.75)', textDecoration: 'none', transition: 'color 0.15s' }}
-                onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.color = C.orange; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.color = 'rgba(234,226,183,0.75)'; }}
-              >
-                Blog &amp; Insights →
-              </a>
+              {[
+                { label: 'Blog & Insights →', href: '/blog' },
+                { label: 'Free AI Scorecard →', href: '/blog' },
+                { label: 'Book a Call →', href: '#' },
+              ].map(link => (
+                <a key={link.label} href={link.href}
+                  style={{ fontSize: 13, fontWeight: 500, color: 'rgba(234,226,183,0.75)', textDecoration: 'none', transition: 'color 0.15s' }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.color = C.orange; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.color = 'rgba(234,226,183,0.75)'; }}
+                >
+                  {link.label}
+                </a>
+              ))}
             </div>
           </div>
         </div>
         <div style={{ borderTop: '1px solid rgba(234,226,183,0.08)', paddingTop: 24, display: 'flex', flexWrap: 'wrap', gap: 12, justifyContent: 'space-between', alignItems: 'center' }}>
-          <div style={{ fontSize: 12, fontWeight: 500, color: 'rgba(234,226,183,0.3)' }}>© 2025 Primo AI Studio. All rights reserved.</div>
-          <div style={{ fontSize: 12, fontWeight: 500, color: 'rgba(234,226,183,0.3)', fontStyle: 'italic' }}>The AI partner you can trust, like that family member you can always count on.™</div>
+          <div style={{ fontSize: 12, fontWeight: 500, color: 'rgba(234,226,183,0.3)' }}>© 2026 Primo AI Studio. Built in El Paso, Texas. 🌵</div>
+          <div style={{ fontSize: 12, fontWeight: 500, color: 'rgba(234,226,183,0.3)', fontStyle: 'italic' }}>Made by your primos, for businesses that don't have time.</div>
         </div>
       </div>
     </footer>
@@ -1138,6 +1224,7 @@ export default function PrimoFunnel({ onOpenForm }: PrimoFunnelProps) {
       <Section3 onOpenForm={onOpenForm} />
       <Section4 onOpenForm={onOpenForm} />
       <Section5 />
+      <Section5b />
       <Section6 onOpenForm={onOpenForm} />
       <Section7 onOpenForm={onOpenForm} />
       <Footer />

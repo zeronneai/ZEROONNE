@@ -49,7 +49,7 @@ export default function BlogCTA() {
           fontSize: 'clamp(26px,4vw,40px)', fontWeight: 900,
           color: C.cream, lineHeight: 1.1,
         }}>
-          Ready to put this into practice?
+          Reading is fun. Implementing is what pays.
         </h2>
 
         <p style={{
@@ -58,8 +58,7 @@ export default function BlogCTA() {
           fontSize: 'clamp(15px,2vw,18px)', fontWeight: 400,
           color: `${C.cream}cc`, lineHeight: 1.6, maxWidth: 520,
         }}>
-          Take our free 5-minute AI Opportunity Scorecard and discover your
-          top automation opportunities — specific to your industry in El Paso.
+          Take the free 5-minute Scorecard and we'll tell you exactly which of these strategies fits your business.
         </p>
 
         <button
@@ -83,8 +82,17 @@ export default function BlogCTA() {
             (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 4px 24px rgba(0,0,0,0.15)';
           }}
         >
-          Take the Scorecard →
+          Take the free Scorecard →
         </button>
+
+        <p style={{
+          margin: '16px 0 0',
+          fontFamily: "'Mulish', sans-serif",
+          fontSize: 12, fontStyle: 'italic',
+          color: `${C.cream}99`, textAlign: 'center',
+        }}>
+          5 minutes. Free. No 'follow-up sequence' — just one honest report.
+        </p>
       </div>
 
       <OnboardingModal entry={modalEntry} onClose={() => setModalEntry(null)} />
