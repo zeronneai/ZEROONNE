@@ -347,66 +347,27 @@ export default function App() {
             fontFamily: "'Mulish', sans-serif",
             fontWeight: 400,
             fontSize: 'clamp(14px, 1.8vw, 17px)',
-            color: 'rgba(26,58,74,0.65)',
+            color: '#1a3a4a',
+            opacity: 0.7,
             lineHeight: 1.55,
-            maxWidth: 620,
+            maxWidth: 640,
             margin: '14px auto 0',
             textAlign: 'center',
           }}>
             While your competition is still trying to figure out what an &lsquo;LLM&rsquo; is,{' '}
-            <strong style={{ fontWeight: 700 }}>we&rsquo;re already installing yours.</strong>
-            <br />
-            <strong style={{ fontWeight: 700, color: 'rgba(26,58,74,0.85)' }}>You stay focused on what you do best. We handle the rest.</strong>
+            <strong style={{ fontWeight: 700, opacity: 1 }}>we&rsquo;re already installing yours.</strong>
+            <br /><br />
+            <span style={{ fontWeight: 700, color: '#1a3a4a', opacity: 0.95, fontSize: 'clamp(15px, 1.9vw, 18px)' }}>
+              You stay focused on what you do best.{' '}
+              <span style={{ color: '#f26419', fontStyle: 'italic' }}>
+                We handle the rest.
+              </span>
+            </span>
           </p>
         </div>
 
-        {/* ══ Punch line ══ */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-          style={{
-            marginTop: 'clamp(20px, 3vh, 32px)',
-            marginBottom: 'clamp(16px, 2.5vh, 24px)',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: 8,
-          }}
-        >
-          <span style={{
-            fontFamily: "'Mulish', sans-serif",
-            fontSize: 10,
-            fontWeight: 800,
-            letterSpacing: '0.2em',
-            textTransform: 'uppercase',
-            color: '#f26419',
-            background: 'rgba(242, 100, 25, 0.1)',
-            padding: '5px 12px',
-            borderRadius: 20,
-            border: '1px solid rgba(242, 100, 25, 0.25)',
-          }}>
-            ✦ Your next move
-          </span>
-          <h2 style={{
-            fontFamily: "'Mulish', sans-serif",
-            fontSize: 'clamp(18px, 2.8vw, 26px)',
-            fontWeight: 800,
-            color: '#1a3a4a',
-            textAlign: 'center',
-            margin: 0,
-            lineHeight: 1.2,
-            letterSpacing: '-0.01em',
-          }}>
-            Want to see what AI could{' '}
-            <span style={{ color: '#f26419', fontStyle: 'italic' }}>
-              handle for you?
-            </span>
-          </h2>
-        </motion.div>
-
         {/* ══ Block 2: Orbit ══ */}
-        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', minHeight: 0, overflow: 'visible', ...(isMobile ? { maxHeight: '65vw', maxWidth: '65vw', alignSelf: 'center' } : {}) }}>
+        <div style={{ flex: 1, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', width: '100%', minHeight: 0, overflow: 'visible', paddingTop: 'clamp(0px, 1vh, 16px)', paddingBottom: 0, marginTop: 'clamp(-8px, -1vh, 0px)', ...(isMobile ? { maxHeight: '60vw', maxWidth: '60vw', alignSelf: 'center' } : {}) }}>
           <div
             className="orbit-container"
             style={{
@@ -516,7 +477,7 @@ export default function App() {
         </div>
 
         {/* ══ Block 3: Hint + Button ══ */}
-        <div style={{ flexShrink: 0, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0 }}>
+        <div style={{ flexShrink: 0, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'clamp(8px, 1.5vh, 14px)', marginBottom: 'clamp(16px, 3vh, 32px)', position: 'relative', zIndex: 10 }}>
 
           <MagneticButton>
             <motion.button
