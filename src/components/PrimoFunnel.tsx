@@ -23,6 +23,7 @@ const EASE_MICRO:[number,number,number,number] = [0.34, 1.56, 0.64, 1];
 // ── Global CSS ────────────────────────────────────────────────────────────────
 const FUNNEL_CSS = `
   @media (max-width: 768px) { .dot-nav-desktop { display: none !important; } }
+  @media (max-width: 768px) { .primo-comparison { grid-template-columns: 1fr !important; gap: 20px !important; } }
   @keyframes spine-pulse {
     0%,100% { transform: translate(-50%,-50%) scale(1);   box-shadow: 0 0 0 0   rgba(242,100,25,0.6); }
     50%      { transform: translate(-50%,-50%) scale(1.2); box-shadow: 0 0 0 8px rgba(242,100,25,0);   }
@@ -115,7 +116,7 @@ function CtaBtn({ label, onClick, variant = 'primary' }:
 }
 
 // ── DotNav ────────────────────────────────────────────────────────────────────
-const DOT_LABELS = ['The System','Built For You','Client Journey','Pricing','The Data','Your 90 Days','Get Started'];
+const DOT_LABELS = ['We Handle It','The System','Built For You','Client Journey','Pricing','The Data','Your 90 Days','Get Started'];
 
 function DotNav({ activeSection }: { activeSection: number }) {
   const [hovered, setHovered] = useState<number | null>(null);
@@ -386,6 +387,216 @@ function FloatingShape({ delay, x, y, size }: { delay: number; x: number; y: num
   );
 }
 
+// ── Section Intro — We Handle It ─────────────────────────────────────────────
+const LEFT_ITEMS = [
+  'Sit through 3 "discovery" calls',
+  'Read 40-page technical proposals',
+  'Learn what "MCP" and "RAG" mean',
+  'Pretend you understood the architecture',
+  "Approve invoices for things you can't pronounce",
+  'Wait 6 months for "results"',
+  'Realize nothing is actually working',
+  'Pay for another agency to fix it',
+];
+
+const RIGHT_ITEMS = [
+  "Tell us what's eating your time",
+  "We tell you what we'll handle",
+  'We build it',
+  'You get your time back',
+];
+
+function SectionIntro({ onOpenForm }: { onOpenForm: (s?: string) => void }) {
+  const reduced = useReducedMotion();
+
+  return (
+    <section id="funnel-section-0" style={{
+      background: C.cream,
+      padding: 'clamp(80px, 14vh, 140px) clamp(20px, 5vw, 60px)',
+      minHeight: '100vh',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+    }}>
+
+      {/* Heading block */}
+      <div style={{ maxWidth: 1000, textAlign: 'center', marginBottom: 'clamp(40px, 8vh, 80px)' }}>
+        <motion.h2
+          initial={reduced ? {} : { opacity: 0, y: 30, filter: 'blur(8px)' }}
+          whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.9, ease: EASE_OUT }}
+          style={{
+            fontFamily: "'Mulish', sans-serif",
+            fontSize: 'clamp(28px, 5.5vw, 56px)',
+            fontWeight: 900,
+            color: C.navy,
+            lineHeight: 1.15,
+            letterSpacing: '-0.02em',
+            marginBottom: 20,
+            marginTop: 0,
+          }}
+        >
+          API keys. Webhooks. Deployments.<br />
+          Vector databases. LLM fine-tuning.<br />
+          SDKs. RAG pipelines.
+        </motion.h2>
+
+        <motion.p
+          initial={reduced ? {} : { opacity: 0, scale: 0.8 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.45, duration: 0.5, type: 'spring', stiffness: 200, damping: 12 }}
+          style={{
+            fontFamily: "'Mulish', sans-serif",
+            fontSize: 'clamp(20px, 3vw, 28px)',
+            fontWeight: 600,
+            fontStyle: 'italic',
+            color: C.orange,
+            marginBottom: 24,
+            marginTop: 0,
+          }}
+        >
+          Yawn.
+        </motion.p>
+
+        <motion.p
+          initial={reduced ? {} : { opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.65, duration: 0.7, ease: EASE_OUT }}
+          style={{
+            fontFamily: "'Mulish', sans-serif",
+            fontSize: 'clamp(15px, 1.8vw, 18px)',
+            fontWeight: 500,
+            color: C.navy,
+            opacity: 0.7,
+            lineHeight: 1.6,
+            maxWidth: 600,
+            margin: '0 auto',
+          }}
+        >
+          If just reading those words made you want to close the tab, you found the right primo.
+        </motion.p>
+      </div>
+
+      {/* Comparison grid */}
+      <div className="primo-comparison" style={{
+        width: '100%',
+        maxWidth: 1100,
+        display: 'grid',
+        gridTemplateColumns: '1fr 1fr',
+        gap: 'clamp(20px, 3vw, 40px)',
+      }}>
+
+        {/* Left — what others make you do */}
+        <motion.div
+          initial={reduced ? {} : { opacity: 0, x: -40 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.8, ease: EASE_OUT }}
+          style={{
+            background: 'rgba(26,58,74,0.06)',
+            border: '1px solid rgba(26,58,74,0.15)',
+            borderRadius: 20,
+            padding: 'clamp(28px, 4vw, 44px)',
+          }}
+        >
+          <p style={{
+            fontFamily: "'Mulish', sans-serif",
+            fontSize: 11, fontWeight: 800,
+            letterSpacing: '0.18em', textTransform: 'uppercase',
+            color: C.navy, opacity: 0.5, marginBottom: 24, marginTop: 0,
+          }}>
+            What most agencies make you do
+          </p>
+          <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 14 }}>
+            {LEFT_ITEMS.map((item, i) => (
+              <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 12,
+                fontFamily: "'Mulish', sans-serif", fontSize: 'clamp(13px, 1.5vw, 15px)',
+                color: C.navy, opacity: 0.75, lineHeight: 1.5 }}>
+                <span style={{ color: C.navy, opacity: 0.4, flexShrink: 0, fontWeight: 700 }}>→</span>
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+        </motion.div>
+
+        {/* Right — what you do with Primo */}
+        <motion.div
+          initial={reduced ? {} : { opacity: 0, x: 40 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.8, delay: 0.15, ease: EASE_OUT }}
+          style={{
+            background: C.navy,
+            borderRadius: 20,
+            padding: 'clamp(28px, 4vw, 44px)',
+            position: 'relative',
+            overflow: 'hidden',
+          }}
+        >
+          {/* Soft background circle */}
+          <div style={{ position: 'absolute', top: -40, right: -40, width: 180, height: 180,
+            borderRadius: '50%', background: C.orange, opacity: 0.08, pointerEvents: 'none' }} />
+
+          <p style={{
+            fontFamily: "'Mulish', sans-serif",
+            fontSize: 11, fontWeight: 800,
+            letterSpacing: '0.18em', textTransform: 'uppercase',
+            color: C.orange, marginBottom: 24, marginTop: 0, position: 'relative',
+          }}>
+            What you do with Primo
+          </p>
+
+          <ul style={{ listStyle: 'none', padding: 0, margin: 0,
+            display: 'flex', flexDirection: 'column', gap: 18, position: 'relative' }}>
+            {RIGHT_ITEMS.map((item, i) => (
+              <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 14,
+                fontFamily: "'Mulish', sans-serif", fontSize: 'clamp(15px, 1.8vw, 18px)',
+                fontWeight: 600, color: C.cream, lineHeight: 1.5 }}>
+                <span style={{
+                  background: C.orange, color: C.cream,
+                  width: 24, height: 24, borderRadius: '50%',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: 13, fontWeight: 800, flexShrink: 0,
+                }}>
+                  {i + 1}
+                </span>
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+
+          <p style={{
+            marginTop: 32, paddingTop: 24,
+            borderTop: '1px solid rgba(234,226,183,0.15)',
+            fontFamily: "'Mulish', sans-serif",
+            fontSize: 'clamp(13px, 1.5vw, 15px)',
+            fontStyle: 'italic', color: C.cream, opacity: 0.7,
+            textAlign: 'center', position: 'relative', marginBottom: 0,
+          }}>
+            That&apos;s it. That&apos;s the process.
+          </p>
+        </motion.div>
+      </div>
+
+      {/* CTA */}
+      <motion.div
+        initial={reduced ? {} : { opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ delay: 0.3, duration: 0.7, ease: EASE_OUT }}
+        style={{ marginTop: 'clamp(40px, 8vh, 80px)', textAlign: 'center' }}
+      >
+        <CtaBtn label="Tell us what's eating your time →" onClick={() => onOpenForm()} />
+      </motion.div>
+
+    </section>
+  );
+}
+
 // ── Section 1 — The System ────────────────────────────────────────────────────
 const STEPS = [
   { num: '01', title: 'Audit & Strategy', desc: 'We map your existing stack, identify AI-ready touchpoints, and build a tailored growth blueprint.' },
@@ -401,7 +612,7 @@ function Section1({ onOpenForm }: { onOpenForm: (s?: string) => void }) {
   const reduced = useReducedMotion();
 
   return (
-    <section id="funnel-section-0" ref={ref} style={{
+    <section id="funnel-section-1" ref={ref} style={{
       background: C.cream, padding: 'clamp(80px,12vh,140px) clamp(20px,5vw,60px)',
       minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center',
     }}>
@@ -501,7 +712,7 @@ function Section2({ onOpenForm }: { onOpenForm: (s?: string) => void }) {
   const inView = useInView(ref, { once: true, amount: 0.15 });
 
   return (
-    <section id="funnel-section-1" ref={ref} style={{
+    <section id="funnel-section-2" ref={ref} style={{
       background: C.navy, padding: 'clamp(80px,12vh,140px) clamp(20px,5vw,60px)',
       minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center',
     }}>
@@ -558,7 +769,7 @@ const JOURNEY_CARDS: SpineCard[] = [
 function Section3({ onOpenForm }: { onOpenForm: (s?: string) => void }) {
   return (
     <SpineSection
-      id="funnel-section-2"
+      id="funnel-section-3"
       bg={C.cream} textColor={C.navy} labelColor={C.orange}
       supLabel="Client Journey"
       heading="From first click to lifelong client."
@@ -587,7 +798,7 @@ function Section4({ onOpenForm }: { onOpenForm: (s?: string) => void }) {
   const reduced = useReducedMotion();
 
   return (
-    <section id="funnel-section-3" ref={ref} style={{
+    <section id="funnel-section-4" ref={ref} style={{
       background: C.navy, padding: 'clamp(80px,12vh,140px) clamp(20px,5vw,60px)',
       minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center',
     }}>
@@ -705,7 +916,7 @@ function Section5() {
   const inView = useInView(ref, { once: true, amount: 0.2 });
 
   return (
-    <section id="funnel-section-4" ref={ref} style={{
+    <section id="funnel-section-5" ref={ref} style={{
       background: C.cream, padding: 'clamp(80px,12vh,140px) clamp(20px,5vw,60px)',
       minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center',
     }}>
@@ -763,7 +974,7 @@ const MILESTONE_CARDS: SpineCard[] = [
 function Section6({ onOpenForm }: { onOpenForm: (s?: string) => void }) {
   return (
     <SpineSection
-      id="funnel-section-5"
+      id="funnel-section-6"
       bg={C.navy} textColor={C.cream} labelColor={C.orange}
       supLabel="Your 90 Days"
       heading="Your first 90 days with Primo."
@@ -790,7 +1001,7 @@ function Section7({ onOpenForm }: { onOpenForm: (s?: string) => void }) {
   const reduced = useReducedMotion();
 
   return (
-    <section id="funnel-section-6" ref={ref} style={{
+    <section id="funnel-section-7" ref={ref} style={{
       background: C.orange, padding: 'clamp(80px,12vh,140px) clamp(20px,5vw,60px)',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       position: 'relative', overflow: 'hidden',
@@ -893,7 +1104,7 @@ export default function PrimoFunnel({ onOpenForm }: PrimoFunnelProps) {
 
   useEffect(() => {
     const observers: IntersectionObserver[] = [];
-    for (let i = 0; i < 7; i++) {
+    for (let i = 0; i < 8; i++) {
       const el = document.getElementById(`funnel-section-${i}`);
       if (!el) continue;
       const obs = new IntersectionObserver(
@@ -910,6 +1121,7 @@ export default function PrimoFunnel({ onOpenForm }: PrimoFunnelProps) {
     <>
       <style>{FUNNEL_CSS}</style>
       <DotNav activeSection={activeSection} />
+      <SectionIntro onOpenForm={onOpenForm} />
       <Section1 onOpenForm={onOpenForm} />
       <Section2 onOpenForm={onOpenForm} />
       <Section3 onOpenForm={onOpenForm} />
