@@ -53,16 +53,15 @@ function SubBubbles({ btnCx, btnCy, points, isMobile }: {
     { bg: C.orange, text: C.cream },
   ];
 
-  const clamp = (val: number, min: number, max: number) => Math.max(min, Math.min(val, max));
-
   return (
     <>
       {points.map((point, i) => {
         const rad  = angles[i] * (Math.PI / 180);
         const dx   = Math.cos(rad) * dist;
         const dy   = Math.sin(rad) * dist;
-        const left = clamp(btnCx + dx, size / 2 + 8, window.innerWidth  - size / 2 - 8);
-        const top  = clamp(btnCy + dy, size / 2 + 8, window.innerHeight - size / 2 - 8);
+        // Center is pre-validated in handleBubbleClick — no clamping needed
+        const left = btnCx + dx;
+        const top  = btnCy + dy;
         return (
           <motion.div
             key={`sub-${i}`}
@@ -108,10 +107,8 @@ function ExpandedBubble({ svc, btnCx, btnCy, isMobile, windowWidth, onClose, onG
     ? Math.min(windowWidth * 0.75, 280)
     : 300; // fixed 300px circle on desktop
 
-  const cx = isMobile ? windowWidth / 2 : btnCx;
-  const cy = isMobile
-    ? (typeof window !== 'undefined' ? window.innerHeight / 2 : 400)
-    : btnCy;
+  const cx = btnCx;
+  const cy = btnCy;
 
   return (
     <motion.div
@@ -302,23 +299,27 @@ export default function App() {
     e.stopPropagation();
     if (active === svc.id) { setActive(null); setPopup(null); return; }
 
-    const btn   = e.currentTarget.getBoundingClientRect();
-    const btnCx = btn.left + btn.width  / 2;
-    const btnCy = btn.top  + btn.height / 2;
+    const iw = window.innerWidth;
+    const ih = window.innerHeight;
 
-    if (isMobile) {
-      setPopup({
-        id: svc.id,
-        btnCx: window.innerWidth  / 2,
-        btnCy: window.innerHeight / 2,
-      });
-    } else {
-      setPopup({
-        id: svc.id,
-        btnCx: window.innerWidth  / 2,
-        btnCy: window.innerHeight / 2,
-      });
-    }
+    // Sub-bubble geometry (mirrors SubBubbles component)
+    const expandedR = isMobile ? Math.min(iw * 0.5, 280) / 2 : 150;
+    const gap       = isMobile ? 52 : 80;
+    const dist      = expandedR + gap;
+    const subSz     = isMobile ? 75 : 90;
+    const pad       = 8;
+
+    // Angles: -90° (top), 30° (lower-right), 150° (lower-left)
+    // Bounding offsets: dy_min=-dist (top), dy_max=dist*sin30°=dist*0.5, dx_max=dist*cos30°≈dist*0.866
+    const minCy = dist       + subSz / 2 + pad;
+    const maxCy = ih - dist * 0.5 - subSz / 2 - pad;
+    const minCx = dist * 0.866 + subSz / 2 + pad;
+    const maxCx = iw - dist * 0.866 - subSz / 2 - pad;
+
+    const safeCx = Math.max(minCx, Math.min(maxCx, iw / 2));
+    const safeCy = Math.max(minCy, Math.min(maxCy, ih / 2));
+
+    setPopup({ id: svc.id, btnCx: safeCx, btnCy: safeCy });
     setActive(svc.id);
   };
 
