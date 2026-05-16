@@ -92,3 +92,10 @@ jobs:
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+      - name: Notify IndexNow (Bing, Yandex)
+        if: success()
+        run: |
+          echo "⏳ Waiting 30s for Vercel CDN to propagate..."
+          sleep 30
+          node scripts/indexnow-ping.mjs
