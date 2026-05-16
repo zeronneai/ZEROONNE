@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useParams, Link, Navigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import ReactMarkdown from 'react-markdown';
@@ -202,6 +202,10 @@ export default function BlogPost() {
   const { slug } = useParams<{ slug: string }>();
   const post = slug ? getPostBySlug(slug) : null;
   const related = slug ? getRelatedPosts(slug, 3) : [];
+
+  useEffect(() => {
+    document.dispatchEvent(new Event('render-event'));
+  }, [slug]);
 
   if (!post) return <Navigate to="/blog" replace />;
 

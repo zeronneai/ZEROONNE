@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
@@ -37,6 +37,10 @@ function BlogFooter() {
 export default function BlogIndex() {
   const allPosts = useMemo(() => getAllPosts(), []);
   const [activeCategory, setActiveCategory] = useState('All');
+
+  useEffect(() => {
+    document.dispatchEvent(new Event('render-event'));
+  }, []);
 
   const featured = allPosts.find(p => p.featured);
   const filteredPosts = allPosts.filter(p => {
