@@ -479,7 +479,7 @@ export default function App() {
 
             {/* Center logo */}
             <motion.a
-              href="https://www.instagram.com/the.cocreativehub"
+              href="https://www.instagram.com/primostudio.us"
               target="_blank" rel="noopener noreferrer"
               style={{
                 position: 'absolute', top: '50%', left: '50%',
