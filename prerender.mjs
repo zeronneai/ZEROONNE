@@ -22,6 +22,7 @@ const ROUTES = [
   '/',
   '/blog',
   '/blog/complete-2026-ai-guide-el-paso-small-businesses',
+  '/faq',
 ];
 
 const MIME_TYPES = {
