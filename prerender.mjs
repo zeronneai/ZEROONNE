@@ -27,6 +27,12 @@ const ROUTES = [
   '/case-studies/torque-performance',
   '/case-studies/el-toro-law',
   '/case-studies/brenda-jazmin-cake-pump',
+  '/ai-automation-el-paso',
+  '/ai-for-law-firms-el-paso',
+  '/bilingual-ai-chatbots-el-paso',
+  '/ai-content-marketing-el-paso',
+  '/ai-web-development-el-paso',
+  '/ai-for-hispanic-businesses-el-paso',
 ];
 
 const MIME_TYPES = {

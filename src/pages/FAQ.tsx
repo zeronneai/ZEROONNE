@@ -250,8 +250,9 @@ function FAQFooter() {
         <div style={{ display: 'flex', gap: 32, flexWrap: 'wrap' }}>
           <Link to="/"     style={{ fontFamily: "'Mulish',sans-serif", fontSize: 13, color: `${C.cream}77`, textDecoration: 'none' }}>Home</Link>
           <Link to="/blog" style={{ fontFamily: "'Mulish',sans-serif", fontSize: 13, color: `${C.cream}77`, textDecoration: 'none' }}>Blog</Link>
-          <Link to="/case-studies" style={{ fontFamily: "'Mulish',sans-serif", fontSize: 13, color: `${C.cream}77`, textDecoration: 'none' }}>Case Studies</Link>
-          <Link to="/faq"  style={{ fontFamily: "'Mulish',sans-serif", fontSize: 13, color: C.cream,         textDecoration: 'none', fontWeight: 700 }}>FAQ</Link>
+          <Link to="/case-studies"          style={{ fontFamily: "'Mulish',sans-serif", fontSize: 13, color: `${C.cream}77`, textDecoration: 'none' }}>Case Studies</Link>
+          <Link to="/ai-automation-el-paso" style={{ fontFamily: "'Mulish',sans-serif", fontSize: 13, color: `${C.cream}77`, textDecoration: 'none' }}>Services</Link>
+          <Link to="/faq"                   style={{ fontFamily: "'Mulish',sans-serif", fontSize: 13, color: C.cream,         textDecoration: 'none', fontWeight: 700 }}>FAQ</Link>
           <a href="mailto:primostudio.us@gmail.com" style={{ fontFamily: "'Mulish',sans-serif", fontSize: 13, color: `${C.cream}77`, textDecoration: 'none' }}>Contact</a>
         </div>
         <div style={{ fontFamily: "'Mulish',sans-serif", fontSize: 12, color: `${C.cream}44` }}>
