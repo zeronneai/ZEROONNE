@@ -33,6 +33,10 @@ whyElPasoPoints:
   - "No language selection menus — the bot adapts, not the customer"
 relatedCaseStudies:
   - el-toro-law
+relatedLandings:
+  - ai-automation-el-paso
+  - ai-content-marketing-el-paso
+  - ai-for-hispanic-businesses-el-paso
 faq:
   - q: "How is this different from Intercom or Drift?"
     a: "Intercom and Drift are built for SaaS support teams managing English-speaking users at scale. They're excellent tools for that use case. What we build is different: bilingual from the ground up, integrated with WhatsApp and Instagram DM, and trained on your specific business — products, services, pricing, intake flow. If your customer base speaks Spanish and messages on WhatsApp, off-the-shelf support tools weren't designed for you."

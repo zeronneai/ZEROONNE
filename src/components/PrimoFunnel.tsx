@@ -1424,8 +1424,21 @@ function Footer() {
           <div>
             <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.14em', textTransform: 'uppercase', color: C.orange, marginBottom: 16 }}>Services</div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-              {['AI Agents','Done-For-You Automations','AI Content Creation','Brand AI','Custom Software','Voice & Chat Bots'].map(s => (
-                <div key={s} style={{ fontSize: 13, fontWeight: 500, color: 'rgba(234,226,183,0.55)' }}>{s}</div>
+              {[
+                { label: 'AI Automation',           href: '/ai-automation-el-paso' },
+                { label: 'AI for Law Firms',         href: '/ai-for-law-firms-el-paso' },
+                { label: 'Bilingual Chatbots',       href: '/bilingual-ai-chatbots-el-paso' },
+                { label: 'AI Content Marketing',     href: '/ai-content-marketing-el-paso' },
+                { label: 'AI Web Development',       href: '/ai-web-development-el-paso' },
+                { label: 'AI for Hispanic Businesses', href: '/ai-for-hispanic-businesses-el-paso' },
+              ].map(s => (
+                <a key={s.label} href={s.href}
+                  style={{ fontSize: 13, fontWeight: 500, color: 'rgba(234,226,183,0.55)', textDecoration: 'none', transition: 'color 0.15s' }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.color = C.cream; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.color = 'rgba(234,226,183,0.55)'; }}
+                >
+                  {s.label}
+                </a>
               ))}
             </div>
           </div>

@@ -24,6 +24,7 @@ export interface Landing {
   whyElPaso: string;
   whyElPasoPoints: string[];
   relatedCaseStudies: string[];   // array of case study slugs
+  relatedLandings: string[];      // array of landing slugs for cross-links
   faq: FaqItem[];
   content: string;
 }
@@ -49,6 +50,7 @@ export function getAllLandings(): Landing[] {
       whyElPaso:          data.whyElPaso           || '',
       whyElPasoPoints:    data.whyElPasoPoints     || [],
       relatedCaseStudies: data.relatedCaseStudies  || [],
+      relatedLandings:    data.relatedLandings     || [],
       faq:                data.faq                 || [],
       content:            parsed.body,
     };

@@ -33,6 +33,9 @@ whyElPasoPoints:
   - "Built with Texas Bar guidelines in mind — we don't give legal advice, and the systems we build don't either"
 relatedCaseStudies:
   - el-toro-law
+relatedLandings:
+  - bilingual-ai-chatbots-el-paso
+  - ai-for-hispanic-businesses-el-paso
 faq:
   - q: "Is using AI in my law firm compliant with Texas Bar rules?"
     a: "The Texas Disciplinary Rules of Professional Conduct don't prohibit AI tools — they require competence, supervision, and confidentiality. The systems we build support those obligations: the AI assists, your attorney supervises and signs off. We build intake and communication tools, not autonomous legal decision-makers. That said, we recommend you review any AI system with your firm's ethics counsel before deployment."

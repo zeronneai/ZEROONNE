@@ -33,6 +33,10 @@ whyElPasoPoints:
   - "Bilingual list segmentation — right language to the right subscriber"
 relatedCaseStudies:
   - brenda-jazmin-cake-pump
+relatedLandings:
+  - ai-web-development-el-paso
+  - bilingual-ai-chatbots-el-paso
+  - ai-for-hispanic-businesses-el-paso
 faq:
   - q: "Will it sound like AI wrote it?"
     a: "Only if we let it. The first step of every engagement is a voice capture session — we interview you, study your existing content, and document your tone, vocabulary, and the way you explain your work. The AI drafts from that profile, not from a generic template. The goal is for your audience to not notice any change in how your content sounds."

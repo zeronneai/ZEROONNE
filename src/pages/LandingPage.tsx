@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useLocation, Link, Navigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import BlogHeader from '../components/BlogHeader';
-import { getLandingBySlug } from '../lib/landings';
+import { getLandingBySlug, getAllLandings } from '../lib/landings';
 import { getCaseStudyBySlug } from '../lib/caseStudies';
 
 const C = { navy: '#1a3a4a', orange: '#f26419', cream: '#eae2b7', yellow: '#f5b800' };
@@ -26,8 +26,9 @@ function LandingFooter() {
         <div style={{ display: 'flex', gap: 32, flexWrap: 'wrap' }}>
           <Link to="/"             style={{ fontFamily: "'Mulish',sans-serif", fontSize: 13, color: `${C.cream}77`, textDecoration: 'none' }}>Home</Link>
           <Link to="/blog"         style={{ fontFamily: "'Mulish',sans-serif", fontSize: 13, color: `${C.cream}77`, textDecoration: 'none' }}>Blog</Link>
-          <Link to="/case-studies" style={{ fontFamily: "'Mulish',sans-serif", fontSize: 13, color: `${C.cream}77`, textDecoration: 'none' }}>Case Studies</Link>
-          <Link to="/faq"          style={{ fontFamily: "'Mulish',sans-serif", fontSize: 13, color: `${C.cream}77`, textDecoration: 'none' }}>FAQ</Link>
+          <Link to="/case-studies"          style={{ fontFamily: "'Mulish',sans-serif", fontSize: 13, color: `${C.cream}77`, textDecoration: 'none' }}>Case Studies</Link>
+          <Link to="/ai-automation-el-paso" style={{ fontFamily: "'Mulish',sans-serif", fontSize: 13, color: `${C.cream}77`, textDecoration: 'none' }}>Services</Link>
+          <Link to="/faq"                   style={{ fontFamily: "'Mulish',sans-serif", fontSize: 13, color: `${C.cream}77`, textDecoration: 'none' }}>FAQ</Link>
           <a href="mailto:primostudio.us@gmail.com" style={{ fontFamily: "'Mulish',sans-serif", fontSize: 13, color: `${C.cream}77`, textDecoration: 'none' }}>Contact</a>
         </div>
         <div style={{ fontFamily: "'Mulish',sans-serif", fontSize: 12, color: `${C.cream}44` }}>
@@ -45,6 +46,12 @@ export default function LandingPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
   if (!landing) return <Navigate to="/" replace />;
+
+  const allLandings = getAllLandings();
+  const relatedLandingPages = landing.relatedLandings
+    .map(s => allLandings.find(l => l.slug === s))
+    .filter((l): l is NonNullable<typeof l> => l !== undefined)
+    .slice(0, 3);
 
   const relatedStudies = landing.relatedCaseStudies
     .map(s => getCaseStudyBySlug(s))
@@ -308,6 +315,33 @@ export default function LandingPage() {
                       </div>
                     )}
                   </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* ── 7b. Related Services — white ── */}
+        {relatedLandingPages.length > 0 && (
+          <section style={{ background: '#fff', padding: 'clamp(48px,6vh,72px) clamp(20px,5vw,60px)' }}>
+            <div style={{ maxWidth: 1040, margin: '0 auto' }}>
+              <p style={{ margin: '0 0 24px', fontSize: 11, fontWeight: 800, letterSpacing: '0.18em', textTransform: 'uppercase', color: `${C.navy}66` }}>
+                RELATED SERVICES
+              </p>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 16 }}>
+                {relatedLandingPages.map(l => (
+                  <Link key={l.slug} to={`/${l.slug}`} style={{ textDecoration: 'none' }}>
+                    <div
+                      style={{ padding: '20px 24px', borderRadius: 12, border: `1.5px solid ${C.navy}14`, display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, transition: 'border-color 0.2s, transform 0.2s' }}
+                      onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.borderColor = C.orange; (e.currentTarget as HTMLDivElement).style.transform = 'translateY(-2px)'; }}
+                      onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.borderColor = `${C.navy}14`; (e.currentTarget as HTMLDivElement).style.transform = 'translateY(0)'; }}
+                    >
+                      <span style={{ fontFamily: "'Mulish',sans-serif", fontSize: 15, fontWeight: 700, color: C.navy, lineHeight: 1.3 }}>
+                        {l.title}
+                      </span>
+                      <span style={{ color: C.orange, fontWeight: 900, flexShrink: 0, fontSize: 18 }}>→</span>
+                    </div>
+                  </Link>
                 ))}
               </div>
             </div>

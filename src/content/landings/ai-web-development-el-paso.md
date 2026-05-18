@@ -34,6 +34,9 @@ whyElPasoPoints:
 relatedCaseStudies:
   - torque-performance
   - brenda-jazmin-cake-pump
+relatedLandings:
+  - ai-automation-el-paso
+  - ai-for-hispanic-businesses-el-paso
 faq:
   - q: "How long does a project take?"
     a: "A marketing site takes four to eight weeks depending on content readiness and revision cycles. A custom SaaS platform or client portal with auth, payments, and custom business logic runs two to four months. We scope before we quote — the timeline is specific to your project, not a generic estimate."

@@ -32,6 +32,10 @@ whyElPasoPoints:
   - "Direct access to the team that built your system — not a support ticket"
 relatedCaseStudies:
   - torque-performance
+relatedLandings:
+  - bilingual-ai-chatbots-el-paso
+  - ai-web-development-el-paso
+  - ai-for-hispanic-businesses-el-paso
 faq:
   - q: "What's the difference between off-the-shelf AI tools and custom AI automation?"
     a: "Tools like Zapier or Make automate fixed workflows between apps that already integrate. Custom AI automation handles judgment calls — qualifying a lead, answering a question in context, generating a document from variable inputs. When the task requires understanding rather than just routing, you need something built for your specific business."
