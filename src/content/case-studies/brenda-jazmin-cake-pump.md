@@ -11,8 +11,8 @@ services:
   - Supabase Backend
   - Claude API Integration
   - AI Vision Companion App
-timeline: "~6 weeks"
-investment: "$12,000–$20,000"
+timeline: "~6-8 weeks"
+investment: "Project-based"
 metaTitle: "Case Study: Brenda Jazmín's Owned Course Platform | Primo AI Studio"
 metaDescription: "How we built a fully-owned Kajabi alternative for Mexican fitness influencer Brenda Jazmín — custom video player, progress tracking, Stripe integration, and AI companion app."
 datePublished: "2026-05-18"

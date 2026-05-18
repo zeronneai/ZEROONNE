@@ -12,7 +12,7 @@ services:
   - Letterhead Automation
   - Formspree Integration
 timeline: "~4 weeks"
-investment: "$4,500–$7,500"
+investment: "Project-based"
 metaTitle: "Case Study: El Toro Law's Premium Bilingual Landing Page | Primo AI Studio"
 metaDescription: "How we built an Awwwards-caliber bilingual landing page for El Toro Law in El Paso. Cinematic GSAP animations, Cormorant Garamond typography, bull SVG intro."
 datePublished: "2026-05-18"

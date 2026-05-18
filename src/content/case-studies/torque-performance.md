@@ -12,7 +12,7 @@ services:
   - Clerk Authentication
   - Mobile Responsiveness
 timeline: "~3 months"
-investment: "$15,000–$25,000"
+investment: "Project-based"
 metaTitle: "Case Study: How Torque Performance Automated Baseball Training Operations | Primo AI Studio"
 metaDescription: "See how we built Torque Performance's full member platform — self-serve parent portal, 16 Stripe price IDs, Supabase RLS, Clerk auth. Zero manual payment reconciliation."
 datePublished: "2026-05-18"
