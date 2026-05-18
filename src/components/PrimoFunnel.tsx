@@ -1461,6 +1461,7 @@ function Footer() {
               <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.15em', textTransform: 'uppercase', color: C.orange, marginBottom: 12 }}>Resources</div>
               {[
                 { label: 'Blog & Insights →', href: '/blog' },
+                { label: 'FAQ →',              href: '/faq' },
                 { label: 'Free AI Scorecard →', href: '/blog' },
                 { label: 'Book a Call →', href: '#' },
               ].map(link => (

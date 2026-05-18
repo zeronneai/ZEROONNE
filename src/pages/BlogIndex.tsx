@@ -24,6 +24,7 @@ function BlogFooter() {
         <div style={{ display: 'flex', gap: 32, flexWrap: 'wrap' }}>
           <Link to="/" style={{ fontFamily: "'Mulish',sans-serif", fontSize: 13, color: `${C.cream}77`, textDecoration: 'none' }}>Home</Link>
           <Link to="/blog" style={{ fontFamily: "'Mulish',sans-serif", fontSize: 13, color: C.cream, textDecoration: 'none', fontWeight: 700 }}>Blog</Link>
+          <Link to="/faq"  style={{ fontFamily: "'Mulish',sans-serif", fontSize: 13, color: `${C.cream}77`, textDecoration: 'none' }}>FAQ</Link>
           <a href="mailto:primostudio.us@gmail.com" style={{ fontFamily: "'Mulish',sans-serif", fontSize: 13, color: `${C.cream}77`, textDecoration: 'none' }}>Contact</a>
         </div>
         <div style={{ fontFamily: "'Mulish',sans-serif", fontSize: 12, color: `${C.cream}44` }}>
