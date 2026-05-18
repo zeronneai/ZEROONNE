@@ -8,6 +8,7 @@ const BlogPost  = lazy(() => import('./src/pages/BlogPost'));
 const FAQ         = lazy(() => import('./src/pages/FAQ'));
 const CaseStudies = lazy(() => import('./src/pages/CaseStudies'));
 const CaseStudy   = lazy(() => import('./src/pages/CaseStudy'));
+const LandingPage = lazy(() => import('./src/pages/LandingPage'));
 
 const rootElement = document.getElementById('root');
 if (!rootElement) throw new Error('Could not find root element to mount to');
@@ -24,6 +25,12 @@ const app = (
             <Route path="/faq"                element={<FAQ />} />
             <Route path="/case-studies"       element={<CaseStudies />} />
             <Route path="/case-studies/:slug" element={<CaseStudy />} />
+            <Route path="/ai-automation-el-paso"              element={<LandingPage />} />
+            <Route path="/ai-for-law-firms-el-paso"           element={<LandingPage />} />
+            <Route path="/bilingual-ai-chatbots-el-paso"      element={<LandingPage />} />
+            <Route path="/ai-content-marketing-el-paso"       element={<LandingPage />} />
+            <Route path="/ai-web-development-el-paso"         element={<LandingPage />} />
+            <Route path="/ai-for-hispanic-businesses-el-paso" element={<LandingPage />} />
           </Routes>
         </Suspense>
       </BrowserRouter>
