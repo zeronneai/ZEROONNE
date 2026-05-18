@@ -1460,10 +1460,11 @@ function Footer() {
             <div style={{ marginTop: 24 }}>
               <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.15em', textTransform: 'uppercase', color: C.orange, marginBottom: 12 }}>Resources</div>
               {[
-                { label: 'Blog & Insights →', href: '/blog' },
+                { label: 'Blog & Insights →',  href: '/blog' },
+                { label: 'Case Studies →',     href: '/case-studies' },
                 { label: 'FAQ →',              href: '/faq' },
                 { label: 'Free AI Scorecard →', href: '/blog' },
-                { label: 'Book a Call →', href: '#' },
+                { label: 'Book a Call →',       href: '#' },
               ].map(link => (
                 <a key={link.label} href={link.href}
                   style={{ fontSize: 13, fontWeight: 500, color: 'rgba(234,226,183,0.75)', textDecoration: 'none', transition: 'color 0.15s' }}

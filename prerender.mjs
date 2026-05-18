@@ -23,6 +23,10 @@ const ROUTES = [
   '/blog',
   '/blog/complete-2026-ai-guide-el-paso-small-businesses',
   '/faq',
+  '/case-studies',
+  '/case-studies/torque-performance',
+  '/case-studies/el-toro-law',
+  '/case-studies/brenda-jazmin-cake-pump',
 ];
 
 const MIME_TYPES = {
