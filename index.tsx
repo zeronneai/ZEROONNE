@@ -5,7 +5,9 @@ import { HelmetProvider } from 'react-helmet-async';
 import App from './App';
 const BlogIndex = lazy(() => import('./src/pages/BlogIndex'));
 const BlogPost  = lazy(() => import('./src/pages/BlogPost'));
-const FAQ       = lazy(() => import('./src/pages/FAQ'));
+const FAQ         = lazy(() => import('./src/pages/FAQ'));
+const CaseStudies = lazy(() => import('./src/pages/CaseStudies'));
+const CaseStudy   = lazy(() => import('./src/pages/CaseStudy'));
 
 const rootElement = document.getElementById('root');
 if (!rootElement) throw new Error('Could not find root element to mount to');
@@ -19,7 +21,9 @@ const app = (
             <Route path="/" element={<App />} />
             <Route path="/blog" element={<BlogIndex />} />
             <Route path="/blog/:slug" element={<BlogPost />} />
-            <Route path="/faq"       element={<FAQ />} />
+            <Route path="/faq"                element={<FAQ />} />
+            <Route path="/case-studies"       element={<CaseStudies />} />
+            <Route path="/case-studies/:slug" element={<CaseStudy />} />
           </Routes>
         </Suspense>
       </BrowserRouter>
