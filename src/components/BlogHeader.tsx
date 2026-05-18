@@ -1,16 +1,22 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 const C = { navy: '#1a3a4a', orange: '#f26419', cream: '#eae2b7' };
-
-const CENTER_LOGO_URL =
-  'https://res.cloudinary.com/dsprn0ew4/image/upload/v1747857494/Primo_Studio_Logo_transparent_background_rfkfq2.png';
 
 interface BlogHeaderProps {
   showBack?: boolean;
 }
 
 export default function BlogHeader({ showBack = true }: BlogHeaderProps) {
+  useEffect(() => {
+    // The homepage App component sets document.body.style.overflow = 'hidden'
+    // as an inline style. Puppeteer captures this and it bleeds into prerendered
+    // HTML for all subsequent routes served via the SPA index.html fallback.
+    // Clear it here so every page using BlogHeader scrolls normally.
+    document.body.style.overflow = '';
+    return () => { document.body.style.overflow = ''; };
+  }, []);
+
   return (
     <header style={{
       position: 'sticky', top: 0, zIndex: 200,
@@ -23,7 +29,7 @@ export default function BlogHeader({ showBack = true }: BlogHeaderProps) {
       {/* Logo */}
       <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}>
         <img
-          src={CENTER_LOGO_URL}
+          src="/android-chrome-192x192.png"
           alt="Primo AI Studio - #1 AI Agency in El Paso, Texas"
           style={{ height: 36, width: 36, objectFit: 'contain', borderRadius: '50%' }}
         />
