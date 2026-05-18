@@ -9,7 +9,7 @@ import { getAllPosts } from '../lib/blog';
 const C = { navy: '#1a3a4a', orange: '#f26419', cream: '#eae2b7', yellow: '#f5b800', green: '#8bbe6e' };
 const EASE_OUT: [number,number,number,number] = [0.22, 1, 0.36, 1];
 
-const CATEGORIES = ['All', 'AI Tools', 'Case Studies', 'Marketing', 'Healthcare', 'Law Firms', 'Restaurants'];
+const CATEGORY_ORDER = ['All', 'AI Tools', 'Case Studies', 'Marketing', 'Healthcare', 'Law Firms', 'Restaurants'];
 
 function BlogFooter() {
   return (
@@ -37,6 +37,11 @@ function BlogFooter() {
 export default function BlogIndex() {
   const allPosts = useMemo(() => getAllPosts(), []);
   const [activeCategory, setActiveCategory] = useState('All');
+
+  const visibleCategories = useMemo(() => {
+    const cats = new Set(allPosts.map(p => p.category).filter(Boolean));
+    return CATEGORY_ORDER.filter(c => c === 'All' || cats.has(c));
+  }, [allPosts]);
 
   useEffect(() => {
     document.dispatchEvent(new Event('render-event'));
@@ -104,7 +109,7 @@ export default function BlogIndex() {
           overflowX: 'auto',
         }}>
           <div style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', gap: 8, padding: '16px 0', minWidth: 'max-content' }}>
-            {CATEGORIES.map(cat => (
+            {visibleCategories.map(cat => (
               <button
                 key={cat}
                 onClick={() => setActiveCategory(cat)}
