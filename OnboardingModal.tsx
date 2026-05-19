@@ -785,7 +785,7 @@ export default function OnboardingModal({ entry, onClose }: OnboardingModalProps
               position: 'fixed',
               inset: 0,
               background: 'rgba(26, 58, 74, 0.85)',
-              zIndex: 400,
+              zIndex: 10000,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',

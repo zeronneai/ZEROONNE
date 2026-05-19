@@ -450,34 +450,14 @@ function SectionIntro({ onOpenForm }: { onOpenForm: (s?: string) => void }) {
             marginTop: 0,
           }}
         >
-          API keys. Webhooks. Deployments.<br />
-          Vector databases. LLM fine-tuning.<br />
-          SDKs. RAG pipelines.
+          If just reading those words made you want to close the tab, you found the right primo.
         </motion.h2>
-
-        <motion.p
-          initial={reduced ? {} : { opacity: 0, scale: 0.8 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.45, duration: 0.5, type: 'spring', stiffness: 200, damping: 12 }}
-          style={{
-            fontFamily: "'Mulish', sans-serif",
-            fontSize: 'clamp(20px, 3vw, 28px)',
-            fontWeight: 600,
-            fontStyle: 'italic',
-            color: C.orange,
-            marginBottom: 24,
-            marginTop: 0,
-          }}
-        >
-          Yawn.
-        </motion.p>
 
         <motion.p
           initial={reduced ? {} : { opacity: 0, y: 12 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ delay: 0.65, duration: 0.7, ease: EASE_OUT }}
+          transition={{ delay: 0.45, duration: 0.7, ease: EASE_OUT }}
           style={{
             fontFamily: "'Mulish', sans-serif",
             fontSize: 'clamp(15px, 1.8vw, 18px)',
@@ -489,7 +469,7 @@ function SectionIntro({ onOpenForm }: { onOpenForm: (s?: string) => void }) {
             margin: '0 auto',
           }}
         >
-          If just reading those words made you want to close the tab, you found the right primo.
+          API keys. Webhooks. Deployments. Vector databases. LLM fine-tuning. SDKs. RAG pipelines.
         </motion.p>
       </div>
 

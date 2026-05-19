@@ -451,12 +451,7 @@ export default function App() {
             margin: '8px auto 0',
             textAlign: 'center',
           }}>
-            While your competition is still trying to figure out what an &lsquo;LLM&rsquo; is,{' '}
-            <strong style={{ fontWeight: 700, opacity: 1 }}>we&rsquo;re already installing yours.</strong>
-            {' · '}
-            <span style={{ fontWeight: 700, color: '#f26419', fontStyle: 'italic' }}>
-              Ready to deploy your first AI agent?
-            </span>
+            We install practical AI systems for El Paso businesses so you recover time, stop missing leads, and avoid having to learn every new tool yourself.
           </p>
         </div>
 
