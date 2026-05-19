@@ -450,7 +450,7 @@ function SectionIntro({ onOpenForm }: { onOpenForm: (s?: string) => void }) {
             marginTop: 0,
           }}
         >
-          If just reading those words made you want to close the tab, you found the right primo.
+          THESE WORDS MAKES YOU WANT TO CLOSE THE TAB, YOU FOUND THE RIGHT PRIMO.
         </motion.h2>
 
         <motion.p
