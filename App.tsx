@@ -128,8 +128,8 @@ function SubBubbles({ containerSize, points, isMobile }: {
         const rad  = angles[i] * (Math.PI / 180);
         const dx   = Math.cos(rad) * dist;
         const dy   = Math.sin(rad) * dist;
-        const left = containerSize / 2 + dx;
-        const top  = containerSize / 2 + dy;
+        const left = containerSize / 2 + dx - size / 2;
+        const top  = containerSize / 2 + dy - size / 2;
         return (
           <motion.div
             key={`sub-${i}`}
@@ -143,7 +143,6 @@ function SubBubbles({ containerSize, points, isMobile }: {
             style={{
               position: 'absolute',
               top, left,
-              transform: 'translate(-50%, -50%)',
               width: size, height: size, borderRadius: '50%',
               background: colors[i].bg, color: colors[i].text,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
