@@ -533,6 +533,7 @@ export default function App() {
                         <span
                           className={`bbl${svc.bestSeller ? ' bbl-bestseller' : ''}`}
                           style={{
+                            position: 'relative',
                             background: svc.nodeBg,
                             fontSize: `${bubbleFontSize}px`, fontWeight: 600,
                             color: svc.nodeText,
@@ -545,6 +546,17 @@ export default function App() {
                             transition: 'opacity 0.4s ease, filter 0.4s ease, transform 0.4s ease',
                           }}
                         >
+                          {svc.bestSeller && (
+                            <span style={{
+                              position: 'absolute', top: -6, right: -8,
+                              background: C.cream, color: C.orange,
+                              fontSize: `${Math.max(5, bubbleFontSize * 0.72)}px`,
+                              fontWeight: 800, letterSpacing: '0.08em',
+                              padding: '1px 4px', borderRadius: 4,
+                              lineHeight: 1.3, textTransform: 'uppercase',
+                              pointerEvents: 'none',
+                            }}>NEW</span>
+                          )}
                           {svc.label}
                         </span>
                       </motion.div>

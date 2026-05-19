@@ -657,7 +657,7 @@ function ThankYouScreen({ onClose }: { onClose: () => void }) {
         We got it. Welcome to the Primo family.
       </p>
       <p style={{ fontFamily: "'Mulish', -apple-system, sans-serif", fontSize: 14, color: 'rgba(26,58,74,0.6)', margin: '0 0 32px', lineHeight: 1.55 }}>
-        Your custom AI opportunity report is being prepared right now. Check your email within 24 hours — we'll outline exactly what we can handle for you, and what it'd take to get started.
+        A Primo will contact you within the next 24 hours.
       </p>
       <button
         onClick={onClose}

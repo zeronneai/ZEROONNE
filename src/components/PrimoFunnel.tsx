@@ -434,6 +434,25 @@ function SectionIntro({ onOpenForm }: { onOpenForm: (s?: string) => void }) {
 
       {/* Heading block */}
       <div style={{ maxWidth: 1000, textAlign: 'center', marginBottom: 'clamp(40px, 8vh, 80px)' }}>
+        <motion.p
+          initial={reduced ? {} : { opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.15, duration: 0.7, ease: EASE_OUT }}
+          style={{
+            fontFamily: "'Mulish', sans-serif",
+            fontSize: 'clamp(15px, 1.8vw, 18px)',
+            fontWeight: 500,
+            color: C.navy,
+            opacity: 0.7,
+            lineHeight: 1.6,
+            maxWidth: 600,
+            margin: '0 auto 20px',
+          }}
+        >
+          FUN WORDS: API keys. Webhooks. Deployments. Vector databases. LLM fine-tuning. SDKs. RAG pipelines.
+        </motion.p>
+
         <motion.h2
           initial={reduced ? {} : { opacity: 0, y: 30, filter: 'blur(8px)' }}
           whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
@@ -446,31 +465,12 @@ function SectionIntro({ onOpenForm }: { onOpenForm: (s?: string) => void }) {
             color: C.navy,
             lineHeight: 1.15,
             letterSpacing: '-0.02em',
-            marginBottom: 20,
+            marginBottom: 0,
             marginTop: 0,
           }}
         >
           THESE WORDS MAKES YOU WANT TO CLOSE THE TAB, YOU FOUND THE RIGHT PRIMO.
         </motion.h2>
-
-        <motion.p
-          initial={reduced ? {} : { opacity: 0, y: 12 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.45, duration: 0.7, ease: EASE_OUT }}
-          style={{
-            fontFamily: "'Mulish', sans-serif",
-            fontSize: 'clamp(15px, 1.8vw, 18px)',
-            fontWeight: 500,
-            color: C.navy,
-            opacity: 0.7,
-            lineHeight: 1.6,
-            maxWidth: 600,
-            margin: '0 auto',
-          }}
-        >
-          API keys. Webhooks. Deployments. Vector databases. LLM fine-tuning. SDKs. RAG pipelines.
-        </motion.p>
       </div>
 
       {/* Comparison grid */}
@@ -768,7 +768,7 @@ function SectionLLM({ onOpenForm }: { onOpenForm: (s?: string) => void }) {
 // ── Section 1 — The System ────────────────────────────────────────────────────
 const STEPS = [
   { num: '01', title: 'Audit & Strategy', sub: 'We listen. You vent.', desc: "30 minutes on a call. You tell us what's eating your week. We tell you exactly what we can take off your plate. No 'discovery framework.' No pitch deck." },
-  { num: '02', title: 'Build & Integrate', sub: 'We disappear for 2 weeks.', desc: "We build everything in the background. No daily Slack pings. No 'just need 30 minutes of your time.' You keep running your business. We keep building." },
+  { num: '02', title: 'Build & Integrate', sub: '', desc: "We build everything in the background. No daily Slack pings. No 'just need 30 minutes of your time.' You keep running your business. We keep building." },
   { num: '03', title: 'Activate & Launch', sub: 'Your business gets superpowers.', desc: "We turn it on. You see leads getting answered at 3am. Content posting itself. Reports landing in your inbox. The 15 hours of admin you used to do — gone." },
   { num: '04', title: 'Optimize & Scale', sub: 'We keep making it sharper.', desc: "Once one system runs itself, we add the next. Quarter by quarter, your business becomes AI-native — and you never had to learn what that means." },
 ];
@@ -1687,7 +1687,6 @@ export default function PrimoFunnel({ onOpenForm }: PrimoFunnelProps) {
       <Section5 />
       <Section5b />
       <Section5c />
-      <Section6 onOpenForm={onOpenForm} />
       <Section7 onOpenForm={onOpenForm} />
       <Footer />
     </>
