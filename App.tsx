@@ -43,6 +43,14 @@ const BUBBLE_CSS = `
 .bbl-bestseller {
   animation: pulse-glow 2.2s ease-in-out infinite;
 }
+@keyframes btn-pulse {
+  0%   { box-shadow: 0 0 0px 0px rgba(242,100,25,0.0); }
+  50%  { box-shadow: 0 0 12px 4px rgba(242,100,25,0.55); }
+  100% { box-shadow: 0 0 0px 0px rgba(242,100,25,0.0); }
+}
+.learn-more-btn {
+  animation: btn-pulse 2s ease-in-out infinite;
+}
 `;
 
 // ── Sub-bubbles: 360° equilateral triangle around the expanded bubble ─────────
@@ -271,9 +279,10 @@ export default function App() {
   }, []);
 
   useEffect(() => {
+    // Re-assert after OnboardingModal's cleanup resets overflow to '' on close
     document.body.style.overflow = funnelUnlocked ? 'auto' : 'hidden';
     return () => { document.body.style.overflow = 'auto'; };
-  }, [funnelUnlocked]);
+  }, [funnelUnlocked, modalEntry]);
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -542,16 +551,20 @@ export default function App() {
                 setFunnelUnlocked(true);
                 setTimeout(() => funnelRef.current?.scrollIntoView({ behavior: 'smooth' }), 120);
               }}
+              className="learn-more-btn"
               style={{
-                marginTop: 4, background: 'transparent', border: 'none',
-                color: 'rgba(26,58,74,0.45)', fontSize: 12, fontWeight: 700,
-                letterSpacing: '0.12em', textTransform: 'uppercase',
+                marginTop: 4, background: 'transparent',
+                border: `1.5px solid ${C.orange}`,
+                borderRadius: 999,
+                color: C.orange, fontSize: 11, fontWeight: 800,
+                letterSpacing: '0.14em', textTransform: 'uppercase',
                 cursor: 'pointer', fontFamily: "'Mulish', sans-serif",
-                display: 'flex', alignItems: 'center', gap: 6, padding: '6px 0',
+                display: 'flex', alignItems: 'center', gap: 6,
+                padding: '7px 18px',
               }}
-              whileHover={{ color: C.navy }}
+              whileHover={{ backgroundColor: C.orange, color: C.cream }}
             >
-              See what we&apos;ll handle for you
+              Learn More
               <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
                 <path d="M6 1v10M1 6l5 5 5-5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
