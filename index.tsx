@@ -3,6 +3,7 @@ import { createRoot, hydrateRoot } from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import App from './App';
+import FloatingWhatsApp from './src/components/FloatingWhatsApp';
 const BlogIndex = lazy(() => import('./src/pages/BlogIndex'));
 const BlogPost  = lazy(() => import('./src/pages/BlogPost'));
 const FAQ         = lazy(() => import('./src/pages/FAQ'));
@@ -33,6 +34,7 @@ const app = (
             <Route path="/ai-for-hispanic-businesses-el-paso" element={<LandingPage />} />
           </Routes>
         </Suspense>
+        <FloatingWhatsApp />
       </BrowserRouter>
     </HelmetProvider>
   </React.StrictMode>
