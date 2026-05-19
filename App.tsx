@@ -106,8 +106,8 @@ const BUBBLE_CSS = `
 `;
 
 // ── Sub-bubbles: 360° equilateral triangle around the expanded bubble ─────────
-function SubBubbles({ btnCx, btnCy, points, isMobile }: {
-  btnCx: number; btnCy: number; points: string[]; isMobile: boolean;
+function SubBubbles({ containerSize, points, isMobile }: {
+  containerSize: number; points: string[]; isMobile: boolean;
 }) {
   const expandedRadius = isMobile
     ? Math.min(window.innerWidth * 0.5, 280) / 2
@@ -128,9 +128,8 @@ function SubBubbles({ btnCx, btnCy, points, isMobile }: {
         const rad  = angles[i] * (Math.PI / 180);
         const dx   = Math.cos(rad) * dist;
         const dy   = Math.sin(rad) * dist;
-        // Center is pre-validated in handleBubbleClick — no clamping needed
-        const left = btnCx + dx;
-        const top  = btnCy + dy;
+        const left = containerSize / 2 + dx - size / 2;
+        const top  = containerSize / 2 + dy - size / 2;
         return (
           <motion.div
             key={`sub-${i}`}
@@ -142,9 +141,8 @@ function SubBubbles({ btnCx, btnCy, points, isMobile }: {
               type: 'spring', stiffness: 180, damping: 16,
             }}
             style={{
-              position: 'fixed',
+              position: 'absolute',
               top, left,
-              transform: 'translate(-50%, -50%)',
               width: size, height: size, borderRadius: '50%',
               background: colors[i].bg, color: colors[i].text,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -153,7 +151,7 @@ function SubBubbles({ btnCx, btnCy, points, isMobile }: {
               fontFamily: "'Mulish', sans-serif",
               fontWeight: 700, lineHeight: 1.25, letterSpacing: '0.02em',
               boxShadow: '0 6px 22px rgba(0,0,0,0.18)',
-              pointerEvents: 'none', zIndex: 110,
+              pointerEvents: 'none', zIndex: 30,
             }}
           >
             {point}
@@ -165,9 +163,9 @@ function SubBubbles({ btnCx, btnCy, points, isMobile }: {
 }
 
 // ── Expanded bubble — replaces the separate popup ─────────────────────────────
-function ExpandedBubble({ svc, btnCx, btnCy, isMobile, windowWidth, onClose, onGetStarted }: {
+function ExpandedBubble({ svc, containerSize, isMobile, windowWidth, onClose, onGetStarted }: {
   svc: typeof SERVICES[0];
-  btnCx: number; btnCy: number;
+  containerSize: number;
   isMobile: boolean; windowWidth: number;
   onClose: () => void;
   onGetStarted: (name: string) => void;
@@ -175,9 +173,6 @@ function ExpandedBubble({ svc, btnCx, btnCy, isMobile, windowWidth, onClose, onG
   const size = isMobile
     ? Math.min(windowWidth * 0.75, 280)
     : 300; // fixed 300px circle on desktop
-
-  const cx = btnCx;
-  const cy = btnCy;
 
   return (
     <motion.div
@@ -188,9 +183,9 @@ function ExpandedBubble({ svc, btnCx, btnCy, isMobile, windowWidth, onClose, onG
       transition={{ type: 'spring', stiffness: 280, damping: 22 }}
       onClick={(e) => e.stopPropagation()}
       style={{
-        position: 'fixed',
-        top:  cy - size / 2,
-        left: cx - size / 2,
+        position: 'absolute',
+        top:  containerSize / 2 - size / 2,
+        left: containerSize / 2 - size / 2,
         width: size, height: size,
         borderRadius: '50%', aspectRatio: '1 / 1',
         background: svc.nodeBg, color: svc.nodeText,
@@ -200,7 +195,7 @@ function ExpandedBubble({ svc, btnCx, btnCy, isMobile, windowWidth, onClose, onG
         gap: 8, textAlign: 'center',
         overflow: 'hidden',
         boxShadow: '0 12px 40px rgba(0,0,0,0.28)',
-        zIndex: 100,
+        zIndex: 20,
       }}
     >
       {/* Close button */}
@@ -308,8 +303,6 @@ const D_BUBBLE_FONT = 7.5;
 
 interface ActiveState {
   id: number;
-  btnCx: number;
-  btnCy: number;
 }
 
 // ── App ───────────────────────────────────────────────────────────────────────
@@ -319,7 +312,6 @@ export default function App() {
   const [modalEntry, setModalEntry]       = useState<ModalEntry | null>(null);
   const [funnelUnlocked, setFunnelUnlocked] = useState(false);
   const funnelRef                         = useRef<HTMLDivElement>(null);
-  const orbitRef                          = useRef<HTMLDivElement>(null);
   const [windowWidth, setWindowWidth]     = useState(
     typeof window !== 'undefined' ? window.innerWidth : 1200,
   );
@@ -369,35 +361,7 @@ export default function App() {
   const handleBubbleClick = (e: React.MouseEvent<HTMLButtonElement>, svc: (typeof SERVICES)[0]) => {
     e.stopPropagation();
     if (active === svc.id) { setActive(null); setPopup(null); return; }
-
-    const iw = window.innerWidth;
-    const ih = window.innerHeight;
-
-    // Sub-bubble geometry (mirrors SubBubbles component)
-    const expandedR = isMobile ? Math.min(iw * 0.5, 280) / 2 : 150;
-    const gap       = isMobile ? 52 : 80;
-    const dist      = expandedR + gap;
-    const subSz     = isMobile ? 75 : 90;
-    const pad       = 8;
-
-    // Angles: -90° (top), 30° (lower-right), 150° (lower-left)
-    // Bounding offsets: dy_min=-dist (top), dy_max=dist*sin30°=dist*0.5, dx_max=dist*cos30°≈dist*0.866
-    const minCy = dist       + subSz / 2 + pad;
-    const maxCy = ih - dist * 0.5 - subSz / 2 - pad;
-    const minCx = dist * 0.866 + subSz / 2 + pad;
-    const maxCx = iw - dist * 0.866 - subSz / 2 - pad;
-
-    let centerX = iw / 2;
-    let centerY = ih / 2;
-    if (orbitRef.current) {
-      const r = orbitRef.current.getBoundingClientRect();
-      centerX = r.left + r.width  / 2;
-      centerY = r.top  + r.height / 2;
-    }
-    const safeCx = Math.max(minCx, Math.min(maxCx, centerX));
-    const safeCy = Math.max(minCy, Math.min(maxCy, centerY));
-
-    setPopup({ id: svc.id, btnCx: safeCx, btnCy: safeCy });
+    setPopup({ id: svc.id });
     setActive(svc.id);
   };
 
@@ -418,30 +382,31 @@ export default function App() {
         background: '#eae2b7',
         display: 'flex', flexDirection: 'column', alignItems: 'center',
         fontFamily: "'Mulish', -apple-system, sans-serif", boxSizing: 'border-box',
-        position: 'relative', overflow: 'hidden',
+        position: 'relative', overflow: 'visible',
       }}>
 
-        {/* ── Decorative background "i" ── */}
-        <svg
-          aria-hidden="true"
-          style={{
-            position: 'absolute',
-            top: '8%',
-            right: isMobile ? '-15%' : '2%',
-            height: '160%',
-            width: 'auto',
-            pointerEvents: 'none',
-            zIndex: 0,
-          }}
-          viewBox="0 0 400 1000"
-          preserveAspectRatio="xMidYMid meet"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <g opacity="0.07">
-            <circle cx="200" cy="140" r="78" fill="#f26419"/>
-            <rect x="125" y="265" width="150" height="640" rx="75" fill="#f26419"/>
-          </g>
-        </svg>
+        {/* ── Decorative background "i" — clipped to hero bounds ── */}
+        <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none', zIndex: 0 }}>
+          <svg
+            aria-hidden="true"
+            style={{
+              position: 'absolute',
+              top: '8%',
+              right: isMobile ? '-15%' : '2%',
+              height: '160%',
+              width: 'auto',
+              pointerEvents: 'none',
+            }}
+            viewBox="0 0 400 1000"
+            preserveAspectRatio="xMidYMid meet"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <g opacity="0.07">
+              <circle cx="200" cy="140" r="78" fill="#f26419"/>
+              <rect x="125" y="265" width="150" height="640" rx="75" fill="#f26419"/>
+            </g>
+          </svg>
+        </div>
 
         {/* ══ Block 1: Heading + Subtitle ══ */}
         <div style={{ flexShrink: 0, textAlign: 'center', marginTop: 0, maxWidth: 640, padding: '0 16px', paddingBottom: 'clamp(4px, 0.8vh, 10px)', position: 'relative', zIndex: 1 }}>
@@ -464,9 +429,8 @@ export default function App() {
         </div>
 
         {/* ══ Block 2: Orbit ══ */}
-        <div style={{ flex: 1, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', width: '100%', minHeight: 0, overflow: 'visible', paddingTop: 'clamp(0px, 1vh, 16px)', paddingBottom: 0, marginTop: 'clamp(-8px, -1vh, 0px)', position: 'relative', zIndex: 1, ...(isMobile ? { maxHeight: '60vw', maxWidth: '60vw', alignSelf: 'center' } : {}) }}>
+        <div style={{ flex: 1, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', width: '100%', minHeight: 0, overflow: 'visible', paddingTop: 'clamp(0px, 1vh, 16px)', paddingBottom: 0, marginTop: 'clamp(-8px, -1vh, 0px)', position: 'relative', zIndex: frozen ? 200 : 1, ...(isMobile ? { maxHeight: '60vw', maxWidth: '60vw', alignSelf: 'center' } : {}) }}>
           <div
-            ref={orbitRef}
             className="orbit-container"
             style={{
               position: 'relative', width: containerSize, height: containerSize, flexShrink: 0,
@@ -566,6 +530,31 @@ export default function App() {
               })}
             </motion.div>
 
+            {/* ── Sub-bubbles — absolute coords inside orbit container ── */}
+            <AnimatePresence>
+              {frozen && activeService && popup && (
+                <SubBubbles
+                  containerSize={containerSize}
+                  points={activeService.keyPoints}
+                  isMobile={isMobile}
+                />
+              )}
+            </AnimatePresence>
+
+            {/* ── Expanded bubble — centered at containerSize/2 ── */}
+            <AnimatePresence>
+              {frozen && activeService && popup && (
+                <ExpandedBubble
+                  svc={activeService}
+                  containerSize={containerSize}
+                  isMobile={isMobile}
+                  windowWidth={windowWidth}
+                  onClose={closePopup}
+                  onGetStarted={openModalFromPopup}
+                />
+              )}
+            </AnimatePresence>
+
             {/* Center logo */}
             <motion.a
               href="https://www.instagram.com/primostudio.us"
@@ -664,32 +653,6 @@ export default function App() {
           )}
         </AnimatePresence>
 
-        {/* ── Sub-bubbles — fixed coords, outside rotator ── */}
-        <AnimatePresence>
-          {frozen && activeService && popup && (
-            <SubBubbles
-              btnCx={popup.btnCx}
-              btnCy={popup.btnCy}
-              points={activeService.keyPoints}
-              isMobile={isMobile}
-            />
-          )}
-        </AnimatePresence>
-
-        {/* ── Expanded bubble overlay (replaces popup) ── */}
-        <AnimatePresence>
-          {frozen && activeService && popup && (
-            <ExpandedBubble
-              svc={activeService}
-              btnCx={popup.btnCx}
-              btnCy={popup.btnCy}
-              isMobile={isMobile}
-              windowWidth={windowWidth}
-              onClose={closePopup}
-              onGetStarted={openModalFromPopup}
-            />
-          )}
-        </AnimatePresence>
       </div>
 
       {/* ── Sales Funnel (unlocked on demand) ── */}
