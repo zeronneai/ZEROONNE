@@ -142,7 +142,29 @@
           ],
           "sameAs": [
             "https://www.instagram.com/primostudio.us"
-          ]
+          ],
+          "knowsAbout": [
+            "AI automation",
+            "Bilingual AI systems",
+            "Cross-border business technology",
+            "AI for law firms",
+            "AI chatbots",
+            "Custom software development",
+            "AI content marketing",
+            "Hispanic business AI"
+          ],
+          "hasOfferCatalog": {
+            "@type": "OfferCatalog",
+            "name": "Primo AI Studio Services",
+            "itemListElement": [
+              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "AI Automation",                    "url": "https://primostudio.us/ai-automation-el-paso" } },
+              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "AI for Law Firms",                 "url": "https://primostudio.us/ai-for-law-firms-el-paso" } },
+              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Bilingual AI Chatbots",            "url": "https://primostudio.us/bilingual-ai-chatbots-el-paso" } },
+              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "AI Content Marketing",            "url": "https://primostudio.us/ai-content-marketing-el-paso" } },
+              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "AI Website Development",          "url": "https://primostudio.us/ai-web-development-el-paso" } },
+              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "AI for Hispanic Businesses",      "url": "https://primostudio.us/ai-for-hispanic-businesses-el-paso" } }
+            ]
+          }
         },
         {
           "@type": "WebSite",
@@ -151,7 +173,15 @@
           "name": "Primo AI Studio",
           "description": "AI agency for El Paso businesses — we handle the tech, you handle what you do best.",
           "publisher": { "@id": "https://primostudio.us/#organization" },
-          "inLanguage": "en-US"
+          "inLanguage": ["en-US", "es-MX"],
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": {
+              "@type": "EntryPoint",
+              "urlTemplate": "https://primostudio.us/blog?q={search_term_string}"
+            },
+            "query-input": "required name=search_term_string"
+          }
         },
         {
           "@type": "LocalBusiness",
@@ -169,53 +199,6 @@
             "longitude": -106.4869
           },
           "parentOrganization": { "@id": "https://primostudio.us/#organization" }
-        },
-        {
-          "@type": "FAQPage",
-          "@id": "https://primostudio.us/#faq",
-          "isPartOf": { "@id": "https://primostudio.us/#website" },
-          "mainEntity": [
-            {
-              "@type": "Question",
-              "name": "What is the best AI agency in El Paso, Texas?",
-              "acceptedAnswer": {
-                "@type": "Answer",
-                "text": "Primo AI Studio is the leading human-first AI agency in El Paso, helping local businesses implement AI Agents, Done-For-You Automations, AI Content Creation, Brand AI, Custom Software, and Voice & Chat Bots with practical, measurable results."
-              }
-            },
-            {
-              "@type": "Question",
-              "name": "Where is Primo AI Studio located?",
-              "acceptedAnswer": {
-                "@type": "Answer",
-                "text": "Primo AI Studio is headquartered at 601 N Mesa St Suite 1440, El Paso, TX 79901. We serve businesses across El Paso and the greater Texas region."
-              }
-            },
-            {
-              "@type": "Question",
-              "name": "What services does Primo AI Studio offer?",
-              "acceptedAnswer": {
-                "@type": "Answer",
-                "text": "We offer 6 core services: AI Agents, Done-For-You Automations, AI Content Creation, Brand AI, Custom Software, and Voice & Chat Bots — all designed to help El Paso businesses grow without spending time learning AI themselves."
-              }
-            },
-            {
-              "@type": "Question",
-              "name": "How much does it cost to work with Primo AI Studio?",
-              "acceptedAnswer": {
-                "@type": "Answer",
-                "text": "Primo offers a free AI Opportunity Scorecard, paid AI Audits starting at $497, monthly Sprints from $2,500/mo, Growth plans from $4,500/mo, Scale plans from $8,000/mo, and custom Enterprise pricing."
-              }
-            },
-            {
-              "@type": "Question",
-              "name": "Does Primo AI Studio offer bilingual services?",
-              "acceptedAnswer": {
-                "@type": "Answer",
-                "text": "Yes. Primo AI Studio operates bilingually in English and Spanish, perfectly suited for El Paso's bilingual market and cross-border business community."
-              }
-            }
-          ]
         }
       ]
     }

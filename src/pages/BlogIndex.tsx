@@ -69,6 +69,14 @@ export default function BlogIndex() {
         <meta property="og:title" content="AI Insights Blog | Primo AI Studio" />
         <meta property="og:description" content="Practical AI strategies for El Paso businesses." />
         <meta property="og:url" content="https://primostudio.us/blog" />
+        <script type="application/ld+json">{JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://primostudio.us/' },
+            { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://primostudio.us/blog' },
+          ],
+        })}</script>
       </Helmet>
 
       <div style={{ minHeight: '100vh', background: C.cream, fontFamily: "'Mulish', sans-serif" }}>

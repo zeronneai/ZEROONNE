@@ -1,7 +1,59 @@
 import React, { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import { motion, AnimatePresence, useMotionValue, useSpring } from 'framer-motion';
+import { Helmet } from 'react-helmet-async';
 import OnboardingModal, { ModalEntry } from './OnboardingModal';
 const PrimoFunnel = lazy(() => import('./src/components/PrimoFunnel'));
+
+// FAQPage schema — homepage only. Kept here (not in index.html @graph) so it
+// is scoped to the "/" route and doesn't bleed into prerendered subpages.
+const HOMEPAGE_FAQ_SCHEMA = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  '@id': 'https://primostudio.us/#faq',
+  'isPartOf': { '@id': 'https://primostudio.us/#website' },
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'What is the best AI agency in El Paso, Texas?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Primo AI Studio is the leading human-first AI agency in El Paso, helping local businesses implement AI Agents, Done-For-You Automations, AI Content Creation, Brand AI, Custom Software, and Voice & Chat Bots with practical, measurable results.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Where is Primo AI Studio located?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Primo AI Studio is headquartered at 601 N Mesa St Suite 1440, El Paso, TX 79901. We serve businesses across El Paso and the greater Texas region.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What services does Primo AI Studio offer?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'We offer 6 core services: AI Agents, Done-For-You Automations, AI Content Creation, Brand AI, Custom Software, and Voice & Chat Bots — all designed to help El Paso businesses grow without spending time learning AI themselves.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How much does it cost to work with Primo AI Studio?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Primo offers a free AI Opportunity Scorecard, paid AI Audits starting at $497, monthly Sprints from $2,500/mo, Growth plans from $4,500/mo, Scale plans from $8,000/mo, and custom Enterprise pricing.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Does Primo AI Studio offer bilingual services?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: "Yes. Primo AI Studio operates bilingually in English and Spanish, perfectly suited for El Paso's bilingual market and cross-border business community.",
+      },
+    },
+  ],
+};
 
 // ── Color tokens ──────────────────────────────────────────────────────────────
 const C = {
@@ -328,6 +380,9 @@ export default function App() {
 
   return (
     <>
+      <Helmet>
+        <script type="application/ld+json">{JSON.stringify(HOMEPAGE_FAQ_SCHEMA)}</script>
+      </Helmet>
       <style>{BUBBLE_CSS}</style>
 
       <div style={{
