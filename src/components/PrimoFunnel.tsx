@@ -609,6 +609,182 @@ function SectionIntro({ onOpenForm }: { onOpenForm: (s?: string) => void }) {
   );
 }
 
+// ── Section LLM SEO + AEO — Flagship ─────────────────────────────────────────
+const LLM_COLS = [
+  {
+    title: 'What We Build',
+    bullets: [
+      'Schema markup optimization that LLMs actually read',
+      'Citation architecture so AI agents quote you, not your competition',
+      'Content engineered for LLM extraction (FAQs, structured answers)',
+      'Authority signals across your entire web presence',
+    ],
+  },
+  {
+    title: 'Without It',
+    bullets: [
+      "Customers ask AI 'who can help me?' — and you're not in the answer",
+      'Your competitors get recommended by ChatGPT for your service',
+      'Google traffic keeps shrinking as users switch to AI search',
+      "You stay invisible to a generation that doesn't 'Google' anymore",
+    ],
+  },
+  {
+    title: "When It's Done Right",
+    bullets: [
+      'Your business name shows up when prospects ask AI for recommendations',
+      'AI agents cite your content as the authoritative source',
+      'You capture leads that Google never even saw',
+      "First-mover advantage in a market most competitors haven't noticed",
+    ],
+  },
+];
+
+function SectionLLM({ onOpenForm }: { onOpenForm: (s?: string) => void }) {
+  const reduced = useReducedMotion();
+
+  return (
+    <section style={{
+      background: C.orange,
+      padding: 'clamp(72px,10vh,110px) clamp(20px,5vw,60px)',
+      position: 'relative',
+      overflow: 'hidden',
+    }}>
+      <div style={{
+        position: 'absolute', inset: 0, pointerEvents: 'none',
+        background: 'radial-gradient(ellipse 80% 50% at 50% 110%, rgba(26,58,74,0.18) 0%, transparent 70%)',
+      }} />
+
+      <div style={{ maxWidth: 1100, margin: '0 auto', position: 'relative', zIndex: 1 }}>
+
+        {/* Header */}
+        <div style={{ textAlign: 'center', marginBottom: 'clamp(40px,6vh,64px)' }}>
+          <motion.p
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.5 }}
+            transition={{ duration: 0.6, ease: EASE_OUT }}
+            style={{
+              margin: '0 0 16px',
+              fontFamily: "'Mulish', sans-serif",
+              fontSize: 10, fontWeight: 800, letterSpacing: '0.22em',
+              textTransform: 'uppercase', color: `${C.cream}bb`,
+            }}
+          >
+            OUR FLAGSHIP SERVICE
+          </motion.p>
+
+          <motion.h2
+            initial={{ opacity: 0, y: 22 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.4 }}
+            transition={{ duration: 0.8, ease: EASE_OUT, delay: 0.1 }}
+            style={{
+              margin: '0 0 20px',
+              fontFamily: "'Mulish', sans-serif",
+              fontSize: 'clamp(28px,4vw,44px)', fontWeight: 900,
+              color: C.cream, lineHeight: 1.1, letterSpacing: '-0.02em',
+            }}
+          >
+            Get Found by ChatGPT, Claude,<br />Perplexity, and Gemini.
+          </motion.h2>
+
+          <motion.p
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.4 }}
+            transition={{ duration: 0.7, ease: EASE_OUT, delay: 0.2 }}
+            style={{
+              margin: '0 auto',
+              maxWidth: 580,
+              fontFamily: "'Mulish', sans-serif",
+              fontSize: 'clamp(15px,1.8vw,18px)', fontWeight: 400,
+              color: `${C.cream}cc`, lineHeight: 1.65,
+            }}
+          >
+            While your competitors optimize for Google, the future is asking AI.
+            We make sure your business is the answer — not someone else&apos;s.
+          </motion.p>
+        </div>
+
+        {/* 3-column grid */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+          gap: 'clamp(16px,2.5vw,28px)',
+          marginBottom: 'clamp(36px,5vh,56px)',
+        }}>
+          {LLM_COLS.map((col, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 28 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.7, ease: EASE_OUT, delay: 0.15 + i * 0.1 }}
+              style={{
+                background: C.cream,
+                borderRadius: 18,
+                padding: 'clamp(24px,3vw,36px)',
+              }}
+            >
+              <div style={{
+                fontFamily: "'Mulish', sans-serif",
+                fontSize: 10, fontWeight: 800, letterSpacing: '0.16em',
+                textTransform: 'uppercase', color: C.orange,
+                marginBottom: 16,
+              }}>
+                {col.title}
+              </div>
+              <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 12 }}>
+                {col.bullets.map((b, j) => (
+                  <li key={j} style={{
+                    display: 'flex', alignItems: 'flex-start', gap: 10,
+                    fontFamily: "'Mulish', sans-serif",
+                    fontSize: 'clamp(13px,1.5vw,15px)', fontWeight: 500,
+                    color: C.navy, lineHeight: 1.55, opacity: 0.88,
+                  }}>
+                    <span style={{ color: C.orange, flexShrink: 0, fontWeight: 800, marginTop: 2 }}>—</span>
+                    <span>{b}</span>
+                  </li>
+                ))}
+              </ul>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* CTA */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.5 }}
+          transition={{ duration: 0.6, ease: EASE_OUT, delay: 0.4 }}
+          style={{ textAlign: 'center' }}
+        >
+          <motion.button
+            onClick={() => onOpenForm('LLM Optimization')}
+            whileHover={reduced ? {} : { scale: 1.04, boxShadow: '0 12px 40px rgba(26,58,74,0.28)' }}
+            whileTap={reduced ? {} : { scale: 0.97 }}
+            transition={{ duration: 0.2, ease: EASE_MICRO }}
+            style={{
+              display: 'inline-flex', alignItems: 'center', gap: 8,
+              background: C.cream, color: C.navy,
+              padding: '14px 36px', borderRadius: 999,
+              border: 'none', cursor: 'pointer',
+              fontFamily: "'Mulish', sans-serif",
+              fontSize: 'clamp(11px,1.3vw,13px)', fontWeight: 800,
+              letterSpacing: '0.12em', textTransform: 'uppercase',
+              boxShadow: '0 4px 24px rgba(26,58,74,0.18)',
+            }}
+          >
+            Book a Free Discovery Call →
+          </motion.button>
+        </motion.div>
+
+      </div>
+    </section>
+  );
+}
+
 // ── Section 1 — The System ────────────────────────────────────────────────────
 const STEPS = [
   { num: '01', title: 'Audit & Strategy', sub: 'We listen. You vent.', desc: "30 minutes on a call. You tell us what's eating your week. We tell you exactly what we can take off your plate. No 'discovery framework.' No pitch deck." },
@@ -1523,6 +1699,7 @@ export default function PrimoFunnel({ onOpenForm }: PrimoFunnelProps) {
       <style>{FUNNEL_CSS}</style>
       <DotNav activeSection={activeSection} />
       <SectionIntro onOpenForm={onOpenForm} />
+      <SectionLLM onOpenForm={onOpenForm} />
       <Section1 onOpenForm={onOpenForm} />
       <Section2 onOpenForm={onOpenForm} />
       <Section3 onOpenForm={onOpenForm} />
