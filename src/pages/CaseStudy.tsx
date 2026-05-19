@@ -165,6 +165,15 @@ export default function CaseStudy() {
         <meta property="og:description" content={cs.metaDescription} />
         <meta property="og:url"         content={`https://primostudio.us/case-studies/${cs.slug}`} />
         <script type="application/ld+json">{JSON.stringify(schema)}</script>
+        <script type="application/ld+json">{JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'Home',          item: 'https://primostudio.us/' },
+            { '@type': 'ListItem', position: 2, name: 'Case Studies',  item: 'https://primostudio.us/case-studies' },
+            { '@type': 'ListItem', position: 3, name: cs.client,       item: `https://primostudio.us/case-studies/${cs.slug}` },
+          ],
+        })}</script>
       </Helmet>
 
       <div style={{ minHeight: '100vh', background: C.cream, fontFamily: "'Mulish', sans-serif" }}>

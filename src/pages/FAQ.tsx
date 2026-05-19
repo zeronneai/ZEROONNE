@@ -309,13 +309,19 @@ export default function FAQ() {
         <meta property="og:title"       content="FAQ | Primo AI Studio — El Paso's AI Agency" />
         <meta property="og:description" content="22 honest answers about AI agency pricing, process, bilingual services, and ROI in El Paso." />
         <meta property="og:url"         content="https://primostudio.us/faq" />
-        <script type="application/ld+json">
-          {JSON.stringify({
-            '@context': 'https://schema.org',
-            '@type':    'FAQPage',
-            mainEntity: schemaEntity,
-          })}
-        </script>
+        <script type="application/ld+json">{JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type':    'FAQPage',
+          mainEntity: schemaEntity,
+        })}</script>
+        <script type="application/ld+json">{JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://primostudio.us/' },
+            { '@type': 'ListItem', position: 2, name: 'FAQ',  item: 'https://primostudio.us/faq' },
+          ],
+        })}</script>
       </Helmet>
 
       <div style={{ minHeight: '100vh', background: C.cream, fontFamily: "'Mulish', sans-serif" }}>
