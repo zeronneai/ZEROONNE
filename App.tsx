@@ -86,6 +86,23 @@ const BUBBLE_CSS = `
   display: flex; align-items: center; justify-content: center;
   width: 100%; height: 100%; border-radius: 50%;
 }
+@keyframes pulse-glow {
+  0%   { box-shadow: 0 0 0px 0px rgba(242,100,25,0.0),  0 0 0px  0px rgba(242,100,25,0.0); }
+  40%  { box-shadow: 0 0 18px 6px rgba(242,100,25,0.65), 0 0 36px 12px rgba(242,100,25,0.25); }
+  60%  { box-shadow: 0 0 18px 6px rgba(242,100,25,0.65), 0 0 36px 12px rgba(242,100,25,0.25); }
+  100% { box-shadow: 0 0 0px 0px rgba(242,100,25,0.0),  0 0 0px  0px rgba(242,100,25,0.0); }
+}
+.bbl-bestseller {
+  animation: pulse-glow 2.2s ease-in-out infinite;
+}
+@keyframes btn-pulse {
+  0%   { box-shadow: 0 0 0px 0px rgba(242,100,25,0.0); }
+  50%  { box-shadow: 0 0 12px 4px rgba(242,100,25,0.55); }
+  100% { box-shadow: 0 0 0px 0px rgba(242,100,25,0.0); }
+}
+.learn-more-btn {
+  animation: btn-pulse 2s ease-in-out infinite;
+}
 `;
 
 // ── Sub-bubbles: 360° equilateral triangle around the expanded bubble ─────────
@@ -275,12 +292,12 @@ const CENTER_LOGO_URL =
   'https://res.cloudinary.com/dsprn0ew4/image/upload/v1778810517/replicame_ese_logo_sin_a%C3%B1adir_202605142001_xo3xpe.jpg';
 
 const SERVICES = [
-  { id: 1, label: 'AI\nAgents',                name: 'AI Agents',                description: "Custom agents that track your numbers, send reports, and handle the boring stuff so you don't have to look at another dashboard ever again.",            nodeBg: C.green,  nodeText: C.navy,  floatIndex: 3, keyPoints: ['Track metrics',        'Auto reports',   'Zero dashboards'] },
-  { id: 2, label: 'Done-For-You\nAutomations', name: 'Done-For-You Automations', description: 'Repetitive tasks running on autopilot. From lead follow-up to invoice reminders — set it once, never touch it again.',                               nodeBg: C.orange, nodeText: C.cream, floatIndex: 6, keyPoints: ['Set & forget',         'Lead follow-up', 'Auto reminders']  },
-  { id: 3, label: 'AI Content\nCreation',      name: 'AI Content Creation',      description: 'AI trained on YOUR brand voice — generating on-brand ideas, scripts, and edits. You film. We handle the rest (or we film for you too).',              nodeBg: C.navy,   nodeText: C.cream, floatIndex: 5, keyPoints: ['On-brand',             'Daily output',   'We edit too']      },
-  { id: 4, label: 'Brand\nAI',                 name: 'Brand AI',                 description: 'Your brand identity, trained into AI. Every piece of content sounds like you, looks like you, and stays consistent across every channel.',              nodeBg: C.yellow, nodeText: C.navy,  floatIndex: 4, keyPoints: ['Brand voice',           'Visual identity','All channels']     },
-  { id: 5, label: 'Custom\nSoftware',          name: 'Custom Software',          description: 'Custom websites, apps, and back-end systems. Built fast, built clean, built for your business — not a template.',                                       nodeBg: C.orange, nodeText: C.cream, floatIndex: 1, keyPoints: ['Web & apps',            'Built fast',     'Built for you']    },
-  { id: 6, label: 'Voice & Chat\nBots',        name: 'Voice & Chat Bots',        description: '24/7 customer service bots and personal assistants that sound human, never sleep, and never call in sick.',                                             nodeBg: C.yellow, nodeText: C.navy,  floatIndex: 2, keyPoints: ['24/7 service',         'Sounds human',   'Bilingual']        },
+  { id: 1, label: 'AI\nAgents',                name: 'AI Agents',                description: "Custom agents that track your numbers, send reports, and handle the boring stuff so you don't have to look at another dashboard ever again.",            nodeBg: C.green,  nodeText: C.navy,  floatIndex: 3, keyPoints: ['Automation',           'Agents',         'Done for You'],   bestSeller: false },
+  { id: 2, label: 'LLM\nOptimization',         name: 'LLM Optimization',         description: 'Get found by AI search engines — ChatGPT, Perplexity, Gemini. We optimize your content and authority so AI recommends you first.',                     nodeBg: C.orange, nodeText: C.cream, floatIndex: 6, keyPoints: ['AI Search',            'SEO & AEO',      'Get Recommended'], bestSeller: true  },
+  { id: 3, label: 'AI Content\nCreation',      name: 'AI Content Creation',      description: 'AI trained on YOUR brand voice — generating on-brand ideas, scripts, and edits. You film. We handle the rest (or we film for you too).',              nodeBg: C.navy,   nodeText: C.cream, floatIndex: 5, keyPoints: ['On-brand',             'Daily output',   'We edit too'],    bestSeller: false },
+  { id: 4, label: 'Websites &\nFunnels',        name: 'Websites & Funnels',       description: 'High-converting landing pages, e-commerce stores, and full funnels — built fast, built to close.',                                                     nodeBg: C.yellow, nodeText: C.navy,  floatIndex: 4, keyPoints: ['Landing Pages',        'E Commerce',     'Flash Turnarounds'], bestSeller: false },
+  { id: 5, label: 'Custom\nSoftware',          name: 'Custom Software',          description: 'Custom websites, apps, and back-end systems. Built fast, built clean, built for your business — not a template.',                                       nodeBg: C.orange, nodeText: C.cream, floatIndex: 1, keyPoints: ['Web & apps',            'Built fast',     'Built for you'],  bestSeller: false },
+  { id: 6, label: 'Voice & Chat\nBots',        name: 'Voice & Chat Bots',        description: '24/7 customer service bots and personal assistants that sound human, never sleep, and never call in sick.',                                             nodeBg: C.yellow, nodeText: C.navy,  floatIndex: 2, keyPoints: ['24/7 service',         'Sounds human',   'Bilingual'],      bestSeller: false },
 ];
 
 // Layout constants
@@ -314,9 +331,10 @@ export default function App() {
   }, []);
 
   useEffect(() => {
+    // Re-assert after OnboardingModal's cleanup resets overflow to '' on close
     document.body.style.overflow = funnelUnlocked ? 'auto' : 'hidden';
     return () => { document.body.style.overflow = 'auto'; };
-  }, [funnelUnlocked]);
+  }, [funnelUnlocked, modalEntry]);
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -509,7 +527,7 @@ export default function App() {
                         style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                       >
                         <span
-                          className="bbl"
+                          className={`bbl${svc.bestSeller ? ' bbl-bestseller' : ''}`}
                           style={{
                             background: svc.nodeBg,
                             fontSize: `${bubbleFontSize}px`, fontWeight: 600,
@@ -588,16 +606,20 @@ export default function App() {
                 setFunnelUnlocked(true);
                 setTimeout(() => funnelRef.current?.scrollIntoView({ behavior: 'smooth' }), 120);
               }}
+              className="learn-more-btn"
               style={{
-                marginTop: 4, background: 'transparent', border: 'none',
-                color: 'rgba(26,58,74,0.45)', fontSize: 12, fontWeight: 700,
-                letterSpacing: '0.12em', textTransform: 'uppercase',
+                marginTop: 4, background: 'transparent',
+                border: `1.5px solid ${C.orange}`,
+                borderRadius: 999,
+                color: C.orange, fontSize: 11, fontWeight: 800,
+                letterSpacing: '0.14em', textTransform: 'uppercase',
                 cursor: 'pointer', fontFamily: "'Mulish', sans-serif",
-                display: 'flex', alignItems: 'center', gap: 6, padding: '6px 0',
+                display: 'flex', alignItems: 'center', gap: 6,
+                padding: '7px 18px',
               }}
-              whileHover={{ color: C.navy }}
+              whileHover={{ backgroundColor: C.orange, color: C.cream }}
             >
-              See what we&apos;ll handle for you
+              Learn More
               <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
                 <path d="M6 1v10M1 6l5 5 5-5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
               </svg>

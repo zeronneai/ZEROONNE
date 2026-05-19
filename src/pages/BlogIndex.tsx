@@ -46,6 +46,7 @@ export default function BlogIndex() {
     return CATEGORY_ORDER.filter(c => c === 'All' || cats.has(c));
   }, [allPosts]);
 
+
   useEffect(() => {
     document.dispatchEvent(new Event('render-event'));
   }, []);
