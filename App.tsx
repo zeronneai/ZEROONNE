@@ -319,6 +319,7 @@ export default function App() {
   const [modalEntry, setModalEntry]       = useState<ModalEntry | null>(null);
   const [funnelUnlocked, setFunnelUnlocked] = useState(false);
   const funnelRef                         = useRef<HTMLDivElement>(null);
+  const orbitRef                          = useRef<HTMLDivElement>(null);
   const [windowWidth, setWindowWidth]     = useState(
     typeof window !== 'undefined' ? window.innerWidth : 1200,
   );
@@ -386,8 +387,15 @@ export default function App() {
     const minCx = dist * 0.866 + subSz / 2 + pad;
     const maxCx = iw - dist * 0.866 - subSz / 2 - pad;
 
-    const safeCx = Math.max(minCx, Math.min(maxCx, iw / 2));
-    const safeCy = Math.max(minCy, Math.min(maxCy, ih / 2));
+    let centerX = iw / 2;
+    let centerY = ih / 2;
+    if (orbitRef.current) {
+      const r = orbitRef.current.getBoundingClientRect();
+      centerX = r.left + r.width  / 2;
+      centerY = r.top  + r.height / 2;
+    }
+    const safeCx = Math.max(minCx, Math.min(maxCx, centerX));
+    const safeCy = Math.max(minCy, Math.min(maxCy, centerY));
 
     setPopup({ id: svc.id, btnCx: safeCx, btnCy: safeCy });
     setActive(svc.id);
@@ -458,6 +466,7 @@ export default function App() {
         {/* ══ Block 2: Orbit ══ */}
         <div style={{ flex: 1, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', width: '100%', minHeight: 0, overflow: 'visible', paddingTop: 'clamp(0px, 1vh, 16px)', paddingBottom: 0, marginTop: 'clamp(-8px, -1vh, 0px)', position: 'relative', zIndex: 1, ...(isMobile ? { maxHeight: '60vw', maxWidth: '60vw', alignSelf: 'center' } : {}) }}>
           <div
+            ref={orbitRef}
             className="orbit-container"
             style={{
               position: 'relative', width: containerSize, height: containerSize, flexShrink: 0,
