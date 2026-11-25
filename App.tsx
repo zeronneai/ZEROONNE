@@ -284,7 +284,7 @@ function MagneticButton({ children, distance = 0.55 }: { children: React.ReactNo
 
 // ── Data ──────────────────────────────────────────────────────────────────────
 const CENTER_LOGO_URL =
-  'https://res.cloudinary.com/dsprn0ew4/image/upload/v1778810517/replicame_ese_logo_sin_a%C3%B1adir_202605142001_xo3xpe.jpg';
+  '/media/replicame-ese-logo-sin-a-c3-b1adir-202605142001-xo3xpe.jpg';
 
 const SERVICES = [
   { id: 1, label: 'AI\nAgents',                name: 'AI Agents',                description: "Custom agents that track your numbers, send reports, and handle the boring stuff so you don't have to look at another dashboard ever again.",            nodeBg: C.green,  nodeText: C.navy,  floatIndex: 3, keyPoints: ['Automation',           'Agents',         'Done for You'],   bestSeller: false },

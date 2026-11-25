@@ -6,7 +6,7 @@ date: "2026-05-15"
 readTime: "14 min read"
 category: "Guides"
 tags: ["AI for small business", "El Paso", "AI tools 2026", "business automation", "AI guide"]
-coverImage: "https://res.cloudinary.com/dsprn0ew4/image/upload/v1778787182/Logo__pr___icon___mo_____pr__and_202605141259_ydscgi.jpg"
+coverImage: "/media/logo-pr-icon-ydscgi.jpg"
 featured: true
 ---
 

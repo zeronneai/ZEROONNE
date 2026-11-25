@@ -1332,7 +1332,7 @@ function Section5c() {
               overflow: 'hidden', marginBottom: 24, background: '#f26419', position: 'relative',
             }}>
               <img
-                src="https://res.cloudinary.com/dsprn0ew4/image/upload/v1778952617/WhatsApp_Image_2026-05-16_at_11.18.11_AM_fxnbf0.jpg"
+                src="/media/whatsapp-image-2026-05-16-at-11-18-11-am-fxnbf0.jpg"
                 alt="Fabian, Co-founder of Primo AI Studio"
                 style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
               />
@@ -1409,7 +1409,7 @@ function Section5c() {
               overflow: 'hidden', marginBottom: 24, background: '#1a3a4a', position: 'relative',
             }}>
               <img
-                src="https://res.cloudinary.com/dsprn0ew4/image/upload/v1778952617/ChatGPT_Image_May_16_2026_11_25_59_AM_wsrbij.png"
+                src="/media/chatgpt-image-may-16-2026-11-25-59-am-wsrbij.png"
                 alt="Nadim, Co-founder & CEO of Primo AI Studio"
                 style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
               />

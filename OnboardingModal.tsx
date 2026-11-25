@@ -6,7 +6,7 @@ const APPS_SCRIPT_URL =
   'https://script.google.com/macros/s/AKfycbwBcw13L-Yn96Yg-AeIpUCRgHKUxQFXgZ9f1dxZX5KgYQzylO_-g16TBcIoeVGLtPls/exec';
 
 const LOGO_URL =
-  'https://res.cloudinary.com/dsprn0ew4/image/upload/v1778360725/ChatGPT_Image_May_9_2026_03_04_56_PM_hdfdcd.png';
+  '/media/chatgpt-image-may-9-2026-03-04-56-pm-hdfdcd.png';
 
 const ALL_SERVICES = [
   'AI Agents',
